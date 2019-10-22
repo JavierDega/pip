@@ -142,6 +142,13 @@ public:
 		return fpc::fp64_to_i32(m_Internal);
 	}
 
+	//#Javier
+	inline explicit operator bool() const
+	{
+		return InternalRepresentation() > 0;
+	}
+	//#Javier
+
 	inline explicit operator int64_t() const 
 	{
 		return fpc::fp64_to_i64(m_Internal);
@@ -220,6 +227,13 @@ public:
 	{
 		return m_Internal.internal == Rhs.m_Internal.internal;
 	}
+
+	//#Javier
+	inline bool operator!=(const Fp64 &Rhs) 
+	{
+		return m_Internal.internal != Rhs.m_Internal.internal;
+	}
+	//#Javier
 
 	inline bool operator>(const Fp64 &Rhs) const 
 	{

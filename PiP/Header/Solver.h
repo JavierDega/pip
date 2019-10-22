@@ -13,7 +13,7 @@ public:
 
 	void Update(float dt);//Updates the time and executes fixed timestep Step();
 	void Step(float dt);//Steps physics forward
-	float ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, float dt);
+	decimal ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, decimal dt);
 	void ComputeResponse(Rigidbody * rb1, Rigidbody * rb2);
 	Rigidbody * AddBody();
 

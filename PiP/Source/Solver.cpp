@@ -37,34 +37,6 @@ void Solver::Update(float dt)
 void Solver::Step(float timestep) 
 {
 	//We need to have up to date velocities to perform sweeps
-	float firstCollision = 1;//Normalized dt
-	std::pair<Rigidbody*, Rigidbody*> firstCollidingPair;
-	//Upwards collision check
-	for (int i = 0; i < m_rigidbodies.size(); i++) {
-		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
-			if (float t = ComputeSweep(m_rigidbodies[i], m_rigidbodies[j], timestep)) {
-				//They collide during the frame, store
-				if (t < firstCollision) {
-					firstCollision = t;
-					firstCollidingPair.first = m_rigidbodies[i];
-					firstCollidingPair.second = m_rigidbodies[j];
-				}
-			}
-		}
-	}
-
-	//If there was collision
-	if (firstCollision != 1) {
-		//Step everything upto collision time
-		float timeToStep = timestep * firstCollision;
-		for (int i = 0; i < m_rigidbodies.size(); i++) {
-			//Step according to their velocities (Don't apply gravity or frictional accelerations).
-			Rigidbody * rb = m_rigidbodies[i];
-			rb->m_position += rb->m_velocity*timeToStep;
-			rb->m_rotation += rb->m_angularVelocity*timeToStep;
-		}
-		ComputeResponse(firstCollidingPair.first, firstCollidingPair.second);
-	}
 	//1: Perform sweeps, storing collision deltas
 	//2: Only acknowledge first collision time
 	//3: Step everything upto first collision time
@@ -72,11 +44,40 @@ void Solver::Step(float timestep)
 	//5: Reperform sweeps  (for(i){for (j = i + 1; ..)}
 	//6: If new collisions, repeat
 	//7: Apply gravity forces (Collisions are impulse based, friction is force based) *optionally do this at step 0
-
-
+	decimal dt = (decimal)timestep;
+	while ( dt > (decimal) 0.f) {
+		decimal firstCollision = (decimal)1.f;//Normalized dt
+		std::pair<Rigidbody*, Rigidbody*> firstCollidingPair;
+		//Upwards collision check
+		for (int i = 0; i < m_rigidbodies.size(); i++) {
+			for (int j = i + 1; j < m_rigidbodies.size(); j++) {
+				if (decimal t = ComputeSweep(m_rigidbodies[i], m_rigidbodies[j], dt)) {
+					//They collide during the frame, store
+					if (t <= firstCollision) {
+						firstCollision = t;
+						firstCollidingPair.first = m_rigidbodies[i];
+						firstCollidingPair.second = m_rigidbodies[j];
+					}
+				}
+			}
+		}
+		//Step everything upto collision time
+		decimal timeToStep = dt * firstCollision;
+		for (int i = 0; i < m_rigidbodies.size(); i++) {
+			//Step according to their velocities (Don't apply gravity or frictional accelerations).
+			Rigidbody * rb = m_rigidbodies[i];
+			rb->m_position += rb->m_velocity*timeToStep;
+			rb->m_rotation += rb->m_angularVelocity*timeToStep;
+		}
+		dt -= timeToStep;
+		//If there was collision
+		if (firstCollidingPair.first) {
+			ComputeResponse(firstCollidingPair.first, firstCollidingPair.second);
+		}
+	}
 }
 
-float Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, float dt) 
+decimal Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, decimal dt) 
 {
 	//https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=2
 
@@ -102,7 +103,7 @@ float Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, float dt)
 
 	const decimal q = b * b - (decimal)4.f * a*c;
 	if (q < (decimal)0.f) {
-		return 0;//No root, no collision
+		return (decimal)0.f;//No root, no collision
 	}
 	else {
 		const decimal sq = Fp64::Sqrt(q, 3);
@@ -110,7 +111,7 @@ float Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, float dt)
 		const decimal root1 = ((decimal)-1.f*b + sq)*d;
 		const decimal root2 = ((decimal)-1.f*b - sq)*d;
 		if (root1 <= root2) return root1;
-
+		else return root2;
 	}
 }
 
