@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "Solver.h"
 
 int main(void)
 {
@@ -25,6 +26,8 @@ int main(void)
 		std::cout << "Error!" << std::endl;
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
+	//Create solver to loop through
+	Solver * solver = new Solver();
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{

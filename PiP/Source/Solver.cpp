@@ -166,8 +166,10 @@ circle2.setMovementVector(v2');*/
 	// v2' = v2 + optimizedP * m1 * n
 	rb2->m_velocity += n * optimizedP * rb1->m_mass;
 }
-Rigidbody * Solver::AddBody()
+Rigidbody * Solver::AddBody(Vector2 pos, decimal rot, Vector2 vel, decimal angVel, Vector2 accel, decimal rad,
+	decimal mass)
 {
 	//Create default sphere and pass reference, using allocator
-	return nullptr;
+	m_rigidbodies.push_back(new Rigidbody(pos, rot, vel, angVel, accel, rad, mass));
+	return m_rigidbodies.back();
 }

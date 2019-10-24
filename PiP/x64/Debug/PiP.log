@@ -1,5 +1,7 @@
-﻿  Rigidbody.cpp
+﻿  stdafx.cpp
+  Rigidbody.cpp
   Solver.cpp
+  StackAllocator.cpp
   Generating Code...
 fp_math_bindings.lib(rustc_std_workspace_core-6391a360e3eeafba.rustc_std_workspace_core.9oi7tjn3-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
 fp_math_bindings.lib(cfg_if-d802c196c150a787.cfg_if.dqpgynn6-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library

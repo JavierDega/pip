@@ -4,7 +4,8 @@
 class Rigidbody
 {
 public:
-	Rigidbody();
+	Rigidbody(Vector2 pos = Vector2(), decimal rot = (decimal)0.f, Vector2 vel = Vector2(), decimal angVel = (decimal)0.f, Vector2 accel = Vector2(), decimal rad = (decimal)1.f,
+		decimal mass = (decimal)1.f);
 	~Rigidbody();
 
 	//They're all spheres for now
