@@ -144,6 +144,27 @@ Vector v2' = v2 + optimizedP * circle1.mass * n;
 
 circle1.setMovementVector(v1');
 circle2.setMovementVector(v2');*/
+
+	//Center of rb1 to center of rb2
+	Vector2 n = rb2->m_position - rb1->m_position;
+	n.Normalize();
+
+	// Find the length of the component of each of the movement vectors along n.
+	decimal a1 = Vector2::Dot(rb1->m_velocity, n);
+	decimal a2 = Vector2::Dot(rb2->m_velocity, n);
+
+	// Using the optimized version,
+	// optimizedP =  2(a1 - a2)
+	//              -----------
+	//                m1 + m2
+	decimal optimizedP = ((decimal)2.f * (a1 - a2)) / (rb1->m_mass + rb2->m_mass);
+
+	// Calculate v1', the new movement vector of circle1
+	// v1' = v1 - optimizedP * m2 * n
+	rb1->m_velocity -= n * optimizedP * rb2->m_mass;
+	// Calculate v1', the new movement vector of circle1
+	// v2' = v2 + optimizedP * m1 * n
+	rb2->m_velocity += n * optimizedP * rb1->m_mass;
 }
 Rigidbody * Solver::AddBody()
 {

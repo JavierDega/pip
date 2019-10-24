@@ -63,6 +63,16 @@ typedef struct Vector2Str {
 		return *this;
 	}
 
+	inline decimal Length() {
+		return fp64::Fp64::Sqrt(x*x + y*y, 3);
+	}
+
+	inline Vector2Str Normalize() {
+		decimal length = Length();
+		x /= length;
+		y /= length;
+		return *this;
+	}
 	inline static decimal Dot(Vector2Str v1, Vector2Str v2) {
 		return v1.x*v2.x + v1.y*v2.y;
 	}
