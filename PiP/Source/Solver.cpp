@@ -1,12 +1,16 @@
-#include "stdafx.h"
 #include "Header\Solver.h"
 
+#if USE_FIXEDPOINT
 using namespace fp64;
+#endif
+
+using namespace math;
 
 Solver::Solver()
 {
 	m_accumulator = 0.f;
 	m_timestep = 0.02f;
+	m_gravity = m_timestep * 9.8f;
 }
 
 
@@ -15,7 +19,7 @@ Solver::~Solver()
 	m_rigidbodies.clear();
 }
 
-void Solver::Update(float dt)
+void Solver::Update(decimal dt)
 {
 	//Step through mem allocated bodies
 
@@ -30,11 +34,9 @@ void Solver::Update(float dt)
 	//To create a lerp between this frame and the next, interact with the graphic system.
 	//ApproxTransform.position = transform.position + m_velocity*m_accumulator ?
 	//float alpha = m_accumulator / m_timestep;
-
-
 }
 
-void Solver::Step(float timestep) 
+void Solver::Step(decimal timestep) 
 {
 	//We need to have up to date velocities to perform sweeps
 	//1: Perform sweeps, storing collision deltas
@@ -46,7 +48,7 @@ void Solver::Step(float timestep)
 	//7: Apply gravity forces (Collisions are impulse based, friction is force based) *optionally do this at step 0
 	decimal dt = (decimal)timestep;
 	while ( dt > (decimal) 0.f) {
-		decimal firstCollision = (decimal)1.f;//Normalized dt
+		decimal firstCollision = 1;//Normalized dt
 		std::pair<Rigidbody*, Rigidbody*> firstCollidingPair;
 		//Upwards collision check
 		for (int i = 0; i < m_rigidbodies.size(); i++) {
@@ -74,6 +76,12 @@ void Solver::Step(float timestep)
 		if (firstCollidingPair.first) {
 			ComputeResponse(firstCollidingPair.first, firstCollidingPair.second);
 		}
+	}
+	for (int i = 0; i < m_rigidbodies.size(); i++) {
+		//Semi euler integration
+		Rigidbody* rb = m_rigidbodies[i];
+		rb->m_acceleration = Vector2( 0, m_gravity / rb->m_mass);
+		rb->m_velocity += rb->m_acceleration;
 	}
 }
 
@@ -106,7 +114,7 @@ decimal Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, decimal dt)
 		return (decimal)0.f;//No root, no collision
 	}
 	else {
-		const decimal sq = Fp64::Sqrt(q, 3);
+		const decimal sq = Sqrt(q, 3);
 		const decimal d = decimal(1.f) / ((decimal)2.f*a);
 		const decimal root1 = ((decimal)-1.f*b + sq)*d;
 		const decimal root2 = ((decimal)-1.f*b - sq)*d;
@@ -166,6 +174,7 @@ circle2.setMovementVector(v2');*/
 	// v2' = v2 + optimizedP * m1 * n
 	rb2->m_velocity += n * optimizedP * rb1->m_mass;
 }
+
 Rigidbody * Solver::AddBody(Vector2 pos, decimal rot, Vector2 vel, decimal angVel, Vector2 accel, decimal rad,
 	decimal mass)
 {

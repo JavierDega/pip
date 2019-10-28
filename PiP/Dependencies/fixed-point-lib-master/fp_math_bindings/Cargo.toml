@@ -1,0 +1,14 @@
+[package]
+name = "fp_math_bindings"
+version = "0.1.0"
+authors = ["Anthony Arian <anthonyarian96@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["dylib", "staticlib"]
+
+[profile.dev]
+opt-level = 2
+
+[dependencies]
+fp_math = { path = ".." }

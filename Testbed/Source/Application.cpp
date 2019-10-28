@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+
 #include "Solver.h"
 
 int main(void)
@@ -28,9 +29,17 @@ int main(void)
 
 	//Create solver to loop through
 	Solver * solver = new Solver();
+	solver->AddBody();
+	decimal prevTime = glfwGetTime();
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
+		decimal curTime = glfwGetTime();
+		decimal dt = curTime - prevTime;
+		prevTime = curTime;
+
+		/*Physics update*/
+		solver->Update(dt);
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBegin(GL_TRIANGLES);

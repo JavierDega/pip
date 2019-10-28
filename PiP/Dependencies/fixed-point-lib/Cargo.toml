@@ -1,8 +1,0 @@
-[package]
-name = "fp_math"
-version = "0.1.0"
-authors = ["Anthony Arian <anthonyarian96@gmail.com>"]
-edition = "2018"
-
-[profile.dev]
-opt-level = 2

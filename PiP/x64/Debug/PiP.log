@@ -1,11 +1,4 @@
-﻿  stdafx.cpp
-  Rigidbody.cpp
+﻿  Rigidbody.cpp
   Solver.cpp
-  StackAllocator.cpp
   Generating Code...
-fp_math_bindings.lib(rustc_std_workspace_core-6391a360e3eeafba.rustc_std_workspace_core.9oi7tjn3-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-fp_math_bindings.lib(cfg_if-d802c196c150a787.cfg_if.dqpgynn6-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-fp_math_bindings.lib(unwind-711d56157cf28645.unwind.ygxb2rxp-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-fp_math_bindings.lib(rustc_std_workspace_alloc-058c975bf38e4686.rustc_std_workspace_alloc.5idv1knb-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
-fp_math_bindings.lib(fp_math-2ce3ffe4ff04e0e5.fp_math.f5acmiqm-cgu.0.rcgu.o) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
   PiP.vcxproj -> C:\Users\javie\Documents\Development\PiP\x64\Debug\PiP.lib

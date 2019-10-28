@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PiP", "PiP\PiP.vcxproj", "{CD714DF1-9319-40BF-AB34-46189AA355DE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Testbed", "Testbed\Testbed.vcxproj", "{7CE9474D-B316-4E6A-89AD-810DE7C1859C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CD714DF1-9319-40BF-AB34-46189AA355DE} = {CD714DF1-9319-40BF-AB34-46189AA355DE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
