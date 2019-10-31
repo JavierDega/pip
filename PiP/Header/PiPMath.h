@@ -5,7 +5,8 @@
 
 #include "fp_math.h"
 
-#define USE_FIXEDPOINT 1
+#define USE_FIXEDPOINT 0
+#define PI 3.14159265f
 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT
@@ -126,23 +127,23 @@ namespace math {
 
 		MatrixStr(Vector4 c1, Vector4 c2, Vector4 c3, Vector4 c4) {
 			m[0][0] = c1.x;
-			m[1][0] = c1.y;
-			m[2][0] = c1.z;
-			m[3][0] = c1.w;
+			m[0][1] = c1.y;
+			m[0][2] = c1.z;
+			m[0][3] = c1.w;
 
-			m[0][1] = c2.x;
+			m[1][0] = c2.x;
 			m[1][1] = c2.y;
-			m[2][1] = c2.z;
-			m[3][1] = c2.w;
+			m[1][2] = c2.z;
+			m[1][3] = c2.w;
 
-			m[0][2] = c3.x;
-			m[1][2] = c3.y;
+			m[2][0] = c3.x;
+			m[2][1] = c3.y;
 			m[2][2] = c3.z;
-			m[3][2] = c3.w;
+			m[2][3] = c3.w;
 
-			m[0][3] = c4.x;
-			m[1][3] = c4.y;
-			m[2][3] = c4.z;
+			m[3][0] = c4.x;
+			m[3][1] = c4.y;
+			m[3][2] = c4.z;
 			m[3][3] = c4.w;
 		}
 
@@ -165,45 +166,46 @@ namespace math {
 			m.m[3][3] = 1;
 		}
 
-		static Vector4 operator * (MatrixStr m1, Vector4 v1) {
+		Vector4 operator * (Vector4 v1) {
 			Vector4 newVec =  Vector4();
-			newVec.x = v1.x * m1.m[0][0] + v1.y * m1.m[0][1] + v1.z * m1.m[0][2] + v1.w * m1.m[0][3];
-			newVec.y = v1.x * m1.m[1][0] + v1.y * m1.m[1][1] + v1.z * m1.m[1][2] + v1.w * m1.m[1][3];
-			newVec.z = v1.x * m1.m[2][0] + v1.y * m1.m[2][1] + v1.z * m1.m[2][2] + v1.w * m1.m[2][3];
-			newVec.w = v1.x * m1.m[3][0] + v1.y * m1.m[3][1] + v1.z * m1.m[3][2] + v1.w * m1.m[3][3];
+			newVec.x = v1.x * m[0][0] + v1.y * m[0][1] + v1.z * m[0][2] + v1.w * m[0][3];
+			newVec.y = v1.x * m[1][0] + v1.y * m[1][1] + v1.z * m[1][2] + v1.w * m[1][3];
+			newVec.z = v1.x * m[2][0] + v1.y * m[2][1] + v1.z * m[2][2] + v1.w * m[2][3];
+			newVec.w = v1.x * m[3][0] + v1.y * m[3][1] + v1.z * m[3][2] + v1.w * m[3][3];
 			return newVec;
 		}
 
-		static MatrixStr operator * (MatrixStr m1, MatrixStr m2) {
+		MatrixStr operator * (MatrixStr m2) {
 
 			//First one's columns (of a row) times the second one's rows (of a column)
 			MatrixStr m3 = MatrixStr();
 			//Result of first column
-			m3.m[0][0] = m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0] + m1.m[0][3] * m2.m[3][0];
-			m3.m[1][0] = m1.m[1][0] * m2.m[0][0] + m1.m[1][1] * m2.m[1][0] + m1.m[1][2] * m2.m[2][0] + m1.m[1][3] * m2.m[3][0];
-			m3.m[2][0] = m1.m[2][0] * m2.m[0][0] + m1.m[2][1] * m2.m[1][0] + m1.m[2][2] * m2.m[2][0] + m1.m[2][3] * m2.m[3][0];
-			m3.m[3][0] = m1.m[3][0] * m2.m[0][0] + m1.m[3][1] * m2.m[1][0] + m1.m[3][2] * m2.m[2][0] + m1.m[3][3] * m2.m[3][0];
+			m3.m[0][0] = m[0][0] * m2.m[0][0] + m[0][1] * m2.m[1][0] + m[0][2] * m2.m[2][0] + m[0][3] * m2.m[3][0];
+			m3.m[1][0] = m[1][0] * m2.m[0][0] + m[1][1] * m2.m[1][0] + m[1][2] * m2.m[2][0] + m[1][3] * m2.m[3][0];
+			m3.m[2][0] = m[2][0] * m2.m[0][0] + m[2][1] * m2.m[1][0] + m[2][2] * m2.m[2][0] + m[2][3] * m2.m[3][0];
+			m3.m[3][0] = m[3][0] * m2.m[0][0] + m[3][1] * m2.m[1][0] + m[3][2] * m2.m[2][0] + m[3][3] * m2.m[3][0];
 
 			//Seguir con segunda tercera cuarta y quinta
 			//Result of second column
-			m3.m[0][1] = m1.m[0][0] * m2.m[0][1] + m1.m[0][1] * m2.m[1][1] + m1.m[0][2] * m2.m[2][1] + m1.m[0][3] * m2.m[3][1];
-			m3.m[1][1] = m1.m[1][0] * m2.m[0][1] + m1.m[1][1] * m2.m[1][1] + m1.m[1][2] * m2.m[2][1] + m1.m[1][3] * m2.m[3][1];
-			m3.m[2][1] = m1.m[2][0] * m2.m[0][1] + m1.m[2][1] * m2.m[1][1] + m1.m[2][2] * m2.m[2][1] + m1.m[2][3] * m2.m[3][1];
-			m3.m[3][1] = m1.m[3][0] * m2.m[0][1] + m1.m[3][1] * m2.m[1][1] + m1.m[3][2] * m2.m[2][1] + m1.m[3][3] * m2.m[3][1];
+			m3.m[0][1] = m[0][0] * m2.m[0][1] + m[0][1] * m2.m[1][1] + m[0][2] * m2.m[2][1] + m[0][3] * m2.m[3][1];
+			m3.m[1][1] = m[1][0] * m2.m[0][1] + m[1][1] * m2.m[1][1] + m[1][2] * m2.m[2][1] + m[1][3] * m2.m[3][1];
+			m3.m[2][1] = m[2][0] * m2.m[0][1] + m[2][1] * m2.m[1][1] + m[2][2] * m2.m[2][1] + m[2][3] * m2.m[3][1];
+			m3.m[3][1] = m[3][0] * m2.m[0][1] + m[3][1] * m2.m[1][1] + m[3][2] * m2.m[2][1] + m[3][3] * m2.m[3][1];
 
 			//Result of third column
-			m3.m[0][2] = m1.m[0][0] * m2.m[0][2] + m1.m[0][1] * m2.m[1][2] + m1.m[0][2] * m2.m[2][2] + m1.m[0][3] * m2.m[3][2];
-			m3.m[1][2] = m1.m[1][0] * m2.m[0][2] + m1.m[1][1] * m2.m[1][2] + m1.m[1][2] * m2.m[2][2] + m1.m[1][3] * m2.m[3][2];
-			m3.m[2][2] = m1.m[2][0] * m2.m[0][2] + m1.m[2][1] * m2.m[1][2] + m1.m[2][2] * m2.m[2][2] + m1.m[2][3] * m2.m[3][2];
-			m3.m[3][2] = m1.m[3][0] * m2.m[0][2] + m1.m[3][1] * m2.m[1][2] + m1.m[3][2] * m2.m[2][2] + m1.m[3][3] * m2.m[3][2];
+			m3.m[0][2] = m[0][0] * m2.m[0][2] + m[0][1] * m2.m[1][2] + m[0][2] * m2.m[2][2] + m[0][3] * m2.m[3][2];
+			m3.m[1][2] = m[1][0] * m2.m[0][2] + m[1][1] * m2.m[1][2] + m[1][2] * m2.m[2][2] + m[1][3] * m2.m[3][2];
+			m3.m[2][2] = m[2][0] * m2.m[0][2] + m[2][1] * m2.m[1][2] + m[2][2] * m2.m[2][2] + m[2][3] * m2.m[3][2];
+			m3.m[3][2] = m[3][0] * m2.m[0][2] + m[3][1] * m2.m[1][2] + m[3][2] * m2.m[2][2] + m[3][3] * m2.m[3][2];
 
 			//Result of fourth column
-			m3.m[0][3] = m1.m[0][0] * m2.m[0][3] + m1.m[0][1] * m2.m[1][3] + m1.m[0][2] * m2.m[2][3] + m1.m[0][3] * m2.m[3][3];
-			m3.m[1][3] = m1.m[1][0] * m2.m[0][3] + m1.m[1][1] * m2.m[1][3] + m1.m[1][2] * m2.m[2][3] + m1.m[1][3] * m2.m[3][3];
-			m3.m[2][3] = m1.m[2][0] * m2.m[0][3] + m1.m[2][1] * m2.m[1][3] + m1.m[2][2] * m2.m[2][3] + m1.m[2][3] * m2.m[3][3];
-			m3.m[3][3] = m1.m[3][0] * m2.m[0][3] + m1.m[3][1] * m2.m[1][3] + m1.m[3][2] * m2.m[2][3] + m1.m[3][3] * m2.m[3][3];
+			m3.m[0][3] = m[0][0] * m2.m[0][3] + m[0][1] * m2.m[1][3] + m[0][2] * m2.m[2][3] + m[0][3] * m2.m[3][3];
+			m3.m[1][3] = m[1][0] * m2.m[0][3] + m[1][1] * m2.m[1][3] + m[1][2] * m2.m[2][3] + m[1][3] * m2.m[3][3];
+			m3.m[2][3] = m[2][0] * m2.m[0][3] + m[2][1] * m2.m[1][3] + m[2][2] * m2.m[2][3] + m[2][3] * m2.m[3][3];
+			m3.m[3][3] = m[3][0] * m2.m[0][3] + m[3][1] * m2.m[1][3] + m[3][2] * m2.m[2][3] + m[3][3] * m2.m[3][3];
 
-			/*float sum = 0;
+			/* LOOP APPROACH
+			float sum = 0;
 			int k = 0;
 			for (int i = 0; i <= 3; i++) {
 				for (int j = 0; j <= 3; j++) {
@@ -219,30 +221,25 @@ namespace math {
 		}
 
 		inline MatrixStr inverseTranslation() {
+			MatrixStr rv = Identity();
+			rv.m[0][3] = -m[0][3];
+			rv.m[1][3] = -m[1][3];
+			rv.m[2][3] = -m[2][3];
+			return rv;
+		}
+
+		inline MatrixStr inverseScale() {
 
 			MatrixStr rv = Identity();
-			rv.values[0, 3] = -values[0, 3];
-			rv.values[1, 3] = -values[1, 3];
-			rv.values[2, 3] = -values[2, 3];
-
-			return rv;
-
-		}
-
-		public Matrix4by4 inverseScale() {
-
-			Matrix4by4 rv = Identity;
-			rv.values[0, 0] = 1.0f / values[0, 0];
-			rv.values[1, 1] = 1.0f / values[1, 1];
-			rv.values[2, 2] = 1.0f / values[2, 2];
+			rv.m[0][0] = (decimal)1.0f / m[0][0];
+			rv.m[1][1] = (decimal)1.0f / m[1][1];
+			rv.m[2][2] = (decimal)1.0f / m[2][2];
 
 			return rv;
 		}
-
-		public Matrix4by4 inverseRotation() {
-
-
-			return new Matrix4by4(GetRow(0), GetRow(1), GetRow(2), GetRow(3));
+		//Transpose
+		inline MatrixStr inverseRotation() {
+			return MatrixStr(GetRow(0), GetRow(1), GetRow(2), GetRow(3));
 			/*//Matrix transpose
 
 			Matrix4by4 m2 = new Matrix4by4();
@@ -285,8 +282,6 @@ namespace math {
 			m1.values [3, 2] = m2.values [3, 2];
 			m1.values [3, 3] = m2.values [3, 3];
 			*/
-
-
 		}
 
 	}Matrix;

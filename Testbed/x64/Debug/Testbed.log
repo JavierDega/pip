@@ -1,2 +1,4 @@
 ﻿  Application.cpp
+C:\Users\javie\Documents\Development\PiP\Testbed\Source\Application.cpp(33,19): warning C4244: 'initializing': conversion from 'double' to 'decimal', possible loss of data
+C:\Users\javie\Documents\Development\PiP\Testbed\Source\Application.cpp(49,19): warning C4244: 'initializing': conversion from 'double' to 'decimal', possible loss of data
   Testbed.vcxproj -> C:\Users\javie\Documents\Development\PiP\x64\Debug\Testbed.exe

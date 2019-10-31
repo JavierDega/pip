@@ -73,6 +73,7 @@ public:
 	inline Fp64() {
 		m_Internal = fpc::Fp64{ 0 };
 	}
+
 	inline Fp64(float f) {
 		*this = FromFloat(f);
 	}
@@ -190,6 +191,12 @@ public:
 		return Fp64(fpc::fp64_div(m_Internal, Rhs.m_Internal));
 	}
 
+	//#Javier
+	inline Fp64 operator-() const 
+	{
+		return Fp64(fpc::fp64_mul(m_Internal, fpc::fp64_from_i32(-1)));
+	}
+	//#Javier
 
 	inline Fp64 operator%(Fp64 Rhs) const 
 	{

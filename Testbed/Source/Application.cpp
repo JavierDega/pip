@@ -32,6 +32,18 @@ int main(void)
 	solver->AddBody();
 	decimal prevTime = glfwGetTime();
 	/* Loop until the user closes the window */
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	//				Identity	fov		aspect ratio nearVal farVal
+	//guPerspective(m_projection, 45, (f32)w / h, 0.1F, 1000.0F);
+	/*fov = DEG_TO_RAD(fov);                      // transform fov from degrees to radians
+	float tangent = tanf(fov / 2.0f);               // tangent of half vertical fov
+	float height = front * tangent;                 // half height of near plane
+	float width = height * aspect;                  // half width of near plane
+	*/
+	glFrustum(-1, 1, -1, 1, -1, 500);
+	glMatrixMode(GL_MODELVIEW);
+	glFrontFace(GL_CCW);//Specify backface culling (Clockwise/ counter clockwise);
 	while (!glfwWindowShouldClose(window))
 	{
 		decimal curTime = glfwGetTime();
@@ -42,11 +54,23 @@ int main(void)
 		solver->Update(dt);
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
-		glBegin(GL_TRIANGLES);
-		glVertex2f(-0.5f, -0.5f);
-		glVertex2f(0.0f, 0.5f);
-		glVertex2f(0.5f, - 0.5f);
-		glEnd();
+		for (Rigidbody* rb : solver->m_rigidbodies) {
+			//Draw
+			glLoadIdentity();
+			glScalef((float)rb->m_radius, (float)rb->m_radius, (float)rb->m_radius);
+			glRotatef((float)rb->m_rotation, 0, 0, 1);
+			glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, 0);
+			glBegin(GL_TRIANGLES);
+			
+			//Circle vertices from trig
+			for (int i = 0; i < 350; i += 10) {
+				glVertex3f(0, 0, 0);
+				glVertex3f(cos(i * PI / 180.f), sin(i * PI / 180.f), 0);
+				glVertex3f(cos((i + 10.f) * PI / 180.f), sin((i + 10.f) * PI / 180.f), 0);
+			}
+
+			glEnd();
+		}
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 
