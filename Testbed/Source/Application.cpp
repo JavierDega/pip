@@ -4,6 +4,7 @@
 
 #include "Solver.h"
 
+using namespace math;
 int main(void)
 {
 	GLFWwindow* window;
@@ -27,11 +28,13 @@ int main(void)
 		std::cout << "Error!" << std::endl;
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	//Create solver to loop through
+	//Physics setup
 	Solver * solver = new Solver();
-	solver->AddBody();
+	solver->AddBody(Vector2(7, 5), 0, Vector2(-5, 0), 0, Vector2());
+	solver->AddBody(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2());
+	//Timestep
 	decimal prevTime = glfwGetTime();
-	/* Loop until the user closes the window */
+	//Graphics setup
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//				Identity	fov		aspect ratio nearVal farVal
@@ -41,9 +44,10 @@ int main(void)
 	float height = front * tangent;                 // half height of near plane
 	float width = height * aspect;                  // half width of near plane
 	*/
-	glFrustum(-1, 1, -1, 1, -1, 500);
+	glFrustum(-1, 1, -1, 1, 0.1, 100);
 	glMatrixMode(GL_MODELVIEW);
 	glFrontFace(GL_CCW);//Specify backface culling (Clockwise/ counter clockwise);
+	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		decimal curTime = glfwGetTime();
@@ -59,16 +63,14 @@ int main(void)
 			glLoadIdentity();
 			glScalef((float)rb->m_radius, (float)rb->m_radius, (float)rb->m_radius);
 			glRotatef((float)rb->m_rotation, 0, 0, 1);
-			glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, 0);
+			glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 			glBegin(GL_TRIANGLES);
-			
 			//Circle vertices from trig
 			for (int i = 0; i < 350; i += 10) {
 				glVertex3f(0, 0, 0);
 				glVertex3f(cos(i * PI / 180.f), sin(i * PI / 180.f), 0);
 				glVertex3f(cos((i + 10.f) * PI / 180.f), sin((i + 10.f) * PI / 180.f), 0);
 			}
-
 			glEnd();
 		}
 		/* Swap front and back buffers */

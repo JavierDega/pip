@@ -55,7 +55,7 @@ void Solver::Step(decimal timestep)
 			for (int j = i + 1; j < m_rigidbodies.size(); j++) {
 				if (decimal t = ComputeSweep(m_rigidbodies[i], m_rigidbodies[j], dt)) {
 					//They collide during the frame, store
-					if (t <= firstCollision) {
+					if ( t > 0 && t <= firstCollision) {
 						firstCollision = t;
 						firstCollidingPair.first = m_rigidbodies[i];
 						firstCollidingPair.second = m_rigidbodies[j];
@@ -80,7 +80,7 @@ void Solver::Step(decimal timestep)
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
-		rb->m_acceleration = Vector2( 0, m_gravity / rb->m_mass);
+		rb->m_acceleration = Vector2( 0, -m_gravity / rb->m_mass);
 		rb->m_velocity += rb->m_acceleration;
 	}
 }
@@ -110,14 +110,14 @@ decimal Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, decimal dt)
 	const decimal c = Vector2::Dot(ab, ab) - rab * rab;
 
 	const decimal q = b * b - (decimal)4.f * a*c;
-	if (q < (decimal)0.f) {
-		return (decimal)0.f;//No root, no collision
+	if (q < 0) {
+		return 0;//No root, no collision
 	}
 	else {
 		const decimal sq = Sqrt(q, 3);
-		const decimal d = decimal(1.f) / ((decimal)2.f*a);
-		const decimal root1 = ((decimal)-1.f*b + sq)*d;
-		const decimal root2 = ((decimal)-1.f*b - sq)*d;
+		const decimal d = (decimal)2*a;
+		const decimal root1 = (-b + sq)/d;
+		const decimal root2 = (-b - sq)/d;
 		if (root1 <= root2) return root1;
 		else return root2;
 	}

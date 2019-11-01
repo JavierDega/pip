@@ -146,7 +146,7 @@ public:
 	//#Javier
 	inline explicit operator bool() const
 	{
-		return fpc::fp64_to_i32(m_Internal);
+		return m_Internal.internal;
 	}
 	//#Javier
 
