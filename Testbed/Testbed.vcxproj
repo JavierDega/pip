@@ -88,12 +88,12 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Testbed\Dependencies\glfw\include;$(SolutionDir)Testbed\Dependencies\glew\include;$(SolutionDir)PiP\Header;$(SolutionDir)PiP\Dependencies\fixed-point-lib-master\fp_math_bindings\include%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Testbed\Dependencies\glfw\include;$(SolutionDir)Testbed\Dependencies\glew\include;$(SolutionDir)Testbed\Dependencies;$(SolutionDir)PiP\Header;$(SolutionDir)PiP\Dependencies\fixed-point-lib-master\fp_math_bindings\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;$(SolutionDir)Testbed\Dependencies\glfw\lib-vc2017;$(SolutionDir)Testbed\Dependencies\glew\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;$(SolutionDir)Testbed\Dependencies\glfw\lib-vc2019;$(SolutionDir)Testbed\Dependencies\glew\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>PiP.lib;glfw3.lib;glew32s.lib;ws2_32.lib;userenv.lib;opengl32.lib;kernel32.lib;User32.lib;Gdi32.lib;Shell32.lib;advapi32.lib;</AdditionalDependencies>
     </Link>
     <ProjectReference />
@@ -135,12 +135,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\Application.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PiP\PiP.vcxproj">
       <Project>{cd714df1-9319-40bf-ab34-46189aa355de}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Dependencies\imgui\imconfig.h" />
+    <ClInclude Include="Dependencies\imgui\imgui.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Dependencies\imgui\imgui_internal.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_textedit.h" />
+    <ClInclude Include="Dependencies\imgui\imstb_truetype.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
