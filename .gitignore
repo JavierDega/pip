@@ -32,3 +32,6 @@
 
 #Visual studio
 *.ipch
+
+#Build
+Build/*
