@@ -10,4 +10,3 @@ set(PIP_HEADER_FILES
 	StackAllocator.h)
 
 add_library(PiP ${PIP_SOURCE_FILES} ${PIP_HEADER_FILES})
-target_link_libraries(PiP fixedPoint)
