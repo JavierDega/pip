@@ -64,8 +64,8 @@ int main(void)
 	glFrontFace(GL_CCW);//Specify backface culling (Clockwise/ counter clockwise);
 	//Physics setup
 	Solver* solver = new Solver();
-	solver->AddBody(Vector2(7, 5), 0, Vector2(-5, 0), 0, Vector2());
-	solver->AddBody(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2());
+	solver->AddBody( new Circle(Vector2(7, 5), 0, Vector2(-5, 0), 0, Vector2()));
+	solver->AddBody( new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
 	//Timestep
 	decimal prevTime = glfwGetTime();
 	/* Loop until the user closes the window */
@@ -91,15 +91,20 @@ int main(void)
 		for (Rigidbody* rb : solver->m_rigidbodies) {
 			//Draw
 			glLoadIdentity();
-			glScalef((float)rb->m_radius, (float)rb->m_radius, (float)rb->m_radius);
-			glRotatef((float)rb->m_rotation, 0, 0, 1);
-			glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+			Circle* circle;
+			if (circle = dynamic_cast<Circle*>(rb)) {
+				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
+				glRotatef((float)rb->m_rotation, 0, 0, 1);
+				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+			}
 			glBegin(GL_TRIANGLES);
-			//Circle vertices from trig
-			for (int i = 0; i < 350; i += 10) {
-				glVertex3f(0, 0, 0);
-				glVertex3f(cos(i * PI / 180.f), sin(i * PI / 180.f), 0);
-				glVertex3f(cos((i + 10.f) * PI / 180.f), sin((i + 10.f) * PI / 180.f), 0);
+			if (circle) {
+				//Circle vertices from trig
+				for (int i = 0; i < 350; i += 10) {
+					glVertex3f(0, 0, 0);
+					glVertex3f(cos(i * PI / 180.f), sin(i * PI / 180.f), 0);
+					glVertex3f(cos((i + 10.f) * PI / 180.f), sin((i + 10.f) * PI / 180.f), 0);
+				}
 			}
 			glEnd();
 		}
@@ -114,6 +119,10 @@ int main(void)
 
 			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
+			//#Javier
+			ImGui::Text("Solver settings: ");
+			ImGui::Checkbox("Continuous Collision", &solver->m_continuousCollision);
+			//#Javier
 			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
 			ImGui::Checkbox("Another Window", &show_another_window);

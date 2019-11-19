@@ -26,7 +26,7 @@ void Solver::Update(decimal dt)
 	m_accumulator += dt;
 	if (m_accumulator > 0.2f) m_accumulator = 0.2f;
 	while (m_accumulator > m_timestep) {
-		Step(m_timestep);
+		(m_continuousCollision) ? ContinuousStep(m_timestep) : Step(m_timestep);
 		m_accumulator -= m_timestep;
 	}
 	//@UP TO THE GRAPHICS APPLICATION:
@@ -35,7 +35,7 @@ void Solver::Update(decimal dt)
 	//float alpha = m_accumulator / m_timestep;
 }
 
-void Solver::Step(decimal timestep) 
+void Solver::ContinuousStep(decimal timestep) 
 {
 	//We need to have up to date velocities to perform sweeps
 	//1: Perform sweeps, storing collision deltas
@@ -52,7 +52,7 @@ void Solver::Step(decimal timestep)
 		//Upwards collision check
 		for (int i = 0; i < m_rigidbodies.size(); i++) {
 			for (int j = i + 1; j < m_rigidbodies.size(); j++) {
-				if (decimal t = ComputeSweep(m_rigidbodies[i], m_rigidbodies[j], dt)) {
+				if (decimal t = m_rigidbodies[i]->ComputeSweep(m_rigidbodies[j], dt)) {
 					//They collide during the frame, store
 					if ( t > 0 && t <= firstCollision) {
 						firstCollision = t;
@@ -84,41 +84,32 @@ void Solver::Step(decimal timestep)
 	}
 }
 
-decimal Solver::ComputeSweep(Rigidbody * rb1, Rigidbody * rb2, decimal dt) 
+void Solver::Step(decimal dt)
 {
-	//https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=2
 
-	//A = A0 + U*VA
-	//B = B0 + U*V
-
-	//B(U) - A(U) = ra + rb
-
-	const decimal ra = rb1->m_radius;
-	const decimal rb = rb2->m_radius;
-
-	const Vector2 va = rb1->m_velocity*dt;
-	const Vector2 vb = rb2->m_velocity*dt;
-
-	const Vector2 ab = rb2->m_position - rb1->m_position;
-	const Vector2 vab = vb - va;
-
-	const decimal rab = ra + rb;
-
-	const decimal a = Vector2::Dot(vab, vab);
-	const decimal b = (decimal)2.f * Vector2::Dot(vab, ab);
-	const decimal c = Vector2::Dot(ab, ab) - rab * rab;
-
-	const decimal q = b * b - (decimal)4.f * a*c;
-	if (q < 0) {
-		return 0;//No root, no collision
+	//Upwards collision check
+	std::vector<std::pair<Rigidbody*, Rigidbody*>> collidingPairs;
+	for (int i = 0; i < m_rigidbodies.size(); i++) {
+		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
+			if (m_rigidbodies[i]->ComputeIntersect(m_rigidbodies[j], dt)) {
+				//They collide during the frame, store
+				collidingPairs.push_back(std::make_pair(m_rigidbodies[i], m_rigidbodies[j]));//add manifolds
+			}
+		}
 	}
-	else {
-		const decimal sq = Sqrt(q, 3);
-		const decimal d = (decimal)2*a;
-		const decimal root1 = (-b + sq)/d;
-		const decimal root2 = (-b - sq)/d;
-		if (root1 <= root2) return root1;
-		else return root2;
+
+	for (std::pair<Rigidbody*, Rigidbody*> collidingPair : collidingPairs) {
+		ComputeResponse(collidingPair.first, collidingPair.second);
+	}
+
+	//Integration
+	for (int i = 0; i < m_rigidbodies.size(); i++) {
+		//Semi euler integration
+		Rigidbody* rb = m_rigidbodies[i];
+		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
+		rb->m_velocity += rb->m_acceleration;
+		rb->m_position += rb->m_velocity;
+		//TODO: Rotations
 	}
 }
 
@@ -174,10 +165,9 @@ circle2.setMovementVector(v2');*/
 	rb2->m_velocity += n * optimizedP * rb1->m_mass;
 }
 
-Rigidbody * Solver::AddBody(Vector2 pos, decimal rot, Vector2 vel, decimal angVel, Vector2 accel, decimal rad,
-	decimal mass)
+Rigidbody * Solver::AddBody(Rigidbody * rb)
 {
 	//Create default sphere and pass reference, using allocator
-	m_rigidbodies.push_back(new Rigidbody(pos, rot, vel, angVel, accel, rad, mass));
+	m_rigidbodies.push_back(rb);
 	return m_rigidbodies.back();
 }

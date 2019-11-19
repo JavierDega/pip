@@ -3,13 +3,12 @@
 
 #include <cmath>
 
-#include "fp_math.h"
-
 #define USE_FIXEDPOINT 1
 #define PI 3.14159265f
 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT
+#include "fp_math.h"
 typedef fp64::Fp64 decimal;
 #else
 typedef float decimal;
