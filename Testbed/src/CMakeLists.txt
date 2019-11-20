@@ -1,5 +1,6 @@
 set(TESTBED_SOURCE_FILES
 	Application.cpp
+	Main.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../include/imgui/imgui.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../include/imgui/imgui_demo.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/../include/imgui/imgui_draw.cpp
@@ -8,7 +9,10 @@ set(TESTBED_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/../include/imgui/imgui_widgets.cpp
 	)
 
-add_executable(Testbed ${TESTBED_SOURCE_FILES} ${IMGUI_SOURCE_FILES})
+set (TESTBED_HEADER_FILES
+	Application.h
+	)
+add_executable(Testbed ${TESTBED_HEADER_FILES} ${TESTBED_SOURCE_FILES} ${IMGUI_SOURCE_FILES})
 target_link_libraries(Testbed fixedPoint)
 target_link_libraries(Testbed PiP)
 target_link_libraries(Testbed opengl32.lib)

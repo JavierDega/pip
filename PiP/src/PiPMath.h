@@ -101,7 +101,7 @@ namespace math {
 			return v1.x * v2.x + v1.y * v2.y;
 		}
 	}Vector2;
-	
+	//Quaternions
 	typedef struct Vector4Str {
 		decimal x, y, z, w;
 		
@@ -284,6 +284,12 @@ namespace math {
 		}
 
 	}Matrix;
+
+	typedef struct ManifoldStr {
+		decimal m_penetration;
+		math::Vector2 m_normal;
+		math::Vector2 m_contactPoint;
+	}Manifold;
 }
 #endif // PIP_MATH
 
