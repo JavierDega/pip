@@ -19,12 +19,12 @@ Manifold Capsule::ComputeIntersect(Rigidbody* rb2, decimal dt)
 
 Manifold Capsule::IntersectWith(Circle* rb2, decimal dt)
 {
-	return nullptr;
+	return Manifold();
 }
 
 Manifold Capsule::IntersectWith(Capsule* rb2, decimal dt)
 {
-	return false;
+	return Manifold();
 }
 
 decimal Capsule::ComputeSweep(Rigidbody* rb2, decimal dt)

@@ -6,10 +6,8 @@ using namespace fp64;
 using namespace math;
 
 Solver::Solver()
+	: m_continuousCollision(true), m_accumulator(0.f), m_timestep(0.02f), m_gravity(m_timestep * 9.8f)
 {
-	m_accumulator = 0.f;
-	m_timestep = 0.02f;
-	m_gravity = m_timestep * 9.8f;
 }
 
 
@@ -91,7 +89,7 @@ void Solver::Step(decimal dt)
 	std::vector<std::pair<Rigidbody*, Rigidbody*>> collidingPairs;
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
-			if (m_rigidbodies[i]->ComputeIntersect(m_rigidbodies[j], dt)) {
+			if (!m_rigidbodies[i]->ComputeIntersect(m_rigidbodies[j], dt)) {
 				//They collide during the frame, store
 				collidingPairs.push_back(std::make_pair(m_rigidbodies[i], m_rigidbodies[j]));//add manifolds
 			}

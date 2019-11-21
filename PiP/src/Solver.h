@@ -1,6 +1,7 @@
 #pragma once
 #include "PiPMath.h"
 #include "Circle.h"
+#include "Capsule.h"
 #include "StackAllocator.h"
 
 #include <vector>

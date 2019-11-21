@@ -14,3 +14,4 @@ Rigidbody::Rigidbody(Vector2 pos, decimal rot, Vector2 vel, decimal angVel, Vect
 Rigidbody::~Rigidbody()
 {
 }
+

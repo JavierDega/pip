@@ -12,19 +12,19 @@ Circle::~Circle()
 {
 }
 
-bool Circle::ComputeIntersect(Rigidbody* rb2, decimal dt)
+Manifold Circle::ComputeIntersect(Rigidbody* rb2, decimal dt)
 {
 	return rb2->IntersectWith(this, dt);
 }
 
-bool Circle::IntersectWith(Circle* rb2, decimal dt)
+Manifold Circle::IntersectWith(Circle* rb2, decimal dt)
 {
-	return false;
+	return Manifold();
 }
 
-bool Circle::IntersectWith(Capsule* rb2, decimal dt)
+Manifold Circle::IntersectWith(Capsule* rb2, decimal dt)
 {
-	return false;
+	return Manifold();
 }
 
 decimal Circle::ComputeSweep(Rigidbody* rb2, decimal dt)

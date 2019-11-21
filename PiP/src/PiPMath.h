@@ -100,6 +100,18 @@ namespace math {
 		inline static decimal Dot(Vector2Str v1, Vector2Str v2) {
 			return v1.x * v2.x + v1.y * v2.y;
 		}
+
+		// Comparison operators
+		inline bool operator==(const Vector2Str& Rhs)
+		{
+			return x == Rhs.x && y == Rhs.y;
+		}
+
+		inline bool operator!=(const Vector2Str& Rhs)
+		{
+			return !(*this == Rhs);
+		}
+
 	}Vector2;
 	//Quaternions
 	typedef struct Vector4Str {
@@ -289,6 +301,16 @@ namespace math {
 		decimal m_penetration;
 		math::Vector2 m_normal;
 		math::Vector2 m_contactPoint;
+
+		ManifoldStr() {
+			m_penetration = 0.0f;
+			m_normal = Vector2{ 0.0f, 0.0f };
+			m_contactPoint = Vector2{ 0.0f, 0.0f };
+		}
+
+		inline explicit operator bool() {
+			return m_penetration != 0.0f || m_normal != Vector2() || m_contactPoint != Vector2();
+		}
 	}Manifold;
 }
 #endif // PIP_MATH
