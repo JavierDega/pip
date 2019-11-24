@@ -3,24 +3,35 @@
 
 #include <cmath>
 
+#include "fp_math.h"
+
 #define USE_FIXEDPOINT 1
 #define PI 3.14159265f
 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT
-#include "fp_math.h"
 typedef fp64::Fp64 decimal;
 #else
 typedef float decimal;
 #endif
 
+class Rigidbody;//Manifold needs fwdecl
+
 namespace math {
 
-	inline decimal Sqrt(decimal x, int iterations = 3) {
+	inline decimal Sqrt(decimal x) {
 #if USE_FIXEDPOINT
-		return fp64::Fp64::Sqrt(x, iterations);
+		return fp64::Fp64::EasySqrt(x);
 #else
 		return sqrt(x);
+#endif
+	}
+
+	inline decimal Pow(decimal x, unsigned int exponent) {
+#if USE_FIXEDPOINT
+		return fp64::Fp64::Pow(x, exponent);
+#else
+		return pow(x, exponent);
 #endif
 	}
 
@@ -97,8 +108,12 @@ namespace math {
 			return *this;
 		}
 		
-		inline static decimal Dot(Vector2Str v1, Vector2Str v2) {
-			return v1.x * v2.x + v1.y * v2.y;
+		inline decimal LengthSqr() {
+			return this->Dot(*this);
+		}
+
+		inline decimal Dot(Vector2Str v2) {
+			return this->x * v2.x + this->y * v2.y;
 		}
 
 		// Comparison operators
@@ -296,20 +311,20 @@ namespace math {
 		}
 
 	}Matrix;
-
+	//Collision info necessary for solver, normal points from objA to B
 	typedef struct ManifoldStr {
-		decimal m_penetration;
-		math::Vector2 m_normal;
-		math::Vector2 m_contactPoint;
+		decimal penetration;
+		math::Vector2 normal;
+		math::Vector2 contactPoint;
+		Rigidbody* rb1;
+		Rigidbody* rb2;
 
 		ManifoldStr() {
-			m_penetration = 0.0f;
-			m_normal = Vector2{ 0.0f, 0.0f };
-			m_contactPoint = Vector2{ 0.0f, 0.0f };
-		}
-
-		inline explicit operator bool() {
-			return m_penetration != 0.0f || m_normal != Vector2() || m_contactPoint != Vector2();
+			penetration = 0.0f;
+			normal = Vector2{ 0.0f, 0.0f };
+			contactPoint = Vector2{ 0.0f, 0.0f };
+			rb1 = nullptr;
+			rb2 = nullptr;
 		}
 	}Manifold;
 }

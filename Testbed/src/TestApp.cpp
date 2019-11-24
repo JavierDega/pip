@@ -11,8 +11,7 @@ TestApp::TestApp()
 int TestApp::Init()
 {
 	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
+	if (!glfwInit()) return -1;
 
 	// GL 3.0 + GLSL 130
 	m_glslVersion = "#version 130";
@@ -23,8 +22,7 @@ int TestApp::Init()
 
 	/* Create a windowed mode window and its OpenGL context */
 	m_window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
-	if (!m_window)
-	{
+	if (!m_window){
 		glfwTerminate();
 		return -1;
 	}
@@ -49,6 +47,7 @@ int TestApp::Init()
 	m_solver.AddBody(new Circle( Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2() ));
 	//Timestep
 	m_prevTime = glfwGetTime();
+	return 0;
 }
 
 void TestApp::InitImgui()

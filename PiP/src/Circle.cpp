@@ -12,27 +12,38 @@ Circle::~Circle()
 {
 }
 
-Manifold Circle::ComputeIntersect(Rigidbody* rb2, decimal dt)
+bool Circle::ComputeIntersect(Rigidbody* rb2, Manifold& manifold)
 {
-	return rb2->IntersectWith(this, dt);
+	return rb2->IntersectWith(this, manifold);
 }
 
-Manifold Circle::IntersectWith(Circle* rb2, decimal dt)
+bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 {
-	return Manifold();
+	Vector2 ab = rb2->m_position - m_position;
+	if (ab.LengthSqr() <= Pow((m_radius + rb2->m_radius), 2)) {
+		//Manifold
+		manifold.normal = ab.Normalize();
+		Vector2 circle1Edge = m_position + ab * m_radius;
+		Vector2 circle2Edge = rb2->m_position - ab * rb2->m_radius;
+		manifold.contactPoint = circle1Edge + (circle2Edge - circle1Edge) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+		return true;
+	}
+	return false;
 }
 
-Manifold Circle::IntersectWith(Capsule* rb2, decimal dt)
+bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 {
-	return Manifold();
+	return false;
 }
 
-decimal Circle::ComputeSweep(Rigidbody* rb2, decimal dt)
+decimal Circle::ComputeSweep(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
-	return rb2->SweepWith(this, dt);
+	return rb2->SweepWith(this, dt, manifold);
 }
 
-decimal Circle::SweepWith(Circle* rb2, decimal dt)
+decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 {
 	//https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=2
 
@@ -47,30 +58,35 @@ decimal Circle::SweepWith(Circle* rb2, decimal dt)
 	const Vector2 va = m_velocity * dt;
 	const Vector2 vb = rb2->m_velocity * dt;
 
-	const Vector2 ab = rb2->m_position - m_position;
-	const Vector2 vab = vb - va;
+	Vector2 ab = rb2->m_position - m_position;
+	Vector2 vab = vb - va;
 
 	const decimal rab = ra + rb;
 
-	const decimal a = Vector2::Dot(vab, vab);
-	const decimal b = (decimal)2.f * Vector2::Dot(vab, ab);
-	const decimal c = Vector2::Dot(ab, ab) - rab * rab;
+	const decimal a = vab.LengthSqr();
+	const decimal b = (decimal)2.f * vab.Dot(ab);
+	const decimal c = ab.LengthSqr() - rab * rab;
 
 	const decimal q = b * b - (decimal)4.f * a * c;
 	if (q < 0) {
 		return 0;//No root, no collision
 	}
 	else {
-		const decimal sq = Sqrt(q, 3);
+		const decimal sq = Sqrt(q);
 		const decimal d = (decimal)2 * a;
-		const decimal root1 = (-b + sq) / d;
-		const decimal root2 = (-b - sq) / d;
+		decimal root1 = (-b + sq) / d;
+		decimal root2 = (-b - sq) / d;
+		//Take out negatives
+		root1 = (decimal)fmax((double)root1, 0);
+		root2 = (decimal)fmax((double)root2, 0);
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
 		if (root1 <= root2) return root1;
 		else return root2;
 	}
 }
 
-decimal Circle::SweepWith(Capsule* rb2, decimal dt)
+decimal Circle::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }

@@ -12,32 +12,32 @@ Capsule::~Capsule()
 {
 }
 
-Manifold Capsule::ComputeIntersect(Rigidbody* rb2, decimal dt)
+bool Capsule::ComputeIntersect(Rigidbody* rb2, Manifold& manifold)
 {
-	return rb2->IntersectWith(this, dt);
+	return rb2->IntersectWith(this, manifold);
 }
 
-Manifold Capsule::IntersectWith(Circle* rb2, decimal dt)
+bool Capsule::IntersectWith(Circle* rb2, Manifold& manifold)
 {
-	return Manifold();
+	return false;
 }
 
-Manifold Capsule::IntersectWith(Capsule* rb2, decimal dt)
+bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 {
-	return Manifold();
+	return false;
 }
 
-decimal Capsule::ComputeSweep(Rigidbody* rb2, decimal dt)
+decimal Capsule::ComputeSweep(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
-	return rb2->SweepWith(this, dt);
+	return rb2->SweepWith(this, dt, manifold);
 }
 
-decimal Capsule::SweepWith(Circle* rb2, decimal dt)
+decimal Capsule::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }
 
-decimal Capsule::SweepWith(Capsule* rb2, decimal dt)
+decimal Capsule::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }

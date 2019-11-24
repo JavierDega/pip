@@ -12,12 +12,12 @@ public:
 	~Rigidbody();
 
 	//Visitor pattern
-	virtual math::Manifold ComputeIntersect(Rigidbody* rb2, decimal dt) = 0;
-	virtual math::Manifold IntersectWith(Circle* rb2, decimal dt) = 0;
-	virtual math::Manifold IntersectWith(Capsule* rb2, decimal dt) = 0;
-	virtual decimal ComputeSweep(Rigidbody* rb2, decimal dt) = 0;
-	virtual decimal SweepWith(Circle* rb2, decimal dt) = 0;
-	virtual decimal SweepWith(Capsule* rb2, decimal dt) = 0;
+	virtual bool ComputeIntersect(Rigidbody* rb2, math::Manifold& manifold) = 0;
+	virtual bool IntersectWith(Circle* rb2, math::Manifold& manifold) = 0;
+	virtual bool IntersectWith(Capsule* rb2, math::Manifold& manifold) = 0;
+	virtual decimal ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold) = 0;
+	virtual decimal SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold) = 0;
+	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) = 0;
 
 	math::Vector2 m_position;
 	decimal m_rotation;
