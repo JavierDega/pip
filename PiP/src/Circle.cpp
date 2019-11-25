@@ -1,5 +1,6 @@
 
 #include "Circle.h"
+#include "Capsule.h"
 
 using namespace math;
 
@@ -35,6 +36,13 @@ bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 
 bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 {
+	//Get Capsule's AB
+	decimal halfLength = rb2->m_length / 2;
+	Vector2 a = Vector2{ -halfLength, 0 };
+	//Rotate about position
+	Vector2 aRot = Vector2();
+	aRot.x = a.x * Cos(rb2->m_rotation) - a.y * Sin(rb2->m_rotation);
+	aRot.y = a.y * Cos(rb2->m_rotation) + a.x * Sin(rb2->m_rotation);
 	return false;
 }
 

@@ -27,14 +27,29 @@ namespace math {
 #endif
 	}
 
-	inline decimal Pow(decimal x, unsigned int exponent) {
+	inline decimal Pow(decimal x, unsigned short exponent) {
 #if USE_FIXEDPOINT
 		return fp64::Fp64::Pow(x, exponent);
 #else
-		return pow(x, exponent);
+		return powf(x, exponent);
 #endif
 	}
 
+	inline decimal Cos(decimal rad) {
+#if USE_FIXEDPOINT
+		return fp64::Fp64::Cos(rad);
+#else
+		return cos(rad);
+#endif
+	}
+
+	inline decimal Sin(decimal rad) {
+#if USE_FIXEDPOINT
+		return fp64::Fp64::Sin(rad);
+#else 
+		return sin(rad);
+#endif
+	}
 	typedef struct Vector2Str {
 
 		decimal x, y;

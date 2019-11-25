@@ -4,7 +4,7 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion("")
+	:m_window(nullptr), m_glslVersion(""), m_prevTime(0)
 {
 }
 
@@ -46,7 +46,7 @@ int TestApp::Init()
 	m_solver.AddBody(new Circle( Vector2(7, 5), 0, Vector2(-5, 0), 0, Vector2() ));
 	m_solver.AddBody(new Circle( Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2() ));
 	//Timestep
-	m_prevTime = glfwGetTime();
+	m_prevTime = (decimal)glfwGetTime();
 	return 0;
 }
 
@@ -84,7 +84,7 @@ void TestApp::UpdateLoop()
 		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 		glfwPollEvents();
 
-		decimal curTime = glfwGetTime();
+		decimal curTime = (decimal)glfwGetTime();
 		decimal dt = curTime - m_prevTime;
 		m_prevTime = curTime;
 		/*Physics update*/
