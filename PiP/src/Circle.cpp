@@ -39,10 +39,29 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 	//Get Capsule's AB
 	decimal halfLength = rb2->m_length / 2;
 	Vector2 a = Vector2{ -halfLength, 0 };
+	Vector2 b = Vector2{ halfLength, 0 };
 	//Rotate about position
 	Vector2 aRot = Vector2();
 	aRot.x = a.x * Cos(rb2->m_rotation) - a.y * Sin(rb2->m_rotation);
 	aRot.y = a.y * Cos(rb2->m_rotation) + a.x * Sin(rb2->m_rotation);
+	Vector2 bRot = Vector2();
+	bRot.x = b.x * Cos(rb2->m_rotation) - b.y * Sin(rb2->m_rotation);
+	bRot.y = b.y * Cos(rb2->m_rotation) + b.x * Sin(rb2->m_rotation);
+
+	aRot += rb2->m_position;
+	bRot += rb2->m_position;
+
+	Vector2 ab = bRot - aRot;
+	Vector2 c = m_position;
+	decimal rab = m_radius + rb2->m_radius;
+	//Case 1
+	if (ab.Dot(c - aRot) <= 0) {
+	
+	}
+	//Case2
+	if (-ab.Dot(c - bRot) <= 0) {
+	
+	}
 	return false;
 }
 
