@@ -50,6 +50,7 @@ namespace math {
 		return sin(rad);
 #endif
 	}
+	
 	typedef struct Vector2Str {
 
 		decimal x, y;

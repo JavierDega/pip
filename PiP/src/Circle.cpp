@@ -54,13 +54,29 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 	Vector2 ab = bRot - aRot;
 	Vector2 c = m_position;
 	decimal rab = m_radius + rb2->m_radius;
+
+	Vector2 closestPt;//In capsule, to sphere
+	Vector2 ac = c - aRot;
+	Vector2 bc = c - bRot;
 	//Case 1
-	if (ab.Dot(c - aRot) <= 0) {
-	
+	if (ab.Dot(ac) <= 0) {
+		closestPt = aRot;
 	}
 	//Case2
-	if (-ab.Dot(c - bRot) <= 0) {
-	
+	else if (-ab.Dot(bc) <= 0) {
+		closestPt = bRot;
+	}
+	else {
+		//Dot project
+		closestPt = a + (ab.Normalize() * ab.Dot(ac));
+	}
+	Vector2 closestVec = c - closestPt;//Closest pt in caps segment to center of sphere
+	if (closestVec.LengthSqr() <= rab * rab){
+		//Fill manifold
+		Vector2 capsuleEdge = closestPt + closestVec.Normalize() * rb2->m_radius;
+		Vector2 sphereEdge = c - closestVec * m_radius;
+		//manifold.contactPoint 
+		return false;
 	}
 	return false;
 }
