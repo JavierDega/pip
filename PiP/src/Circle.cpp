@@ -70,13 +70,17 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 		//Dot project
 		closestPt = a + (ab.Normalize() * ab.Dot(ac));
 	}
-	Vector2 closestVec = c - closestPt;//Closest pt in caps segment to center of sphere
+	Vector2 closestVec = closestPt - c;//Center of sphere to closestpt in caps segment, also normal
 	if (closestVec.LengthSqr() <= rab * rab){
 		//Fill manifold
-		Vector2 capsuleEdge = closestPt + closestVec.Normalize() * rb2->m_radius;
-		Vector2 sphereEdge = c - closestVec * m_radius;
+		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
+		Vector2 sphereEdge = c + closestVec * m_radius;
+		manifold.normal = closestVec;
+		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
 		//manifold.contactPoint 
-		return false;
+		return true;
 	}
 	return false;
 }
@@ -124,8 +128,13 @@ decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 		root2 = (decimal)fmax((double)root2, 0);
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
-		if (root1 <= root2) return root1;
-		else return root2;
+		decimal realRoot = (root1 <= root2) ? root1 : root2;
+		//Get normal, contact point
+		Vector2 rb1Pos = m_position + va * realRoot;
+		Vector2 rb2Pos = rb2->m_position + vb * realRoot;
+		manifold.contactPoint = (rb1Pos + rb2Pos )/ 2;
+		manifold.normal = (rb2Pos - rb1Pos).Normalize();
+		return realRoot;
 	}
 }
 

@@ -6,7 +6,7 @@ using namespace fp64;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(true), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+	: m_continuousCollision(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
@@ -141,8 +141,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Rigidbody* rb1 = manifold.rb1;
 	Rigidbody* rb2 = manifold.rb2;
 	//Center of rb1 to center of rb2
-	Vector2 n = rb2->m_position - rb1->m_position;
-	n.Normalize();
+	Vector2 n = manifold.normal;
+	n.Normalize();//Expected to come normalized already
 
 	// Find the length of the component of each of the movement vectors along n.
 	decimal a1 = rb1->m_velocity.Dot(n);
@@ -160,6 +160,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	// Calculate v1', the new movement vector of circle1
 	// v2' = v2 + optimizedP * m1 * n
 	rb2->m_velocity += n * optimizedP * rb1->m_mass;
+	
+	//Use contact points for rotation
 }
 
 Rigidbody * Solver::AddBody(Rigidbody * rb)
