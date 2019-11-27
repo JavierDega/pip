@@ -140,7 +140,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 
 	Rigidbody* rb1 = manifold.rb1;
 	Rigidbody* rb2 = manifold.rb2;
-	//Center of rb1 to center of rb2
+	//Collision normal
 	Vector2 n = manifold.normal;
 	n.Normalize();//Expected to come normalized already
 

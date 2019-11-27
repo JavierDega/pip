@@ -45,6 +45,7 @@ int TestApp::Init()
 	//Physics setup
 	m_solver.AddBody(new Circle( Vector2(7, 5), 0, Vector2(-5, 0), 0, Vector2() ));
 	m_solver.AddBody(new Circle( Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2() ));
+	m_solver.AddBody(new Capsule(Vector2(0, 0), 45.0f, Vector2(), 0.0f, Vector2(), 100.f, 2.f));
 	//Timestep
 	m_prevTime = (decimal)glfwGetTime();
 	return 0;
@@ -91,9 +92,6 @@ void TestApp::UpdateLoop()
 		m_solver.Update(dt);
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
 		for (Rigidbody* rb : m_solver.m_rigidbodies) {
 			//Draw
 			glLoadIdentity();
@@ -105,6 +103,8 @@ void TestApp::UpdateLoop()
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 			} else if (capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
+				glRotatef((float)rb->m_rotation, 0, 0, 1);
+				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 			}
 			glBegin(GL_TRIANGLES);
 			if (circle) {
@@ -114,9 +114,28 @@ void TestApp::UpdateLoop()
 					glVertex3f(cos(i * PI / 180.f), sin(i * PI / 180.f), 0);
 					glVertex3f(cos((i + 10.f) * PI / 180.f), sin((i + 10.f) * PI / 180.f), 0);
 				}
-			}
-			else if (capsule) {
+			} else if (capsule) {
 				//Capsule vertices (Two circles and rectangle?)
+				float offSet = (float)capsule->m_length / 2;
+				float rad = (float)capsule->m_radius;
+				for (int i = 0; i < 350; i += 10) {
+					glVertex3f(-offSet, 0, 0);
+					glVertex3f(-offSet + rad*cos(i * PI / 180.f), rad*sin(i * PI / 180.f), 0);
+					glVertex3f(-offSet + rad*cos((i + 10.f) * PI / 180.f), rad*sin((i + 10.f) * PI / 180.f), 0);
+				}
+				for (int i = 0; i < 350; i += 10) {
+					glVertex3f(offSet, 0, 0);
+					glVertex3f(offSet + rad * cos(i * PI / 180.f), rad * sin(i * PI / 180.f), 0);
+					glVertex3f(offSet + rad * cos((i + 10.f) * PI / 180.f), rad * sin((i + 10.f) * PI / 180.f), 0);
+				}
+				//Draw rectangle in gltriangles
+				glVertex3f(-offSet, -rad, 0);
+				glVertex3f(offSet, -rad, 0);
+				glVertex3f(offSet, rad, 0);
+				//Rect2
+				glVertex3f(-offSet, -rad, 0);
+				glVertex3f(offSet, rad, 0);
+				glVertex3f(-offSet, rad, 0);
 			}
 			glEnd();
 		}
@@ -136,6 +155,9 @@ void TestApp::UpdateLoop()
 
 void TestApp::DrawImgui()
 {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (m_showDemoWindow)
 		ImGui::ShowDemoWindow(&m_showDemoWindow);
