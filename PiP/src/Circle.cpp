@@ -79,7 +79,6 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
-		//manifold.contactPoint 
 		return true;
 	}
 	return false;

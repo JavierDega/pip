@@ -45,7 +45,7 @@ int TestApp::Init()
 	//Physics setup
 	m_solver.AddBody(new Circle( Vector2(7, 5), 0, Vector2(-5, 0), 0, Vector2() ));
 	m_solver.AddBody(new Circle( Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2() ));
-	m_solver.AddBody(new Capsule(Vector2(0, 0), 45.0f, Vector2(), 0.0f, Vector2(), 100.f, 2.f));
+	m_solver.AddBody(new Capsule(Vector2(0, 0), 45.0f * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, 2.f, 1.0f));
 	//Timestep
 	m_prevTime = (decimal)glfwGetTime();
 	return 0;
@@ -77,7 +77,8 @@ void TestApp::UpdateLoop()
 {
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(m_window))
-	{
+	{	
+		//#ImGui
 		// Poll and handle events (inputs, window resize, etc.)
 		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
 		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
@@ -99,11 +100,11 @@ void TestApp::UpdateLoop()
 			Capsule* capsule;
 			if (circle = dynamic_cast<Circle*>(rb)) {
 				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
-				glRotatef((float)rb->m_rotation, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 			} else if (capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
-				glRotatef((float)rb->m_rotation, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 			}
 			glBegin(GL_TRIANGLES);
@@ -114,7 +115,8 @@ void TestApp::UpdateLoop()
 					glVertex3f(cos(i * PI / 180.f), sin(i * PI / 180.f), 0);
 					glVertex3f(cos((i + 10.f) * PI / 180.f), sin((i + 10.f) * PI / 180.f), 0);
 				}
-			} else if (capsule) {
+			} 
+			else if (capsule) {
 				//Capsule vertices (Two circles and rectangle?)
 				float offSet = (float)capsule->m_length / 2;
 				float rad = (float)capsule->m_radius;

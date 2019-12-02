@@ -7,6 +7,8 @@
 
 #define USE_FIXEDPOINT 1
 #define PI 3.14159265f
+#define DEG2RAD PI/180
+#define RAD2DEG 1/DEG2RAD
 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT

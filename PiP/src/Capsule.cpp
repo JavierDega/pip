@@ -1,6 +1,6 @@
 
 #include "Capsule.h"
-
+#include "Circle.h"
 using namespace math;
 
 Capsule::Capsule(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, math::Vector2 accel, decimal mass, decimal length, decimal radius)
@@ -19,7 +19,7 @@ bool Capsule::ComputeIntersect(Rigidbody* rb2, Manifold& manifold)
 
 bool Capsule::IntersectWith(Circle* rb2, Manifold& manifold)
 {
-	return false;
+	return rb2->IntersectWith(this, manifold);//Forward to solution in circle
 }
 
 bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
