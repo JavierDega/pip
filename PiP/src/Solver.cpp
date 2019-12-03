@@ -162,6 +162,9 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	rb2->m_velocity += n * optimizedP * rb1->m_mass;
 	
 	//Use contact points for rotation
+	//torque = Force X (Contact point - center of mass);
+	//We want to apply angular impulse ie an immediate change in angular velocity
+	//Use Vector2Str.Cross
 }
 
 Rigidbody * Solver::AddBody(Rigidbody * rb)

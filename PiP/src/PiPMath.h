@@ -134,6 +134,10 @@ namespace math {
 			return this->x * v2.x + this->y * v2.y;
 		}
 
+		inline decimal Cross(const Vector2Str& v2) const
+		{
+			return (x * v2.y) - (y * v2.x);
+		}
 		// Comparison operators
 		inline bool operator==(const Vector2Str& Rhs)
 		{
