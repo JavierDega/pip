@@ -25,4 +25,5 @@ public:
 	decimal m_angularVelocity;
 	math::Vector2 m_acceleration;
 	decimal m_mass;
+	decimal m_inertiaTensor;//Scalar in 2D aka 2nd moment of mass
 };

@@ -2,11 +2,14 @@
 #include "Circle.h"
 #include "Capsule.h"
 
+//https://en.wikipedia.org/wiki/List_of_moments_of_inertia
+
 using namespace math;
 
 Circle::Circle(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, math::Vector2 accel, decimal mass, decimal rad)
 	: Rigidbody(pos, rot, vel, angVel, accel, mass), m_radius(rad)
 {
+	m_inertiaTensor = m_mass * m_radius * m_radius / 2;//mr^2/2
 }
 
 Circle::~Circle()
