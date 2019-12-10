@@ -76,6 +76,11 @@ namespace math {
 			return Vector2Str(x - Rhs.x, y - Rhs.y);
 		}
 
+		inline Vector2Str operator-() const
+		{
+			return Vector2Str(-x, -y);
+		}
+
 		inline Vector2Str operator*(decimal scalar) const
 		{
 			return Vector2Str(x * scalar, y * scalar);
@@ -130,8 +135,11 @@ namespace math {
 			return this->Dot(*this);
 		}
 
+		inline Vector2Str Perp() {
+			return Vector2Str(-y, x);
+		}
 		inline decimal Dot(Vector2Str v2) {
-			return this->x * v2.x + this->y * v2.y;
+			return x * v2.x + y * v2.y;
 		}
 
 		inline decimal Cross(const Vector2Str& v2) const

@@ -164,7 +164,25 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Use contact points for rotation
 	//torque = Force X (Contact point - center of mass);
 	//We want to apply angular impulse ie an immediate change in angular velocity
-	//Use Vector2Str.Cross
+	//Use Vector2Str.Cross>
+
+
+	//Chris Hecker's physics column (Using j impulse)
+	//Norma expected to point to A, e = coefficient of restitution (0 = inelastic, 1 = elastic)
+	//r1 = perp of A to point of contact, same r2 
+	//j = -((1 + e)*v12 * n)/( n*n*(1/m1 + 1/m2) + (r1*n)^2/I1 + (r2*n)^2/I2 )
+	//v1' = v1 + j*n/m1 
+	//v2' = v2 - J*n/m2
+	//wa' = wa + r1*jn/I1;
+	//wb' = wb - r2*jn/I2;
+
+	//#TODO r1,r2, also clean up n since we know it is normalized
+	Vector2 r1, r2;
+	Vector2 vAB = rb2->m_velocity - rb1->m_velocity;
+	decimal e = 1;
+	decimal impulse = -((decimal)1 + e) * vAB.Dot(n) / ((decimal)1 / rb1->m_mass + (decimal)1 / rb2->m_mass +
+		Pow(r1.Dot(n), 2) / rb1->m_inertiaTensor + Pow(r2.Dot(n), 2) / rb2->m_inertiaTensor);
+
 }
 
 Rigidbody * Solver::AddBody(Rigidbody * rb)
