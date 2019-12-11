@@ -63,6 +63,8 @@ namespace fp64 {
 	 * arithmetic/manipulation, as the scale of the internal integer
 	 * may change in future versions.
 	 */
+	class Vector2;
+
 	class Fp64 {
 	private:
 		fpc::Fp64 m_Internal;
@@ -316,6 +318,7 @@ namespace fp64 {
 	};
 
 } // namespace fp64
+
 #endif // __cplusplus
 
 #endif // FP_MATH_DY_H

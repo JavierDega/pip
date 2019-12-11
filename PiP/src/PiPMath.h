@@ -7,8 +7,8 @@
 
 #define USE_FIXEDPOINT 1
 #define PI 3.14159265f
-#define DEG2RAD PI/180
-#define RAD2DEG 180/PI
+#define DEG2RAD (PI)/180
+#define RAD2DEG 1/(DEG2RAD)
 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT
@@ -53,78 +53,74 @@ namespace math {
 #endif
 	}
 	
-	typedef struct Vector2Str {
+	struct Vector2 {
 
 		decimal x, y;
 
-		Vector2Str()
+		Vector2()
 			: x(0.f), y(0.f)
 		{}
 
-		Vector2Str(decimal x, decimal y)
+		Vector2(decimal x, decimal y)
 			: x(x), y(y) {
 		}
 
 		//Arithmetic operators
-		inline Vector2Str operator+(Vector2Str Rhs) const
+		inline Vector2 operator+(Vector2 Rhs) const
 		{
-			return Vector2Str(x + Rhs.x, y + Rhs.y);
+			return Vector2(x + Rhs.x, y + Rhs.y);
 		}
 
-		inline Vector2Str operator-(Vector2Str Rhs) const
+		inline Vector2 operator-(Vector2 Rhs) const
 		{
-			return Vector2Str(x - Rhs.x, y - Rhs.y);
+			return Vector2(x - Rhs.x, y - Rhs.y);
 		}
 
-		inline Vector2Str operator-() const
+		inline Vector2 operator-() const
 		{
-			return Vector2Str(-x, -y);
+			return Vector2(-x, -y);
 		}
 
-		inline Vector2Str operator*(decimal scalar) const
-		{
-			return Vector2Str(x * scalar, y * scalar);
-		}
+		inline friend Vector2 operator*(const Vector2& v, const decimal& scalar);
 
-		inline Vector2Str operator/(decimal scalar) const
+		inline friend Vector2 operator*(const decimal& scalar, const Vector2& v);
+
+		inline Vector2 operator/(const decimal& scalar) const
 		{
-			return Vector2Str(x / scalar, y / scalar);
+			return Vector2(x / scalar, y / scalar);
 		}
 
 		// Arithmetic assignment operators
-		inline Vector2Str& operator+=(Vector2Str Rhs)
+		inline Vector2& operator+=(Vector2 Rhs)
 		{
 			x += Rhs.x;
 			y += Rhs.y;
 			return *this;
 		}
 
-		inline Vector2Str& operator-=(Vector2Str Rhs)
+		inline Vector2& operator-=(Vector2 Rhs)
 		{
 			x -= Rhs.x;
 			y -= Rhs.y;
 			return *this;
 		}
 
-		inline Vector2Str& operator*=(decimal Rhs)
+		inline Vector2& operator*=(decimal Rhs)
 		{
-			x *= Rhs;
-			y *= Rhs;
+			*this = *this * Rhs;
 			return *this;
 		}
 
-		inline Vector2Str& operator/=(decimal Rhs)
+		inline Vector2& operator/=(decimal Rhs)
 		{
-			x /= Rhs;
-			y /= Rhs;
-			return *this;
+			return *this = *this / Rhs;
 		}
 
 		inline decimal Length() {
 			return Sqrt(x * x + y * y);
 		}
 
-		inline Vector2Str Normalize() {
+		inline Vector2 Normalize() {
 			decimal length = Length();
 			x /= length;
 			y /= length;
@@ -135,29 +131,39 @@ namespace math {
 			return this->Dot(*this);
 		}
 
-		inline Vector2Str Perp() {
-			return Vector2Str(-y, x);
+		inline Vector2 Perp() {
+			return Vector2(-y, x);
 		}
-		inline decimal Dot(Vector2Str v2) {
+
+		inline decimal Dot(Vector2 v2) {
 			return x * v2.x + y * v2.y;
 		}
 
-		inline decimal Cross(const Vector2Str& v2) const
+		inline decimal Cross(const Vector2& v2) const
 		{
 			return (x * v2.y) - (y * v2.x);
 		}
 		// Comparison operators
-		inline bool operator==(const Vector2Str& Rhs)
+		inline bool operator==(const Vector2& Rhs)
 		{
 			return x == Rhs.x && y == Rhs.y;
 		}
 
-		inline bool operator!=(const Vector2Str& Rhs)
+		inline bool operator!=(const Vector2& Rhs)
 		{
 			return !(*this == Rhs);
 		}
 
-	}Vector2;
+	};
+
+	inline Vector2 operator*( const Vector2& v, const decimal& scalar ) {
+		return Vector2(v.x * scalar, v.y * scalar);
+	}
+
+	inline Vector2 operator*( const decimal& scalar, const Vector2& v ) {
+		return v * scalar;
+	}
+
 	//Quaternions
 	typedef struct Vector4Str {
 		decimal x, y, z, w;

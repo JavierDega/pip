@@ -1,7 +1,4 @@
 #include "Solver.h"
-#if USE_FIXEDPOINT
-using namespace fp64;
-#endif
 
 using namespace math;
 
@@ -166,7 +163,6 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//We want to apply angular impulse ie an immediate change in angular velocity
 	//Use Vector2Str.Cross>
 
-
 	//Chris Hecker's physics column (Using j impulse)
 	//Norma expected to point to A, e = coefficient of restitution (0 = inelastic, 1 = elastic)
 	//r1 = perp of A to point of contact, same r2 
@@ -177,11 +173,13 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//wb' = wb - r2*jn/I2;
 
 	//#TODO r1,r2, also clean up n since we know it is normalized
-	Vector2 r1, r2;
+	Vector2 rA = (manifold.contactPoint - rb1->m_position).Perp();
+	Vector2 rB = (manifold.contactPoint - rb2->m_position).Perp();
 	Vector2 vAB = rb2->m_velocity - rb1->m_velocity;
 	decimal e = 1;
 	decimal impulse = -((decimal)1 + e) * vAB.Dot(n) / ((decimal)1 / rb1->m_mass + (decimal)1 / rb2->m_mass +
-		Pow(r1.Dot(n), 2) / rb1->m_inertiaTensor + Pow(r2.Dot(n), 2) / rb2->m_inertiaTensor);
+		Pow(rA.Dot(n), 2) / rb1->m_inertiaTensor + Pow(rB.Dot(n), 2) / rb2->m_inertiaTensor);
+	rb1->m_velocity += n / rb1->m_mass;
 
 }
 
