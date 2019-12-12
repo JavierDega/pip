@@ -5,10 +5,10 @@
 
 #include "fp_math.h"
 
-#define USE_FIXEDPOINT 1
+#define USE_FIXEDPOINT 0
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
-#define RAD2DEG 1/(DEG2RAD)
+#define RAD2DEG 180/(PI)
 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT
@@ -348,21 +348,21 @@ namespace math {
 
 	}Matrix;
 	//Collision info necessary for solver, normal points from objA to B
-	typedef struct ManifoldStr {
+	struct Manifold {
 		decimal penetration;
 		math::Vector2 normal;
 		math::Vector2 contactPoint;
 		Rigidbody* rb1;
 		Rigidbody* rb2;
 
-		ManifoldStr() {
+		Manifold() {
 			penetration = 0.0f;
 			normal = Vector2{ 0.0f, 0.0f };
 			contactPoint = Vector2{ 0.0f, 0.0f };
 			rb1 = nullptr;
 			rb2 = nullptr;
 		}
-	}Manifold;
+	};
 }
 #endif // PIP_MATH
 

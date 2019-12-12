@@ -132,7 +132,7 @@ void TestApp::UpdateLoop()
 				glVertex3f(-offSet, -rad, 0);
 				glVertex3f(offSet, -rad, 0);
 				glVertex3f(offSet, rad, 0);
-				//Rect2
+				//Tri2
 				glVertex3f(-offSet, -rad, 0);
 				glVertex3f(offSet, rad, 0);
 				glVertex3f(-offSet, rad, 0);
