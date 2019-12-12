@@ -21,7 +21,7 @@ int TestApp::Init()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
 	/* Create a windowed mode window and its OpenGL context */
-	m_window = glfwCreateWindow(1280, 720, "Hello World", NULL, NULL);
+	m_window = glfwCreateWindow(800, 800, "Hello World", NULL, NULL);
 	if (!m_window){
 		glfwTerminate();
 		return -1;
@@ -43,7 +43,7 @@ int TestApp::Init()
 	glMatrixMode(GL_MODELVIEW);
 	glFrontFace(GL_CCW);//Specify backface culling (Clockwise/ counter clockwise);
 	//Physics setup
-	m_solver.AddBody(new Circle( Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2() ));
+	//m_solver.AddBody(new Circle( Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2() ));
 	m_solver.AddBody(new Circle( Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2() ));
 	m_solver.AddBody(new Capsule(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, 2.f, 1.0f));
 	//Timestep
@@ -99,9 +99,9 @@ void TestApp::UpdateLoop()
 			Circle* circle;
 			Capsule* capsule;
 			if (circle = dynamic_cast<Circle*>(rb)) {
-				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
 				glBegin(GL_TRIANGLES);
 				//Circle vertices from trig
 				for (int i = 0; i < 350; i += 10) {
@@ -112,8 +112,8 @@ void TestApp::UpdateLoop()
 			} 
 			else if (capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glBegin(GL_TRIANGLES);
 				//Capsule vertices (Two circles and rectangle?)
 				float offSet = (float)capsule->m_length / 2;

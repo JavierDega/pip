@@ -88,7 +88,6 @@ void Solver::Step(decimal dt)
 		rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
-		//TODO: Rotations
 	}
 	//Upwards collision check
 	std::vector<Manifold> manifolds;
@@ -134,14 +133,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector v2' = v2 + optimizedP * circle1.mass * n;
 
 	circle1.setMovementVector(v1');
-	circle2.setMovementVector(v2');*/
-
-	Rigidbody* rb1 = manifold.rb1;
-	Rigidbody* rb2 = manifold.rb2;
-	//Collision normal
-	Vector2 n = manifold.normal;
-	n.Normalize();//Expected to come normalized already
-
+	circle2.setMovementVector(v2');
 	// Find the length of the component of each of the movement vectors along n.
 	//decimal a1 = rb1->m_velocity.Dot(n);
 	//decimal a2 = rb2->m_velocity.Dot(n);
@@ -160,7 +152,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Use contact points for rotation
 	//torque = Force X (Contact point - center of mass);
 	//We want to apply angular impulse ie an immediate change in angular velocity
-	//Use Vector2Str.Cross>
+	//Use Vector2Str.Cross>*/
 
 	//Chris Hecker's physics column (Using j impulse)
 	//Norma expected to point to A, e = coefficient of restitution (0 = inelastic, 1 = elastic)
@@ -171,6 +163,11 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//wa' = wa + r1*j*n/I1;
 	//wb' = wb - r2*j*n/I2;
 
+	Rigidbody* rb1 = manifold.rb1;
+	Rigidbody* rb2 = manifold.rb2;
+	//Collision normal
+	Vector2 n = manifold.normal;
+	n.Normalize();//Expected to come normalized already
 	n = -n;//Flip n due to convention
 	Vector2 rA = (manifold.contactPoint - rb1->m_position).Perp();
 	Vector2 rB = (manifold.contactPoint - rb2->m_position).Perp();
