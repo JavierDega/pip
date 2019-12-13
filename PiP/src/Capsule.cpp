@@ -19,7 +19,7 @@ Capsule::Capsule(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angV
 	//I = Icm + md^2
 	decimal inertiaCircle1 = massHemicircles * m_radius * m_radius / 2;
 	decimal inertiaCircle2 = inertiaCircle1 - massHemicircles * m_length / 2;
-	m_inertiaTensor = inertiaRectangle + inertiaCircle2;
+	m_inertia = inertiaRectangle + inertiaCircle2;
 }
 
 Capsule::~Capsule()

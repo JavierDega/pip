@@ -9,7 +9,7 @@ using namespace math;
 Circle::Circle(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, math::Vector2 accel, decimal mass, decimal rad)
 	: Rigidbody(pos, rot, vel, angVel, accel, mass), m_radius(rad)
 {
-	m_inertiaTensor = m_mass * m_radius * m_radius / 2;//mr^2/2
+	m_inertia = m_mass * m_radius * m_radius / 2;//mr^2/2
 }
 
 Circle::~Circle()
@@ -26,7 +26,7 @@ bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 	Vector2 ab = rb2->m_position - m_position;
 	if (ab.LengthSqr() <= Pow((m_radius + rb2->m_radius), 2)) {
 		//Manifold
-		manifold.normal = ab.Normalize();
+		manifold.normal = -ab.Normalize();//Point to A by convention
 		Vector2 circle1Edge = m_position + ab * m_radius;
 		Vector2 circle2Edge = rb2->m_position - ab * rb2->m_radius;
 		manifold.contactPoint = circle1Edge + (circle2Edge - circle1Edge) / 2;
@@ -78,7 +78,7 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 		//Fill manifold
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = c + closestVec * m_radius;
-		manifold.normal = closestVec;
+		manifold.normal = -closestVec;//Point to A by convention
 		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
@@ -134,8 +134,8 @@ decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 		//Get normal, contact point
 		Vector2 rb1Pos = m_position + va * realRoot;
 		Vector2 rb2Pos = rb2->m_position + vb * realRoot;
-		manifold.contactPoint = (rb1Pos + rb2Pos )/ 2;
-		manifold.normal = (rb2Pos - rb1Pos).Normalize();
+		manifold.contactPoint = rb1Pos + (ra / (ra + rb)) * (rb2Pos - rb1Pos);
+		manifold.normal = (rb1Pos - rb2Pos).Normalize();//Point to A by convention
 		return realRoot;
 	}
 }

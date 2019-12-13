@@ -100,7 +100,7 @@ void TestApp::UpdateLoop()
 			Capsule* capsule;
 			if (circle = dynamic_cast<Circle*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, -1);
 				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
 				glBegin(GL_TRIANGLES);
 				//Circle vertices from trig
@@ -113,7 +113,7 @@ void TestApp::UpdateLoop()
 			else if (capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, -1);
 				glBegin(GL_TRIANGLES);
 				//Capsule vertices (Two circles and rectangle?)
 				float offSet = (float)capsule->m_length / 2;
