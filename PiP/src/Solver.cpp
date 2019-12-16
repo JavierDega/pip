@@ -44,7 +44,7 @@ void Solver::ContinuousStep(decimal dt)
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
-		rb->m_velocity += rb->m_acceleration*dt;
+		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration*dt;
 	}
 	while ( dt > (decimal) 0.f) {
 		decimal firstCollision = 1;//Normalized dt
@@ -85,7 +85,7 @@ void Solver::Step(decimal dt)
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
-		rb->m_velocity += rb->m_acceleration * dt;
+		if( !rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
 	}
@@ -173,16 +173,19 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal ib = rb2->m_inertia;
 	Vector2 rA = (manifold.contactPoint - rb1->m_position).Perp();
 	Vector2 rB = (manifold.contactPoint - rb2->m_position).Perp();
-	Vector2 vAB = rb2->m_velocity - rb1->m_velocity;
+	Vector2 vBA = rb1->m_velocity - rb2->m_velocity;//Even though Chris Hecker's column calls it vAB
 	decimal e = 1;
-	decimal impulse = -(1 + e) * vAB.Dot(n) / (1 / ma + 1 / mb +
+	decimal impulse = -(1 + e) * vBA.Dot(n) / (1 / ma + 1 / mb +
 		Pow(rA.Dot(n), 2) / ia + Pow(rB.Dot(n), 2) / ib);
 	
-	rb1->m_velocity += impulse * n / rb1->m_mass;
-	rb2->m_velocity -= impulse * n / rb2->m_mass;
-	rb1->m_angularVelocity += rA.Dot(impulse * n) / ia;
-	rb2->m_angularVelocity -= rB.Dot(impulse * n) / ib;
-
+	if (!rb1->m_isKinematic) {
+		rb1->m_velocity += impulse * n / rb1->m_mass;
+		rb1->m_angularVelocity += rA.Dot(impulse * n) / ia;
+	}
+	if (!rb2->m_isKinematic) {
+		rb2->m_velocity -= impulse * n / rb2->m_mass;
+		rb2->m_angularVelocity -= rB.Dot(impulse * n) / ib;
+	}
 }
 
 Rigidbody * Solver::AddBody(Rigidbody * rb)

@@ -6,8 +6,9 @@
 
 using namespace math;
 
-Circle::Circle(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, math::Vector2 accel, decimal mass, decimal rad)
-	: Rigidbody(pos, rot, vel, angVel, accel, mass), m_radius(rad)
+Circle::Circle(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, math::Vector2 accel, decimal mass, bool isKinematic,
+	decimal rad)
+	: Rigidbody(pos, rot, vel, angVel, accel, mass, isKinematic), m_radius(rad)
 {
 	m_inertia = m_mass * m_radius * m_radius / 2;//mr^2/2
 }
