@@ -43,9 +43,7 @@ int TestApp::Init()
 	glMatrixMode(GL_MODELVIEW);
 	glFrontFace(GL_CCW);//Specify backface culling (Clockwise/ counter clockwise);
 	//Physics setup
-	//m_solver.AddBody(new Circle( Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2() ));
-	m_solver.AddBody(new Circle( Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2() ));
-	m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.f, 1.0f ));
+	LoadScene(0);
 	//Timestep
 	m_prevTime = (decimal)glfwGetTime();
 	return 0;
@@ -78,7 +76,6 @@ void TestApp::UpdateLoop()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(m_window))
 	{	
-		//#ImGui
 		// Poll and handle events (inputs, window resize, etc.)
 		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
 		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
@@ -142,9 +139,6 @@ void TestApp::UpdateLoop()
 		DrawImgui();
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
 	}
 	//Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
@@ -188,4 +182,26 @@ void TestApp::DrawImgui()
 	}
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void TestApp::LoadScene(unsigned int index)
+{
+	m_solver.m_rigidbodies.clear();
+	switch (index) {
+	case 0:
+	{
+		m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
+		m_solver.AddBody(new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.f, 1.0f));
+	}
+	break;
+	case 1:
+	{
+		m_solver.AddBody(new Capsule( Vector2(0, 10), 45 * DEG2RAD, Vector2(), 5 * DEG2RAD, Vector2(), 1.0f, false, 3.0f, 0.5f));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.f, 1.0f));
+	}
+	break;
+	default:
+		break;
+	}
 }

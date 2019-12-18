@@ -17,6 +17,7 @@ public:
 	void InitImgui();
 	void UpdateLoop();
 	void DrawImgui();
+	void LoadScene(unsigned int index);
 	//Variables
 	//Graphics/Window
 	GLFWwindow* m_window;
