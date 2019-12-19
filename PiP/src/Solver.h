@@ -19,6 +19,7 @@ public:
 	Rigidbody * AddBody(Rigidbody * rb);
 
 	bool m_continuousCollision;
+	bool m_stepMode;
 	decimal m_accumulator;
 	decimal m_timestep;
 	decimal m_gravity;

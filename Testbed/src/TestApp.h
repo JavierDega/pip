@@ -8,6 +8,16 @@
 
 #include "Solver.h"
 //Holds Physics solver, abstract all glfw/imgui graphics
+
+enum Keys {
+	KEY_0 = (1 << 0),
+	KEY_1 = (1 << 1),
+	KEY_2 = (1 << 2),
+	KEY_3 = (1 << 3),
+	KEY_4 = (1 << 4),
+	KEY_5 = (1 << 5),
+	KEY_R = (1 << 6)
+};
 class TestApp
 {
 public:
@@ -19,7 +29,7 @@ public:
 	void DrawImgui();
 	void LoadScene(unsigned int index);
 	void ProcessInput();
-	//Variables
+
 	//Graphics/Window
 	GLFWwindow* m_window;
 	const char* m_glslVersion;
@@ -28,9 +38,7 @@ public:
 	//Timestep
 	decimal m_prevTime;
 	//Imgui
-	ImVec4 m_clearColor;
 	bool m_showDemoWindow;
-	bool m_showAnotherWindow;
 	//Input: Short =16 bits. 0-5 load scenes. 6 = Step mode(Q).
 	short m_inputDown;
 	short m_inputPressed;

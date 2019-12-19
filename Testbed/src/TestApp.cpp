@@ -4,7 +4,7 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_prevTime(0), m_showDemoWindow(false), m_showAnotherWindow(false), m_inputDown(0), 
+	:m_window(nullptr), m_glslVersion(""), m_prevTime(0), m_showDemoWindow(false), m_inputDown(0), 
 	m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
 {
 }
@@ -66,10 +66,6 @@ void TestApp::InitImgui()
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 	ImGui_ImplOpenGL3_Init(m_glslVersion);
-	// Our state
-	m_showDemoWindow = false;
-	m_showAnotherWindow = false;
-	m_clearColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 }
 
 void TestApp::UpdateLoop()
@@ -159,26 +155,14 @@ void TestApp::DrawImgui()
 
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
-		ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-		//#Javier
-		ImGui::Text("Solver settings: ");
+		ImGui::Begin("Settings");                          // Create a window and append into it.
+		ImGui::Text("Press 0-5 to load scenes, R for stepMode");
+		ImGui::Checkbox("Step mode", &m_solver.m_stepMode);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
-		//#Javier
 		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &m_showAnotherWindow);
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::End();
-	}
-
-	// 3. Show another simple window.
-	if (m_showAnotherWindow)
-	{
-		ImGui::Begin("Another Window", &m_showAnotherWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text("Hello from another window!");
-		if (ImGui::Button("Close Me"))
-			m_showAnotherWindow = false;
 		ImGui::End();
 	}
 	ImGui::Render();
@@ -216,11 +200,17 @@ void TestApp::ProcessInput()
 	short three = glfwGetKey(m_window, GLFW_KEY_3);
 	short four = glfwGetKey(m_window, GLFW_KEY_4);
 	short five = glfwGetKey(m_window, GLFW_KEY_5);
-	short q = glfwGetKey(m_window, GLFW_KEY_Q);
-	short inputDownNew = (zero << 0) | (one << 1) | (two << 2) | (three << 3) | (four << 4) | (five << 5) | (q << 6);
+	short r = glfwGetKey(m_window, GLFW_KEY_R);
+	short inputDownNew = (zero << 0) | (one << 1) | (two << 2) | (three << 3) | (four << 4) | (five << 5) | (r << 6);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
 	//etc, then assign new inputDown
-	
+	m_inputReleased = m_inputDown & ~inputDownNew;
+	m_inputDown = inputDownNew;
+
+	//React to input
+	if (m_inputPressed & KEY_0)LoadScene(0);
+	if (m_inputPressed & KEY_1)LoadScene(1);
+	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 }

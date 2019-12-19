@@ -3,7 +3,7 @@
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+	: m_continuousCollision(false), m_stepMode(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
