@@ -4,7 +4,8 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_prevTime(0)
+	:m_window(nullptr), m_glslVersion(""), m_prevTime(0), m_showDemoWindow(false), m_showAnotherWindow(false), m_inputDown(0), 
+	m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
 {
 }
 
@@ -82,7 +83,7 @@ void TestApp::UpdateLoop()
 		// - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
 		// Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
 		glfwPollEvents();
-
+		ProcessInput();
 		decimal curTime = (decimal)glfwGetTime();
 		decimal dt = curTime - m_prevTime;
 		m_prevTime = curTime;
@@ -204,4 +205,22 @@ void TestApp::LoadScene(unsigned int index)
 	default:
 		break;
 	}
+}
+
+void TestApp::ProcessInput()
+{
+	//glfwGetKey(m_window, GLFW_KEY_0);
+	short zero = glfwGetKey(m_window, GLFW_KEY_0);
+	short one = glfwGetKey(m_window, GLFW_KEY_1);
+	short two = glfwGetKey(m_window, GLFW_KEY_2);
+	short three = glfwGetKey(m_window, GLFW_KEY_3);
+	short four = glfwGetKey(m_window, GLFW_KEY_4);
+	short five = glfwGetKey(m_window, GLFW_KEY_5);
+	short q = glfwGetKey(m_window, GLFW_KEY_Q);
+	short inputDownNew = (zero << 0) | (one << 1) | (two << 2) | (three << 3) | (four << 4) | (five << 5) | (q << 6);
+	//AND with m_inputDown to get m_inputHeld
+	m_inputHeld = m_inputDown & inputDownNew;
+	m_inputPressed = ~m_inputDown & inputDownNew;
+	//etc, then assign new inputDown
+	
 }

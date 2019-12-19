@@ -18,6 +18,7 @@ public:
 	void UpdateLoop();
 	void DrawImgui();
 	void LoadScene(unsigned int index);
+	void ProcessInput();
 	//Variables
 	//Graphics/Window
 	GLFWwindow* m_window;
@@ -28,6 +29,12 @@ public:
 	decimal m_prevTime;
 	//Imgui
 	ImVec4 m_clearColor;
-	bool m_showDemoWindow = false;
-	bool m_showAnotherWindow = false;
+	bool m_showDemoWindow;
+	bool m_showAnotherWindow;
+	//Input: Short =16 bits. 0-5 load scenes. 6 = Step mode(Q).
+	short m_inputDown;
+	short m_inputPressed;
+	short m_inputHeld;
+	short m_inputReleased;
+	bool m_keyTest = false;
 };
