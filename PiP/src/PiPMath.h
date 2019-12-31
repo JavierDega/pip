@@ -134,6 +134,12 @@ namespace math {
 		inline Vector2 Perp() {
 			return Vector2(-y, x);
 		}
+		//Rotate a point about the origin
+		inline Vector2 Rotate(decimal rad) {
+			x = x * Cos(rad) - y * Sin(rad);
+			y = y * Cos(rad) + x * Sin(rad);
+			return *this;
+		}
 
 		inline decimal Dot(Vector2 v2) {
 			return x * v2.x + y * v2.y;
@@ -162,6 +168,25 @@ namespace math {
 
 	inline Vector2 operator*( const decimal& scalar, const Vector2& v ) {
 		return v * scalar;
+	}
+
+	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p) {
+		//Return point in segment ab closest to point p
+		Vector2 ab = b - a;
+		Vector2 ap = p - a;
+		Vector2 bp = p - b;
+		//Case 1
+		if (ab.Dot(ap) <= 0) {
+			return a;
+		}
+		//Case2
+		else if (-ab.Dot(bp) <= 0) {
+			return b;
+		}
+		else {
+			//Dot project
+			return  a + (ab.Normalize() * ab.Dot(ap));
+		}
 	}
 
 	//Quaternions

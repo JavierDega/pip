@@ -175,15 +175,15 @@ void TestApp::LoadScene(unsigned int index)
 	switch (index) {
 	case 0:
 	{
-		m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
+		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
 		m_solver.AddBody(new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
-		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.f, 1.0f));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, 2.f, 1.0f));
 	}
 	break;
 	case 1:
 	{
-		m_solver.AddBody(new Capsule( Vector2(0, 10), 45 * DEG2RAD, Vector2(), 5 * DEG2RAD, Vector2(), 1.0f, false, 3.0f, 0.5f));
-		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.f, 1.0f));
+		m_solver.AddBody(new Capsule( Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .2f, 1.0f));
+		m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.0f, 1.0f));
 	}
 	break;
 	default:

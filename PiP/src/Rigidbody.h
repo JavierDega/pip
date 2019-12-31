@@ -20,7 +20,7 @@ public:
 	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) = 0;
 
 	math::Vector2 m_position;
-	decimal m_rotation;
+	decimal m_rotation;//In radians
 	math::Vector2 m_velocity;
 	decimal m_angularVelocity;
 	math::Vector2 m_acceleration;

@@ -39,6 +39,72 @@ bool Capsule::IntersectWith(Circle* rb2, Manifold& manifold)
 
 bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 {
+	//Get Capsule's AB
+	decimal halfLength = m_length / 2;
+	decimal halfLength2 = rb2->m_length / 2;
+	Vector2 a = Vector2{ -halfLength, 0 };
+	Vector2 b = Vector2{ halfLength, 0 };
+	Vector2 c = Vector2{ -halfLength2, 0 };
+	Vector2 d = Vector2{ halfLength2 , 0 };
+	//Rotate about position
+	a.Rotate(m_rotation);
+	b.Rotate(m_rotation);
+	c.Rotate(rb2->m_rotation);
+	d.Rotate(rb2->m_rotation);
+	a += m_position;
+	b += m_position;
+	c += rb2->m_position;
+	d += rb2->m_position;
+	decimal rab = m_radius + rb2->m_radius;
+
+	Vector2 closestPt = ClosestPtToSegment(a, b, c);//Segment in caps1, to point in caps2
+	Vector2 closestVec = closestPt - c;//Center of sphere to closestpt in caps segment, also normal
+	if (closestVec.LengthSqr() <= rab * rab) {
+		//Fill manifold
+		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
+		Vector2 sphereEdge = c + closestVec * rb2->m_radius;
+		manifold.normal = closestVec;//Point to A by convention
+		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+		return true;
+	}
+	closestPt = ClosestPtToSegment(a, b, d);
+	closestVec = closestPt - d;
+	if (closestVec.LengthSqr() <= rab * rab) {
+		//Fill manifold
+		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
+		Vector2 sphereEdge = d + closestVec * rb2->m_radius;
+		manifold.normal = closestVec;//Point to A
+		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+		return true;
+	}
+	closestPt = ClosestPtToSegment(c, d, a);//Segment in caps2, to point in caps1
+	closestVec = closestPt - a;
+	if (closestVec.LengthSqr() <= rab*rab) {
+		//Fill manifold
+		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
+		Vector2 sphereEdge = a + closestVec * m_radius;
+		manifold.normal = -closestVec;//Point to A
+		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+		return true;
+	}
+	closestPt = ClosestPtToSegment(c, d, b);
+	closestVec = closestPt - b;
+	if (closestVec.LengthSqr() <= rab * rab) {
+		//Fill manifold
+		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
+		Vector2 sphereEdge = b + closestVec * m_radius;
+		manifold.normal = -closestVec;//Point to A
+		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+		return true;
+	}
 	return false;
 }
 

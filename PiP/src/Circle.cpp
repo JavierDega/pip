@@ -45,35 +45,14 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 	Vector2 a = Vector2{ -halfLength, 0 };
 	Vector2 b = Vector2{ halfLength, 0 };
 	//Rotate about position
-	Vector2 aRot = Vector2();
-	aRot.x = a.x * Cos(rb2->m_rotation) - a.y * Sin(rb2->m_rotation);
-	aRot.y = a.y * Cos(rb2->m_rotation) + a.x * Sin(rb2->m_rotation);
-	Vector2 bRot = Vector2();
-	bRot.x = b.x * Cos(rb2->m_rotation) - b.y * Sin(rb2->m_rotation);
-	bRot.y = b.y * Cos(rb2->m_rotation) + b.x * Sin(rb2->m_rotation);
-
-	aRot += rb2->m_position;
-	bRot += rb2->m_position;
-
-	Vector2 ab = bRot - aRot;
+	a.Rotate(rb2->m_rotation);
+	b.Rotate(rb2->m_rotation);
+	a += rb2->m_position;
+	b += rb2->m_position;
 	Vector2 c = m_position;
 	decimal rab = m_radius + rb2->m_radius;
-
-	Vector2 closestPt;//In capsule, to sphere
-	Vector2 ac = c - aRot;
-	Vector2 bc = c - bRot;
-	//Case 1
-	if (ab.Dot(ac) <= 0) {
-		closestPt = aRot;
-	}
-	//Case2
-	else if (-ab.Dot(bc) <= 0) {
-		closestPt = bRot;
-	}
-	else {
-		//Dot project
-		closestPt = a + (ab.Normalize() * ab.Dot(ac));
-	}
+	
+	Vector2 closestPt = ClosestPtToSegment(a, b, c);//In capsule, to sphere
 	Vector2 closestVec = closestPt - c;//Center of sphere to closestpt in caps segment, also normal
 	if (closestVec.LengthSqr() <= rab * rab){
 		//Fill manifold
