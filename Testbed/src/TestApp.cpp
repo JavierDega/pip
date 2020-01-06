@@ -4,8 +4,8 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_prevTime(0), m_showDemoWindow(false), m_inputDown(0), 
-	m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
+	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_inputDown(0), m_inputPressed(0), 
+	m_inputHeld(0), m_inputReleased(0)
 {
 }
 
@@ -60,8 +60,8 @@ void TestApp::InitImgui()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsClassic();
+	//ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
@@ -155,11 +155,11 @@ void TestApp::DrawImgui()
 
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
-		ImGui::Begin("Settings");                          // Create a window and append into it.
-		ImGui::Text("Press 0-5 to load scenes, R for stepMode");
-		ImGui::Checkbox("Step mode", &m_solver.m_stepMode);
+		ImGui::Begin(m_sceneName.c_str());                          // Create a window and append into it.
+		ImGui::Text("Press 0-5 to load scenes");
+		ImGui::Checkbox("Step mode (R)", &m_solver.m_stepMode);
+		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
-		ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -175,6 +175,7 @@ void TestApp::LoadScene(unsigned int index)
 	switch (index) {
 	case 0:
 	{
+		m_sceneName = "Scene 0: Desc here";
 		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
 		m_solver.AddBody(new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
 		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, 2.f, 1.0f));
@@ -182,6 +183,7 @@ void TestApp::LoadScene(unsigned int index)
 	break;
 	case 1:
 	{
+		m_sceneName = "Scene 1: Desc here";
 		m_solver.AddBody(new Capsule( Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .2f, 1.0f));
 		m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.0f, 1.0f));
 	}
@@ -201,7 +203,8 @@ void TestApp::ProcessInput()
 	short four = glfwGetKey(m_window, GLFW_KEY_4);
 	short five = glfwGetKey(m_window, GLFW_KEY_5);
 	short r = glfwGetKey(m_window, GLFW_KEY_R);
-	short inputDownNew = (zero << 0) | (one << 1) | (two << 2) | (three << 3) | (four << 4) | (five << 5) | (r << 6);
+	short t = glfwGetKey(m_window, GLFW_KEY_T);
+	short inputDownNew = (zero << 0) | (one << 1) | (two << 2) | (three << 3) | (four << 4) | (five << 5) | (r << 6) | (t << 7);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
@@ -213,4 +216,5 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_0)LoadScene(0);
 	if (m_inputPressed & KEY_1)LoadScene(1);
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
+	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
 }

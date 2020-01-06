@@ -18,8 +18,7 @@ public:
 	void ComputeResponse(const math::Manifold& manifold);
 	Rigidbody * AddBody(Rigidbody * rb);
 
-	bool m_continuousCollision;
-	bool m_stepMode;
+	bool m_continuousCollision, m_stepMode, m_stepOnce;
 	decimal m_accumulator;
 	decimal m_timestep;
 	decimal m_gravity;

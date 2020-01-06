@@ -3,7 +3,7 @@
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
@@ -18,11 +18,19 @@ void Solver::Update(decimal dt)
 	//Step through mem allocated bodies
 
 	//Fixed timestep with accumulator (50fps)
-	m_accumulator += dt;
-	if (m_accumulator > 0.2f) m_accumulator = 0.2f;
-	while (m_accumulator > m_timestep) {
-		(m_continuousCollision) ? ContinuousStep(m_timestep) : Step(m_timestep);
-		m_accumulator -= m_timestep;
+	if (m_stepMode) {
+		if (m_stepOnce) {
+			(m_continuousCollision) ? ContinuousStep(m_timestep) : Step(m_timestep);
+			m_stepOnce = false;
+		}
+	}
+	else {
+		m_accumulator += dt;
+		if (m_accumulator > 0.2f) m_accumulator = 0.2f;
+		while (m_accumulator > m_timestep) {
+			(m_continuousCollision) ? ContinuousStep(m_timestep) : Step(m_timestep);
+			m_accumulator -= m_timestep;
+		}
 	}
 	//@UP TO THE GRAPHICS APPLICATION:
 	//To create a lerp between this frame and the next, interact with the graphic system.

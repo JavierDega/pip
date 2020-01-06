@@ -1,9 +1,9 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <iostream>
 
 #include "Solver.h"
@@ -16,7 +16,8 @@ enum Keys {
 	KEY_3 = (1 << 3),
 	KEY_4 = (1 << 4),
 	KEY_5 = (1 << 5),
-	KEY_R = (1 << 6)
+	KEY_R = (1 << 6),
+	KEY_T = (1 << 7)
 };
 class TestApp
 {
@@ -33,6 +34,7 @@ public:
 	//Graphics/Window
 	GLFWwindow* m_window;
 	const char* m_glslVersion;
+	std::string m_sceneName;
 	//Physics
 	Solver m_solver;
 	//Timestep
@@ -40,9 +42,5 @@ public:
 	//Imgui
 	bool m_showDemoWindow;
 	//Input: Short =16 bits. 0-5 load scenes. 6 = Step mode(Q).
-	short m_inputDown;
-	short m_inputPressed;
-	short m_inputHeld;
-	short m_inputReleased;
-	bool m_keyTest = false;
+	short m_inputDown, m_inputPressed, m_inputHeld, m_inputReleased;
 };

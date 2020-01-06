@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(PiP)
+include_directories(include)
+add_subdirectory(Imgui)
 add_subdirectory(PiP)
 add_subdirectory(Testbed)
