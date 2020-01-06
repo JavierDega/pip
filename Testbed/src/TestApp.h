@@ -28,6 +28,7 @@ public:
 	void InitImgui();
 	void UpdateLoop();
 	void DrawImgui();
+	void ImGuiShowRigidbodyEditor();
 	void LoadScene(unsigned int index);
 	void ProcessInput();
 
@@ -40,7 +41,7 @@ public:
 	//Timestep
 	decimal m_prevTime;
 	//Imgui
-	bool m_showDemoWindow;
+	bool m_showDemoWindow, m_showRigidbodyEditor;
 	//Input: Short =16 bits. 0-5 load scenes. 6 = Step mode(Q).
 	short m_inputDown, m_inputPressed, m_inputHeld, m_inputReleased;
 };

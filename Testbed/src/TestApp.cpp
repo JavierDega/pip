@@ -4,7 +4,7 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_inputDown(0), m_inputPressed(0), 
+	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(false), m_inputDown(0), m_inputPressed(0), 
 	m_inputHeld(0), m_inputReleased(0)
 {
 }
@@ -152,7 +152,8 @@ void TestApp::DrawImgui()
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if (m_showDemoWindow)
 		ImGui::ShowDemoWindow(&m_showDemoWindow);
-
+	if (m_showRigidbodyEditor)
+		ImGuiShowRigidbodyEditor();
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
 		ImGui::Begin(m_sceneName.c_str());                          // Create a window and append into it.
@@ -161,12 +162,80 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Show Rigidbody Editor", &m_showRigidbodyEditor);      // Edit bools storing our window open/close state
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+//Maybe take handle to boolean
+void TestApp::ImGuiShowRigidbodyEditor()
+{
+	/*ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
+	if (!ImGui::Begin("Example: Property editor", p_open))
+	{
+		ImGui::End();
+		return;
+	}
+
+	HelpMarker("This example shows how you may implement a property editor using two columns.\nAll objects/fields data are dummies here.\nRemember that in many simple cases, you can use ImGui::SameLine(xxx) to position\nyour cursor horizontally instead of using the Columns() API.");
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	ImGui::Columns(2);
+	ImGui::Separator();
+
+	struct funcs
+	{
+		static void ShowDummyObject(const char* prefix, int uid)
+		{
+			ImGui::PushID(uid);                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
+			ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
+			bool node_open = ImGui::TreeNode("Object", "%s_%u", prefix, uid);
+			ImGui::NextColumn();
+			ImGui::AlignTextToFramePadding();
+			ImGui::Text("my sailor is rich");
+			ImGui::NextColumn();
+			if (node_open)
+			{
+				static float dummy_members[8] = { 0.0f,0.0f,1.0f,3.1416f,100.0f,999.0f };
+				for (int i = 0; i < 8; i++)
+				{
+					ImGui::PushID(i); // Use field index as identifier.
+					if (i < 2)
+					{
+						ShowDummyObject("Child", 424242);
+					}
+					else
+					{
+						// Here we use a TreeNode to highlight on hover (we could use e.g. Selectable as well)
+						ImGui::AlignTextToFramePadding();
+						ImGui::TreeNodeEx("Field", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Field_%d", i);
+						ImGui::NextColumn();
+						ImGui::SetNextItemWidth(-1);
+						if (i >= 5)
+							ImGui::InputFloat("##value", &dummy_members[i], 1.0f);
+						else
+							ImGui::DragFloat("##value", &dummy_members[i], 0.01f);
+						ImGui::NextColumn();
+					}
+					ImGui::PopID();
+				}
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
+		}
+	};
+
+	// Iterate dummy objects with dummy members (all the same data)
+	for (int obj_i = 0; obj_i < 3; obj_i++)
+		funcs::ShowDummyObject("Object", obj_i);
+
+	ImGui::Columns(1);
+	ImGui::Separator();
+	ImGui::PopStyleVar();
+	ImGui::End();*/
 }
 
 void TestApp::LoadScene(unsigned int index)
