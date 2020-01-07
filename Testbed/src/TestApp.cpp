@@ -173,20 +173,18 @@ void TestApp::DrawImgui()
 //Maybe take handle to boolean
 void TestApp::ImGuiShowRigidbodyEditor()
 {
-	/*ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
-	if (!ImGui::Begin("Example: Property editor", p_open))
+	ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
+	if (!ImGui::Begin("Rigidbody Editor", &m_showRigidbodyEditor))
 	{
 		ImGui::End();
 		return;
 	}
 
-	HelpMarker("This example shows how you may implement a property editor using two columns.\nAll objects/fields data are dummies here.\nRemember that in many simple cases, you can use ImGui::SameLine(xxx) to position\nyour cursor horizontally instead of using the Columns() API.");
-
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 	ImGui::Columns(2);
 	ImGui::Separator();
 
-	struct funcs
+	/*struct funcs
 	{
 		static void ShowDummyObject(const char* prefix, int uid)
 		{
@@ -231,11 +229,11 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	// Iterate dummy objects with dummy members (all the same data)
 	for (int obj_i = 0; obj_i < 3; obj_i++)
 		funcs::ShowDummyObject("Object", obj_i);
-
+		*/
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::PopStyleVar();
-	ImGui::End();*/
+	ImGui::End();
 }
 
 void TestApp::LoadScene(unsigned int index)
