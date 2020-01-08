@@ -230,6 +230,46 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	for (int obj_i = 0; obj_i < 3; obj_i++)
 		funcs::ShowDummyObject("Object", obj_i);
 		*/
+
+	for (int i = 0; i < m_solver.m_rigidbodies.size(); i++) {
+		//Info
+		Rigidbody * rb = m_solver.m_rigidbodies[i];
+		ImGui::PushID(i);                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
+		ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
+		bool node_open = ImGui::TreeNode("Object", "%s_%u", "Object", i);
+		ImGui::NextColumn();
+		ImGui::AlignTextToFramePadding();
+		ImGui::Text("my sailor is rich");
+		ImGui::NextColumn();
+		if (node_open)
+		{
+			static float dummy_members[8] = { 0.0f,0.0f,1.0f,3.1416f,100.0f,999.0f };
+			for (int j = 0; j < 8; j++)
+			{
+				ImGui::PushID(j); // Use field index as identifier.
+				if (j < 2)
+				{
+					//ShowDummyObject("Child", 424242);
+				}
+				else
+				{
+					// Here we use a TreeNode to highlight on hover (we could use e.g. Selectable as well)
+					ImGui::AlignTextToFramePadding();
+					ImGui::TreeNodeEx("Field", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Field_%d", j);
+					ImGui::NextColumn();
+					ImGui::SetNextItemWidth(-1);
+					if (j >= 5)
+						ImGui::InputFloat("##value", &dummy_members[j], 1.0f);
+					else
+						ImGui::DragFloat("##value", &dummy_members[j], 0.01f);
+					ImGui::NextColumn();
+				}
+				ImGui::PopID();
+			}
+			ImGui::TreePop();
+		}
+		ImGui::PopID();
+	}
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::PopStyleVar();
