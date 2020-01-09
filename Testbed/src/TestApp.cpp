@@ -239,7 +239,15 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		bool node_open = ImGui::TreeNode("Object", "%s_%u", "Object", i);
 		ImGui::NextColumn();
 		ImGui::AlignTextToFramePadding();
-		ImGui::Text("my sailor is rich");
+		std::string objDesc = "";
+		if (Circle * circle = dynamic_cast<Circle*>(rb)) {
+			objDesc = "Circle, pos: ";
+		}
+		else if (Capsule * capsule = dynamic_cast<Capsule*>(rb)) {
+			objDesc = "Capsule, pos: ";
+		}
+		objDesc.append(" X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);
+		ImGui::Text(objDesc.c_str());
 		ImGui::NextColumn();
 		if (node_open)
 		{
