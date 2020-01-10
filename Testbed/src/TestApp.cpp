@@ -246,6 +246,19 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		else if (Capsule * capsule = dynamic_cast<Capsule*>(rb)) {
 			objDesc = "Capsule, pos: ";
 		}
+		snprintf(objDesc.c_str(), )
+		/*
+		char buffer[100];
+		int cx;
+
+		cx = snprintf(buffer, 100, "The half of %d is %d", 60, 60 / 2);
+
+		if (cx >= 0 && cx < 100)      // check returned value
+
+			snprintf(buffer + cx, 100 - cx, ", and the half of that is %d.", 60 / 2 / 2);
+
+		puts(buffer);
+		*/
 		objDesc.append(" X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);
 		ImGui::Text(objDesc.c_str());
 		ImGui::NextColumn();
