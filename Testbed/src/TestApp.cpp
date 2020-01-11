@@ -236,18 +236,23 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		Rigidbody * rb = m_solver.m_rigidbodies[i];
 		ImGui::PushID(i);                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
 		ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
-		bool node_open = ImGui::TreeNode("Object", "%s_%u", "Object", i);
+		bool nodeOpen = ImGui::TreeNode("Object", "%s_%u", "Object", i);
 		ImGui::NextColumn();
 		ImGui::AlignTextToFramePadding();
-		std::string objDesc = "";
+		std::string objDesc;
 		if (Circle * circle = dynamic_cast<Circle*>(rb)) {
 			objDesc = "Circle, pos: ";
 		}
 		else if (Capsule * capsule = dynamic_cast<Capsule*>(rb)) {
 			objDesc = "Capsule, pos: ";
 		}
-		snprintf(objDesc.c_str(), )
-		/*
+		//Turn to char*
+		char* objDesc2 = new char[100];
+		strcpy(objDesc2, objDesc.c_str());
+		int firstPartLength = objDesc.length();
+		snprintf(objDesc2 + firstPartLength, 100 - firstPartLength, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
+
+		/* Tut char buffering with formatting
 		char buffer[100];
 		int cx;
 
@@ -259,11 +264,31 @@ void TestApp::ImGuiShowRigidbodyEditor()
 
 		puts(buffer);
 		*/
-		objDesc.append(" X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);
-		ImGui::Text(objDesc.c_str());
+
+		ImGui::Text(objDesc2);
 		ImGui::NextColumn();
-		if (node_open)
+		if (nodeOpen)
 		{
+			//Show rotation, velocity, angular velocity
+			
+			ImGui::AlignTextToFramePadding();
+			ImGui::TreeNodeEx("Rotation", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Rotation");
+			ImGui::NextColumn();
+			ImGui::SetNextItemWidth(-1);
+			char rotation[50];
+			snprintf(rotation, 50, "Rad(%f), Deg(%f)", rb->m_rotation, rb->m_rotation*RAD2DEG);
+			ImGui::Text(rotation);
+			//ImGui::InputFloat("##value",
+			ImGui::NextColumn();
+			ImGui::TreePop();
+
+			/*ImGui::AlignTextToFramePadding();
+			ImGui::TreeNodeEx("Velocity", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Velocity");
+			ImGui::NextColumn();
+			ImGui::SetNextItemWidth(-1);
+			ImGui::InputFloat2("Velocity")
+			ImGui::InputFloat("##value", &dummy_members[j], 1.0f)*/
+
 			static float dummy_members[8] = { 0.0f,0.0f,1.0f,3.1416f,100.0f,999.0f };
 			for (int j = 0; j < 8; j++)
 			{
