@@ -173,72 +173,17 @@ void TestApp::DrawImgui()
 //Maybe take handle to boolean
 void TestApp::ImGuiShowRigidbodyEditor()
 {
-	ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
-	if (!ImGui::Begin("Rigidbody Editor", &m_showRigidbodyEditor))
-	{
-		ImGui::End();
-		return;
-	}
-
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	ImGui::Begin("Rigidbody Editor", &m_showRigidbodyEditor);
 	ImGui::Columns(2);
 	ImGui::Separator();
 
-	/*struct funcs
-	{
-		static void ShowDummyObject(const char* prefix, int uid)
-		{
-			ImGui::PushID(uid);                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
-			ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
-			bool node_open = ImGui::TreeNode("Object", "%s_%u", prefix, uid);
-			ImGui::NextColumn();
-			ImGui::AlignTextToFramePadding();
-			ImGui::Text("my sailor is rich");
-			ImGui::NextColumn();
-			if (node_open)
-			{
-				static float dummy_members[8] = { 0.0f,0.0f,1.0f,3.1416f,100.0f,999.0f };
-				for (int i = 0; i < 8; i++)
-				{
-					ImGui::PushID(i); // Use field index as identifier.
-					if (i < 2)
-					{
-						ShowDummyObject("Child", 424242);
-					}
-					else
-					{
-						// Here we use a TreeNode to highlight on hover (we could use e.g. Selectable as well)
-						ImGui::AlignTextToFramePadding();
-						ImGui::TreeNodeEx("Field", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Field_%d", i);
-						ImGui::NextColumn();
-						ImGui::SetNextItemWidth(-1);
-						if (i >= 5)
-							ImGui::InputFloat("##value", &dummy_members[i], 1.0f);
-						else
-							ImGui::DragFloat("##value", &dummy_members[i], 0.01f);
-						ImGui::NextColumn();
-					}
-					ImGui::PopID();
-				}
-				ImGui::TreePop();
-			}
-			ImGui::PopID();
-		}
-	};
-
-	// Iterate dummy objects with dummy members (all the same data)
-	for (int obj_i = 0; obj_i < 3; obj_i++)
-		funcs::ShowDummyObject("Object", obj_i);
-		*/
-
 	for (int i = 0; i < m_solver.m_rigidbodies.size(); i++) {
-		//Info
 		Rigidbody * rb = m_solver.m_rigidbodies[i];
-		ImGui::PushID(i);                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
-		ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
-		bool nodeOpen = ImGui::TreeNode("Object", "%s_%u", "Object", i);
+		//Turn to char*
+		char* strId = new char[10];
+		snprintf(strId, 10, "Rb%i", i);//Worth revising this
+		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u", "Rigidbody", i);
 		ImGui::NextColumn();
-		ImGui::AlignTextToFramePadding();
 		std::string objDesc;
 		if (Circle * circle = dynamic_cast<Circle*>(rb)) {
 			objDesc = "Circle, pos: ";
@@ -252,73 +197,57 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		int firstPartLength = objDesc.length();
 		snprintf(objDesc2 + firstPartLength, 100 - firstPartLength, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
 
-		/* Tut char buffering with formatting
-		char buffer[100];
-		int cx;
-
-		cx = snprintf(buffer, 100, "The half of %d is %d", 60, 60 / 2);
-
-		if (cx >= 0 && cx < 100)      // check returned value
-
-			snprintf(buffer + cx, 100 - cx, ", and the half of that is %d.", 60 / 2 / 2);
-
-		puts(buffer);
-		*/
-
 		ImGui::Text(objDesc2);
 		ImGui::NextColumn();
 		if (nodeOpen)
 		{
 			//Show rotation, velocity, angular velocity
-			
-			ImGui::AlignTextToFramePadding();
-			ImGui::TreeNodeEx("Rotation", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Rotation");
+			ImGui::Text("Rotation");
 			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
 			char rotation[50];
 			snprintf(rotation, 50, "Rad(%f), Deg(%f)", rb->m_rotation, rb->m_rotation*RAD2DEG);
 			ImGui::Text(rotation);
-			//ImGui::InputFloat("##value",
 			ImGui::NextColumn();
-			ImGui::TreePop();
 
-			/*ImGui::AlignTextToFramePadding();
-			ImGui::TreeNodeEx("Velocity", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Velocity");
+			ImGui::Text("Velocity");
 			ImGui::NextColumn();
-			ImGui::SetNextItemWidth(-1);
-			ImGui::InputFloat2("Velocity")
-			ImGui::InputFloat("##value", &dummy_members[j], 1.0f)*/
+			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f );//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
+			ImGui::DragFloat("VelY", &rb->m_velocity.y, 1.0f );
+			ImGui::NextColumn();
 
-			static float dummy_members[8] = { 0.0f,0.0f,1.0f,3.1416f,100.0f,999.0f };
-			for (int j = 0; j < 8; j++)
-			{
-				ImGui::PushID(j); // Use field index as identifier.
-				if (j < 2)
-				{
-					//ShowDummyObject("Child", 424242);
-				}
-				else
-				{
-					// Here we use a TreeNode to highlight on hover (we could use e.g. Selectable as well)
-					ImGui::AlignTextToFramePadding();
-					ImGui::TreeNodeEx("Field", ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet, "Field_%d", j);
-					ImGui::NextColumn();
-					ImGui::SetNextItemWidth(-1);
-					if (j >= 5)
-						ImGui::InputFloat("##value", &dummy_members[j], 1.0f);
-					else
-						ImGui::DragFloat("##value", &dummy_members[j], 0.01f);
-					ImGui::NextColumn();
-				}
-				ImGui::PopID();
-			}
+			ImGui::Text("AngVel");
+			ImGui::NextColumn();
+			ImGui::DragFloat("Rot (Rad/S)", &rb->m_angularVelocity, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Acceleration");
+			ImGui::NextColumn();
+			ImGui::DragFloat("AccelX", &rb->m_acceleration.x, 1.0f);
+			ImGui::DragFloat("AccelY", &rb->m_acceleration.y, 1.0f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Mass");
+			ImGui::NextColumn();
+			ImGui::InputFloat("Mass", &rb->m_mass, 0.1f);
+			ImGui::NextColumn();
+
+			ImGui::Text("Kinematic");
+			ImGui::NextColumn();
+			ImGui::Checkbox("Is Kinematic?", &rb->m_isKinematic);
+			ImGui::NextColumn();
+
+			ImGui::Text("Inertia");
+			ImGui::NextColumn();
+			char inertia[50];
+			snprintf(inertia, 50, "%f", rb->m_inertia);
+			ImGui::Text(inertia);
+			ImGui::NextColumn();
+
 			ImGui::TreePop();
 		}
-		ImGui::PopID();
 	}
 	ImGui::Columns(1);
 	ImGui::Separator();
-	ImGui::PopStyleVar();
 	ImGui::End();
 }
 
@@ -349,15 +278,14 @@ void TestApp::LoadScene(unsigned int index)
 void TestApp::ProcessInput()
 {
 	//glfwGetKey(m_window, GLFW_KEY_0);
-	short zero = glfwGetKey(m_window, GLFW_KEY_0);
-	short one = glfwGetKey(m_window, GLFW_KEY_1);
-	short two = glfwGetKey(m_window, GLFW_KEY_2);
-	short three = glfwGetKey(m_window, GLFW_KEY_3);
-	short four = glfwGetKey(m_window, GLFW_KEY_4);
-	short five = glfwGetKey(m_window, GLFW_KEY_5);
+	short f1 = glfwGetKey(m_window, GLFW_KEY_F1);
+	short f2 = glfwGetKey(m_window, GLFW_KEY_F2);
+	short f3 = glfwGetKey(m_window, GLFW_KEY_F3);
+	short f4 = glfwGetKey(m_window, GLFW_KEY_F4);
+	short f5 = glfwGetKey(m_window, GLFW_KEY_F5);
 	short r = glfwGetKey(m_window, GLFW_KEY_R);
 	short t = glfwGetKey(m_window, GLFW_KEY_T);
-	short inputDownNew = (zero << 0) | (one << 1) | (two << 2) | (three << 3) | (four << 4) | (five << 5) | (r << 6) | (t << 7);
+	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
@@ -366,8 +294,8 @@ void TestApp::ProcessInput()
 	m_inputDown = inputDownNew;
 
 	//React to input
-	if (m_inputPressed & KEY_0)LoadScene(0);
-	if (m_inputPressed & KEY_1)LoadScene(1);
+	if (m_inputPressed & KEY_F1)LoadScene(0);
+	if (m_inputPressed & KEY_F2)LoadScene(1);
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
 }

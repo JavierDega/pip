@@ -10,14 +10,13 @@
 //Holds Physics solver, abstract all glfw/imgui graphics
 
 enum Keys {
-	KEY_0 = (1 << 0),
-	KEY_1 = (1 << 1),
-	KEY_2 = (1 << 2),
-	KEY_3 = (1 << 3),
-	KEY_4 = (1 << 4),
-	KEY_5 = (1 << 5),
-	KEY_R = (1 << 6),
-	KEY_T = (1 << 7)
+	KEY_F1 = (1 << 0),
+	KEY_F2 = (1 << 1),
+	KEY_F3 = (1 << 2),
+	KEY_F4 = (1 << 3),
+	KEY_F5 = (1 << 4),
+	KEY_R = (1 << 5),
+	KEY_T = (1 << 6)
 };
 class TestApp
 {
