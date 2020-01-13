@@ -157,7 +157,7 @@ void TestApp::DrawImgui()
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
 		ImGui::Begin(m_sceneName.c_str());                          // Create a window and append into it.
-		ImGui::Text("Press 0-5 to load scenes");
+		ImGui::Text("Press F1-F5 to load scenes");
 		ImGui::Checkbox("Step mode (R)", &m_solver.m_stepMode);
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
