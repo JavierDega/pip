@@ -137,7 +137,7 @@ namespace math {
 		//Rotate a point about the origin
 		inline Vector2 Rotate(decimal rad) {
 			decimal x2 = x * Cos(rad) - y * Sin(rad);
-			decimal y2 = y * Cos(rad) - x * Sin(rad);
+			decimal y2 = y * Cos(rad) + x * Sin(rad);
 			x = x2;
 			y = y2;
 			return *this;
