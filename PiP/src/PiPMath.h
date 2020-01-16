@@ -127,6 +127,10 @@ namespace math {
 			return *this;
 		}
 		
+		inline Vector2 Normalized() {
+			decimal length = Length();
+			return Vector2(x / length, y / length);
+		}
 		inline decimal LengthSqr() {
 			return this->Dot(*this);
 		}
@@ -187,7 +191,8 @@ namespace math {
 		}
 		else {
 			//Dot project
-			return  a + (ab.Normalize() * ab.Dot(ap));
+			ab.Normalize();
+			return  a + (ab * ab.Dot(ap));
 		}
 	}
 
