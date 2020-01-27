@@ -187,6 +187,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		Pow(rA.Dot(n), 2) / ia + Pow(rB.Dot(n), 2) / ib);
 	
 	if (!rb1->m_isKinematic) {
+	//#TODO: Do kinematic objects well. It's a utopic property so we probably can't just apply normal newtonian physics
+	//and expect it to work
 		rb1->m_velocity += impulse * n / rb1->m_mass;
 		rb1->m_angularVelocity += rA.Dot(impulse * n) / ia;
 	}

@@ -267,7 +267,7 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Scene 1: Desc here";
 		m_solver.AddBody(new Capsule( Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
-		m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, true, 2.0f, 1.0f));
+		m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1000.f, false, 2.0f, 1.0f));
 	}
 	break;
 	default:

@@ -148,7 +148,7 @@ namespace math {
 		}
 
 		inline decimal Dot(Vector2 v2) {
-			return x * v2.x + y * v2.y;
+			return x * v2.x + y * v2.y;//Same as LengthSqr
 		}
 
 		inline decimal Cross(const Vector2& v2) const
