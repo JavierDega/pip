@@ -194,7 +194,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		//Turn to char*
 		char* objDesc2 = new char[100];
 		strcpy(objDesc2, objDesc.c_str());
-		int firstPartLength = objDesc.length();
+		size_t firstPartLength = objDesc.length();
 		snprintf(objDesc2 + firstPartLength, 100 - firstPartLength, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
 
 		ImGui::Text(objDesc2);

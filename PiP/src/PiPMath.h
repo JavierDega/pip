@@ -21,6 +21,22 @@ class Rigidbody;//Manifold needs fwdecl
 
 namespace math {
 
+	inline decimal Min(decimal x, decimal max) {
+		return x < max ? x : max;
+	}
+
+	inline decimal Max(decimal x, decimal min) {
+		return x > min ? x : min;
+	}
+
+	inline decimal Clamp(decimal x, decimal min, decimal max) {
+#if USE_FIXEDPOINT
+		return Max(min, Min(x, max));
+#else
+		return fmaxf(min, fminf(x, max));
+#endif
+	}
+
 	inline decimal Sqrt(decimal x) {
 #if USE_FIXEDPOINT
 		return fp64::Fp64::EasySqrt(x);

@@ -11,6 +11,7 @@ public:
 	virtual bool ComputeIntersect(Rigidbody* rb2, math::Manifold& manifold) override;
 	virtual bool IntersectWith(Circle* rb2, math::Manifold& manifold) override;
 	virtual bool IntersectWith(Capsule* rb2, math::Manifold& manifold) override;
+	virtual bool IntersectWith(OrientedBox* rb2, math::Manifold& manifold) override;
 	virtual decimal ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold) override;
 	virtual decimal SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold) override;
 	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) override;

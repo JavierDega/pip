@@ -1,6 +1,7 @@
 
 #include "Circle.h"
 #include "Capsule.h"
+#include "OrientedBox.h"
 
 //https://en.wikipedia.org/wiki/List_of_moments_of_inertia
 
@@ -64,6 +65,19 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 		manifold.rb2 = rb2;
 		return true;
 	}
+	return false;
+}
+
+bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
+{
+	//ClosestPtToObb query
+	//Set world origin to be box's center, unrotate all, clamp pt to AABB. Rotate point with box and move it to its pos.
+	Vector2 p = m_position - rb2->m_position;
+	//Consider the box unrotated, and rotate this p by inverse box's rotation
+	p.Rotate(-rb2->m_rotation);
+	p.x = Clamp(p.x, -rb2->m_halfExtents.x, rb2->m_halfExtents.x);
+	p.y = Clamp(p.y, -rb2->m_halfExtents.y, rb2->m_halfExtents.y);
+	//#TODO
 	return false;
 }
 

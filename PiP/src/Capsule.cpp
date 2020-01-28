@@ -108,6 +108,12 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	return false;
 }
 
+bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
+{
+	//Haven't done this one before, probably ClosestPtObbToSegment query
+	return false;
+}
+
 decimal Capsule::ComputeSweep(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
 	return rb2->SweepWith(this, dt, manifold);
