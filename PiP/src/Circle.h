@@ -15,6 +15,7 @@ public:
 	virtual decimal ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold) override;
 	virtual decimal SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold) override;
 	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) override;
+	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold) override;
 
 	decimal m_radius;
 };

@@ -270,6 +270,11 @@ void TestApp::LoadScene(unsigned int index)
 		m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1000.f, false, 2.0f, 1.0f));
 	}
 	break;
+	case 2:
+	{
+		m_sceneName = "Scene 2: Sphere against Obb";
+		//m_solver.AddBody()
+	}
 	default:
 		break;
 	}
@@ -296,6 +301,7 @@ void TestApp::ProcessInput()
 	//React to input
 	if (m_inputPressed & KEY_F1)LoadScene(0);
 	if (m_inputPressed & KEY_F2)LoadScene(1);
+	if (m_inputPressed & KEY_F3)LoadScene(2);
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
 }

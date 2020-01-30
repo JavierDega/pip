@@ -128,3 +128,8 @@ decimal Capsule::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }
+
+decimal Capsule::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold)
+{
+	return decimal();
+}

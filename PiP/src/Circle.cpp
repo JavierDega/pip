@@ -77,7 +77,11 @@ bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	p.Rotate(-rb2->m_rotation);
 	p.x = Clamp(p.x, -rb2->m_halfExtents.x, rb2->m_halfExtents.x);
 	p.y = Clamp(p.y, -rb2->m_halfExtents.y, rb2->m_halfExtents.y);
-	//#TODO
+	//Rotate point back to world space, then translate it
+	p.Rotate(rb2->m_rotation);
+	p += rb2->m_position;
+	//p is closest point from sphere to Obb
+
 	return false;
 }
 
@@ -135,6 +139,11 @@ decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 }
 
 decimal Circle::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
+{
+	return decimal();
+}
+
+decimal Circle::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold)
 {
 	return decimal();
 }

@@ -3,6 +3,7 @@ set(PIP_HEADER_FILES
 	RigidBody.h
 	Circle.h
 	Capsule.h
+	OrientedBox.h
 	Solver.h
 	StackAllocator.h)
 	
@@ -10,6 +11,7 @@ set(PIP_SOURCE_FILES
 	Rigidbody.cpp
 	Circle.cpp
 	Capsule.cpp
+	OrientedBox.cpp
 	Solver.cpp
 	StackAllocator.cpp)
 

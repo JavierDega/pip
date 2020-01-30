@@ -31,3 +31,23 @@ bool OrientedBox::IntersectWith(Capsule* rb2, math::Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
+
+decimal OrientedBox::ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold)
+{
+	return rb2->SweepWith(this, dt, manifold);
+}
+
+decimal OrientedBox::SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold)
+{
+	return decimal();
+}
+
+decimal OrientedBox::SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold)
+{
+	return decimal();
+}
+
+decimal OrientedBox::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold)
+{
+	return decimal();
+}
