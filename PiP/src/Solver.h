@@ -2,8 +2,7 @@
 #include <vector>
 
 #include "PiPMath.h"
-#include "Circle.h"
-#include "Capsule.h"
+#include "Rigidbody.h"
 #include "StackAllocator.h"
 
 class Solver

@@ -1,6 +1,8 @@
 
 #include "TestApp.h"
-
+#include "Circle.h"
+#include "Capsule.h"
+#include "OrientedBox.h"
 using namespace math;
 
 TestApp::TestApp()
@@ -90,9 +92,7 @@ void TestApp::UpdateLoop()
 		for (Rigidbody* rb : m_solver.m_rigidbodies) {
 			//Draw
 			glLoadIdentity();
-			Circle* circle;
-			Capsule* capsule;
-			if (circle = dynamic_cast<Circle*>(rb)) {
+			if ( Circle * circle = dynamic_cast<Circle*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
@@ -104,7 +104,7 @@ void TestApp::UpdateLoop()
 					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
 				}
 			} 
-			else if (capsule = dynamic_cast<Capsule*>(rb)) {
+			else if ( Capsule * capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
@@ -130,6 +130,12 @@ void TestApp::UpdateLoop()
 				glVertex3f(-offSet, -rad, 0);
 				glVertex3f(offSet, rad, 0);
 				glVertex3f(-offSet, rad, 0);
+			}
+			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb)) {
+				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glBegin(GL_TRIANGLES);
+				//Rectangle made up of two triangles
 			}
 			glEnd();
 		}
@@ -273,7 +279,8 @@ void TestApp::LoadScene(unsigned int index)
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		//m_solver.AddBody()
+		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
+		m_solver.AddBody(new Circle(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f));
 	}
 	default:
 		break;

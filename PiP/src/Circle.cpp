@@ -81,7 +81,16 @@ bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	p.Rotate(rb2->m_rotation);
 	p += rb2->m_position;
 	//p is closest point from sphere to Obb
+	//Get manifold info
 
+	Vector2 circleToClosestPt = p - m_position;
+	if (circleToClosestPt.LengthSqr() <= m_radius * m_radius) {
+		//Assume circle is outside
+		manifold.normal = -circleToClosestPt.Normalize();
+		manifold.contactPoint = (m_position + m_radius * circleToClosestPt + p) / 2;
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+	}
 	return false;
 }
 
