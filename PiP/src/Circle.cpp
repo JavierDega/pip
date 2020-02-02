@@ -90,6 +90,7 @@ bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		manifold.contactPoint = (m_position + m_radius * circleToClosestPt + p) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
+		return true;
 	}
 	return false;
 }

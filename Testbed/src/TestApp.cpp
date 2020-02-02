@@ -99,6 +99,7 @@ void TestApp::UpdateLoop()
 				glBegin(GL_TRIANGLES);
 				//Circle vertices from trig
 				for (int i = 0; i < 350; i += 10) {
+					//Counter clockwise
 					glVertex3f(0, 0, 0);
 					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
 					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
@@ -136,6 +137,14 @@ void TestApp::UpdateLoop()
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glBegin(GL_TRIANGLES);
 				//Rectangle made up of two triangles
+				Vector2 halfExtents = obb->m_halfExtents;
+				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
+				glVertex3f(halfExtents.x, -halfExtents.y, 0);
+				glVertex3f(halfExtents.x, halfExtents.y, 0);
+				//Upper tri
+				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
+				glVertex3f(halfExtents.x, halfExtents.y, 0);
+				glVertex3f(-halfExtents.x, halfExtents.y, 0);
 			}
 			glEnd();
 		}
@@ -279,8 +288,9 @@ void TestApp::LoadScene(unsigned int index)
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
-		m_solver.AddBody(new Circle(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f));
+		m_solver.AddBody(new Circle(Vector2(0, 10), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f));
+		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(1, 1)));
+		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 46 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
 	}
 	default:
 		break;
