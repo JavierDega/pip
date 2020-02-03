@@ -34,6 +34,18 @@ bool OrientedBox::IntersectWith(Capsule* rb2, math::Manifold& manifold)
 
 bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 {
+	//SAT
+	//We only have 4 axis to project to, but we can simplify it by bringing things to one Obb's reference frame
+
+	Vector2 axis = Vector2(1, 0).Rotate(m_rotation);
+
+	decimal projExtents[2];//max and min along axis
+	projExtents[0] = m_position.Dot(axis) + m_halfExtents.x;
+	projExtents[1] = m_position.Dot(axis) - m_halfExtents.x;
+
+	decimal projExtents2[2];
+	//..Dot projections
+
 	return false;
 }
 

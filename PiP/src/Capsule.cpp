@@ -1,6 +1,7 @@
 
 #include "Capsule.h"
 #include "Circle.h"
+#include "OrientedBox.h"
 
 using namespace math;
 
@@ -111,6 +112,25 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 {
 	//Haven't done this one before, probably ClosestPtObbToSegment query
+	///#Randy Gaul: 
+	//First make sure the AABB is on one side of the plane or the other.
+	//Then compute the support point of the AABB along the normal of the plane,
+	//and clamp this point within your lane segment.
+
+	///#Some coder:
+	//use the formula for the distance from a point to a line in 2d, do it for all four corners.
+	//the lowest result is the closest corner (or a corner on the closest side, if the line happens to be axis aligned).
+	
+	//Rotate to get line-AABB query
+	//Rotate by cap's rotation and -rotation of the Obb to get it in the AABB's reference frame
+	Vector2 capsLocalPos = m_position - rb2->m_position;
+	Vector2 caps1 = Vector2(m_length / 2, 0).Rotate(m_rotation - rb2->m_rotation);
+	Vector2 caps2 = Vector2(m_length / 2, 0).Rotate(m_rotation - rb2->m_rotation);
+	caps1 += capsLocalPos;
+	caps2 += capsLocalPos;
+
+
+
 	return false;
 }
 
