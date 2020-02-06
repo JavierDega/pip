@@ -18,7 +18,7 @@ public:
 	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold) override;
 
 	//private
-	bool TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2 pos2, math::Vector2 rotExtents, math::Vector2 rotExtents2);
+	bool TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2 pos2, math::Vector2 rotExtents, math::Vector2 rotExtents2, decimal& penetration);
 
 	math::Vector2 m_halfExtents;
 };

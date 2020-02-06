@@ -36,10 +36,41 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 {
 	//SAT
 	//We only have 4 axis to project to, but we can simplify it by bringing things to one Obb's reference frame
-	if (!TestAxis(Vector2(1, 0).Rotate(m_rotation), m_position, rb2->m_position, m_halfExtents.Rotate(m_rotation),
-		rb2->m_halfExtents.Rotate(rb2->m_rotation))) return false;
+	Vector2 rotExtents = m_halfExtents.Rotate(m_rotation);
+	Vector2 rotExtents2 = rb2->m_halfExtents.Rotate(rb2->m_rotation);
+	//Possibly add ref arguments to retrieve contact data (amount of penetration,..)
+	decimal penetration;
+	//rb1's axii
+	if (TestAxis(Vector2(1, 0).Rotate(m_rotation), m_position, rb2->m_position, rotExtents,
+		rotExtents2, penetration)) {
+
+
+	}
+	else return false;
 	
-	return false;
+	if (TestAxis(Vector2(0, 1).Rotate(m_rotation), m_position, rb2->m_position, rotExtents,
+			rotExtents2, penetration)) {
+
+	} 
+	else return false;
+	//rb2's axii
+	if (TestAxis(Vector2(1, 0).Rotate(rb2->m_rotation), m_position, rb2->m_position, rotExtents,
+		rotExtents2, penetration)) {
+
+	} 
+	else return false;
+
+	if (TestAxis(Vector2(0, 1).Rotate(rb2->m_rotation), m_position, rb2->m_position, rotExtents,
+		rotExtents2, penetration)) {
+	
+	}
+	else return false;
+
+	//#TODO: Contact retrieval
+
+	manifold.rb1 = this;
+	manifold.rb2 = rb2;
+	return true;
 }
 
 decimal OrientedBox::ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold)
@@ -62,7 +93,7 @@ decimal OrientedBox::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& man
 	return decimal();
 }
 
-bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2 pos2, math::Vector2 rotExtents, math::Vector2 rotExtents2)
+bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2 pos2, math::Vector2 rotExtents, math::Vector2 rotExtents2, decimal& penetration)
 {
 	decimal pos1Axis = pos1.Dot(axis);
 	decimal pos2Axis = pos2.Dot(axis);
@@ -87,7 +118,11 @@ bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2
 			//Separating axis
 			return false;
 		}
-		else return true;
+		else {
+			//Retrieve important info, like penetration amount on such axis
+			penetration = pos1Axis + max - (pos2Axis - min2);
+			return true;
+		}
 	}
 	else 
 	{
@@ -96,6 +131,9 @@ bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2
 			//Separating axis
 			return false;
 		}
-		else return true;
+		else {
+			penetration = pos2Axis + max2 - (pos1Axis - min);
+			return true;
+		}
 	}
 }
