@@ -39,30 +39,45 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	Vector2 rotExtents = m_halfExtents.Rotate(m_rotation);
 	Vector2 rotExtents2 = rb2->m_halfExtents.Rotate(rb2->m_rotation);
 	//Possibly add ref arguments to retrieve contact data (amount of penetration,..)
+	decimal minPen;
+	Vector2 minAxis;
+	Vector2 axis;
 	decimal penetration;
 	//rb1's axii
-	if (TestAxis(Vector2(1, 0).Rotate(m_rotation), m_position, rb2->m_position, rotExtents,
+	axis = Vector2(1, 0).Rotate(m_rotation);
+	if (TestAxis(axis, m_position, rb2->m_position, rotExtents,
 		rotExtents2, penetration)) {
-
-
+		//Store penetration and axis
+		minPen = penetration;
+		minAxis = axis;
 	}
 	else return false;
-	
-	if (TestAxis(Vector2(0, 1).Rotate(m_rotation), m_position, rb2->m_position, rotExtents,
+	axis = Vector2(0, 1).Rotate(m_rotation);
+	if (TestAxis( axis, m_position, rb2->m_position, rotExtents,
 			rotExtents2, penetration)) {
-
+		if (penetration < minPen) {
+			minPen = penetration;
+			minAxis = axis;
+		}
 	} 
 	else return false;
 	//rb2's axii
-	if (TestAxis(Vector2(1, 0).Rotate(rb2->m_rotation), m_position, rb2->m_position, rotExtents,
+	axis = Vector2(1, 0).Rotate(rb2->m_rotation);
+	if (TestAxis( axis, m_position, rb2->m_position, rotExtents,
 		rotExtents2, penetration)) {
-
+		if (penetration < minPen) {
+			minPen = penetration;
+			minAxis = axis;
+		}
 	} 
 	else return false;
-
-	if (TestAxis(Vector2(0, 1).Rotate(rb2->m_rotation), m_position, rb2->m_position, rotExtents,
+	axis = Vector2(0, 1).Rotate(rb2->m_rotation);
+	if (TestAxis( axis, m_position, rb2->m_position, rotExtents,
 		rotExtents2, penetration)) {
-	
+		if (penetration < minPen) {
+			minPen = penetration;
+			minAxis = axis;
+		}
 	}
 	else return false;
 
