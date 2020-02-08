@@ -1,5 +1,13 @@
 
 #include "Rigidbody.h"
+
+enum class SatCollision {
+	OBJ1X,
+	OBJ1Y,
+	OBJ2X,
+	OBJ2Y
+};
+
 class OrientedBox :
 	public Rigidbody
 {

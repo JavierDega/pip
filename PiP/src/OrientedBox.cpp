@@ -36,6 +36,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 {
 	//SAT
 	//We only have 4 axis to project to, but we can simplify it by bringing things to one Obb's reference frame
+	Vector2 aToB = rb2->m_position - m_position;
 	Vector2 rotExtents = m_halfExtents.Rotate(m_rotation);
 	Vector2 rotExtents2 = rb2->m_halfExtents.Rotate(rb2->m_rotation);
 	//Possibly add ref arguments to retrieve contact data (amount of penetration,..)
@@ -43,6 +44,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	Vector2 minAxis;
 	Vector2 axis;
 	decimal penetration;
+	SatCollision collisionType;
 	//rb1's axii
 	axis = Vector2(1, 0).Rotate(m_rotation);
 	if (TestAxis(axis, m_position, rb2->m_position, rotExtents,
@@ -50,6 +52,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		//Store penetration and axis
 		minPen = penetration;
 		minAxis = axis;
+		collisionType = SatCollision::OBJ1X;
 	}
 	else return false;
 	axis = Vector2(0, 1).Rotate(m_rotation);
@@ -58,6 +61,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
+			collisionType = SatCollision::OBJ1Y;
 		}
 	} 
 	else return false;
@@ -68,6 +72,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
+			collisionType = SatCollision::OBJ2X;
 		}
 	} 
 	else return false;
@@ -77,12 +82,33 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
+			collisionType = SatCollision::OBJ2Y;
 		}
 	}
 	else return false;
 
 	//#TODO: Contact retrieval
+	//We may need to know which face the axis comes from, as well as the side planes, so that we can build a plane and clip the incident face against it
 
+	switch (collisionType) {
+	case SatCollision::OBJ1X: 
+	{
+		//Use relative pos to know which side of face
+		if (rotExtents.Dot(aToB) > 0) 
+		{
+			//Right side of A
+		}
+		else 
+		{
+			//Left side of A
+		}
+	}
+	break;
+	case SatCollision::OBJ1Y:
+	{
+	}
+	break;
+	}
 	manifold.rb1 = this;
 	manifold.rb2 = rb2;
 	return true;
