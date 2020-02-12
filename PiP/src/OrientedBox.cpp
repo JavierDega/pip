@@ -94,7 +94,21 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	case SatCollision::OBJ1X: 
 	{
 		//Use relative pos to know which side of face
-		if (rotExtents.Dot(aToB) > 0) 
+		//Build reference planes
+		Vector2 n1 = minAxis;
+		Vector2 n2 = -n1;
+		//Side planes
+		Vector2 n3 = Vector2(1, 0).Rotate(m_rotation);
+		Vector2 n4 = -n3;
+
+		decimal offSet1 = (m_position + Vector2(m_halfExtents.x, 0).Rotate(m_rotation)).Dot(n1);
+		decimal offSet2 = (m_position + Vector2(-m_halfExtents.x, 0).Rotate(m_rotation)).Dot(n2);
+
+		decimal offSet3 = (m_position + Vector2(0, m_halfExtents.y).Rotate(m_rotation)).Dot(n3);
+		decimal offSet4 = (m_position + Vector2(0, -m_halfExtents.y).Rotate(m_rotation)).Dot(n4);
+
+		//We have data for four planes
+		if (minAxis.Dot(aToB) > 0) 
 		{
 			//Right side of A
 		}

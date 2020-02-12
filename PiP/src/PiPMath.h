@@ -147,6 +147,7 @@ namespace math {
 			decimal length = Length();
 			return Vector2(x / length, y / length);
 		}
+		
 		inline decimal LengthSqr() {
 			return this->Dot(*this);
 		}
@@ -211,7 +212,13 @@ namespace math {
 			return  a + (ab * ab.Dot(ap));
 		}
 	}
-
+	//Point, plane normal, plane dist to origin along n
+	inline decimal DistPtToPlane(Vector2 p, Vector2 n, decimal dist) {
+		n.Normalize();
+		Vector2 q = n * dist;//Plane's centre
+		Vector2 planeToP = p - q;
+		return planeToP.Dot(n);
+	}
 	//Quaternions
 	typedef struct Vector4Str {
 		decimal x, y, z, w;
