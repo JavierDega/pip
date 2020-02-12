@@ -25,10 +25,10 @@ public:
 
 	int Init();
 	void InitImgui();
+	void LoadScene(unsigned int index);
 	void UpdateLoop();
 	void DrawImgui();
 	void ImGuiShowRigidbodyEditor();
-	void LoadScene(unsigned int index);
 	void ProcessInput();
 
 	//Graphics/Window

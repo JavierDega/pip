@@ -70,6 +70,37 @@ void TestApp::InitImgui()
 	ImGui_ImplOpenGL3_Init(m_glslVersion);
 }
 
+void TestApp::LoadScene(unsigned int index)
+{
+	m_solver.m_rigidbodies.clear();
+	switch (index) {
+	case 0:
+	{
+		m_sceneName = "Scene 0: Desc here";
+		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
+		m_solver.AddBody(new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, 2.f, 1.0f));
+	}
+	break;
+	case 1:
+	{
+		m_sceneName = "Scene 1: Desc here";
+		m_solver.AddBody(new Capsule(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1000.f, false, 2.0f, 1.0f));
+	}
+	break;
+	case 2:
+	{
+		m_sceneName = "Scene 2: Sphere against Obb";
+		m_solver.AddBody(new Circle(Vector2(0, 10), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f));
+		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(1, 1)));
+		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 46 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
+	}
+	default:
+		break;
+	}
+}
+
 void TestApp::UpdateLoop()
 {
 	/* Loop until the user closes the window */
@@ -264,37 +295,6 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	ImGui::Columns(1);
 	ImGui::Separator();
 	ImGui::End();
-}
-
-void TestApp::LoadScene(unsigned int index)
-{
-	m_solver.m_rigidbodies.clear();
-	switch (index) {
-	case 0:
-	{
-		m_sceneName = "Scene 0: Desc here";
-		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
-		m_solver.AddBody(new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
-		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, 2.f, 1.0f));
-	}
-	break;
-	case 1:
-	{
-		m_sceneName = "Scene 1: Desc here";
-		m_solver.AddBody(new Capsule( Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
-		m_solver.AddBody(new Capsule( Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1000.f, false, 2.0f, 1.0f));
-	}
-	break;
-	case 2:
-	{
-		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new Circle(Vector2(0, 10), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f));
-		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(1, 1)));
-		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 46 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
-	}
-	default:
-		break;
-	}
 }
 
 void TestApp::ProcessInput()
