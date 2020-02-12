@@ -101,11 +101,17 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		Vector2 n3 = Vector2(1, 0).Rotate(m_rotation);
 		Vector2 n4 = -n3;
 
-		decimal offSet1 = (m_position + Vector2(m_halfExtents.x, 0).Rotate(m_rotation)).Dot(n1);
-		decimal offSet2 = (m_position + Vector2(-m_halfExtents.x, 0).Rotate(m_rotation)).Dot(n2);
+		decimal offSet1 = (m_position + Vector2(rotExtents.x, 0)).Dot(n1);
+		decimal offSet2 = (m_position + Vector2(-rotExtents.x, 0)).Dot(n2);
 
-		decimal offSet3 = (m_position + Vector2(0, m_halfExtents.y).Rotate(m_rotation)).Dot(n3);
-		decimal offSet4 = (m_position + Vector2(0, -m_halfExtents.y).Rotate(m_rotation)).Dot(n4);
+		decimal offSet3 = (m_position + Vector2(0, rotExtents.y)).Dot(n3);
+		decimal offSet4 = (m_position + Vector2(0, -rotExtents.y)).Dot(n4);
+
+		Vector2 box2Points[4];
+		box2Points[0] = rb2->m_position + rotExtents2;
+		box2Points[1] = rb2->m_position + Vector2( -rotExtents2.x, rotExtents2.y );
+		box2Points[2] = rb2->m_position - rotExtents2;
+		box2Points[3] = rb2->m_position + Vector2( rotExtents2.x, -rotExtents2.y );
 
 		//We have data for four planes
 		if (minAxis.Dot(aToB) > 0) 
