@@ -31,7 +31,8 @@ bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 		manifold.normal = -ab.Normalize();//Point to A by convention
 		Vector2 circle1Edge = m_position + ab * m_radius;
 		Vector2 circle2Edge = rb2->m_position - ab * rb2->m_radius;
-		manifold.contactPoint = circle1Edge + (circle2Edge - circle1Edge) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = circle1Edge + (circle2Edge - circle1Edge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
@@ -60,7 +61,8 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = c + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A by convention
-		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
@@ -87,7 +89,8 @@ bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	if (circleToClosestPt.LengthSqr() <= m_radius * m_radius) {
 		//Assume circle is outside
 		manifold.normal = -circleToClosestPt.Normalize();
-		manifold.contactPoint = (m_position + m_radius * circleToClosestPt + p) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = (m_position + m_radius * circleToClosestPt + p) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
@@ -142,7 +145,7 @@ decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 		//Get normal, contact point
 		Vector2 rb1Pos = m_position + va * realRoot;
 		Vector2 rb2Pos = rb2->m_position + vb * realRoot;
-		manifold.contactPoint = rb1Pos + (ra / (ra + rb)) * (rb2Pos - rb1Pos);
+		manifold.contactPoints[0] = rb1Pos + (ra / (ra + rb)) * (rb2Pos - rb1Pos);
 		manifold.normal = (rb1Pos - rb2Pos).Normalize();//Point to A by convention
 		return realRoot;
 	}

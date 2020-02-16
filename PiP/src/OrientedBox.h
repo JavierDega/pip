@@ -1,11 +1,10 @@
 
 #include "Rigidbody.h"
 
+//May get more complex in the future? All we need for now, just to know which object to clip against which
 enum class SatCollision {
-	OBJ1X,
-	OBJ1Y,
-	OBJ2X,
-	OBJ2Y
+	OBJ1,
+	OBJ2
 };
 
 class OrientedBox :

@@ -65,7 +65,8 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = c + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A by convention
-		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
@@ -77,7 +78,8 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = d + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A
-		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
@@ -89,7 +91,8 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = a + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
@@ -101,7 +104,8 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = b + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.contactPoint = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints = 1;
+		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;

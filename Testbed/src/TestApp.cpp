@@ -92,7 +92,7 @@ void TestApp::LoadScene(unsigned int index)
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new Circle(Vector2(0, 10), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f));
+		m_solver.AddBody(new OrientedBox(Vector2(0, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f));
 		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(1, 1)));
 		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 46 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
 	}

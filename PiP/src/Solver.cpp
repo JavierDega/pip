@@ -179,20 +179,20 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal mb = rb2->m_mass;
 	decimal ia = rb1->m_inertia;
 	decimal ib = rb2->m_inertia;
-	Vector2 rA = (manifold.contactPoint - rb1->m_position).Perp();
-	Vector2 rB = (manifold.contactPoint - rb2->m_position).Perp();
-	Vector2 vBA = rb1->m_velocity - rb2->m_velocity;//Even though Chris Hecker's column calls it vAB
-	decimal e = 1;
-	decimal impulse = -(1 + e) * vBA.Dot(n) / (1 / ma + 1 / mb +
-		Pow(rA.Dot(n), 2) / ia + Pow(rB.Dot(n), 2) / ib);
-	
-	if (!rb1->m_isKinematic) {
-	//#TODO: Do kinematic objects well. It's a utopic property so we probably can't just apply normal newtonian physics
-	//and expect it to work
+
+	//Contact point number agnostic collision response
+	decimal e = 1; //Coefficient of restitution
+	for (int i = 0; i < manifold.numContactPoints; i++) 
+	{
+		Vector2 curContactPoint = manifold.contactPoints[i];
+		Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
+		Vector2 rA = (curContactPoint - rb1->m_position).Perp();
+		Vector2 rB = (curContactPoint - rb2->m_position).Perp();
+		decimal impulse = -(1 + e) * vBA.Dot(n) / (1 / ma + 1 / mb + Pow(rA.Dot(n), 2) / ia + Pow(rB.Dot(n), 2) / ib);
+		//#TODO: Handle object kinematics
 		rb1->m_velocity += impulse * n / rb1->m_mass;
 		rb1->m_angularVelocity += rA.Dot(impulse * n) / ia;
-	}
-	if (!rb2->m_isKinematic) {
+
 		rb2->m_velocity -= impulse * n / rb2->m_mass;
 		rb2->m_angularVelocity -= rB.Dot(impulse * n) / ib;
 	}

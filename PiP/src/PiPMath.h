@@ -131,6 +131,16 @@ namespace math {
 		{
 			return *this = *this / Rhs;
 		}
+		// Comparison operators
+		inline bool operator==(const Vector2& Rhs)
+		{
+			return x == Rhs.x && y == Rhs.y;
+		}
+
+		inline bool operator!=(const Vector2& Rhs)
+		{
+			return !(*this == Rhs);
+		}
 
 		inline decimal Length() {
 			return Sqrt(x * x + y * y);
@@ -160,6 +170,7 @@ namespace math {
 			Vector2 copy = *this;
 			return copy.Rotate(rad);
 		}
+
 		inline Vector2 Rotate(decimal rad) {
 			decimal x2 = x * Cos(rad) - y * Sin(rad);
 			decimal y2 = y * Cos(rad) + x * Sin(rad);
@@ -176,17 +187,7 @@ namespace math {
 		{
 			return (x * v2.y) - (y * v2.x);
 		}
-		// Comparison operators
-		inline bool operator==(const Vector2& Rhs)
-		{
-			return x == Rhs.x && y == Rhs.y;
-		}
-
-		inline bool operator!=(const Vector2& Rhs)
-		{
-			return !(*this == Rhs);
-		}
-
+		
 	};
 
 	inline Vector2 operator*( const Vector2& v, const decimal& scalar ) {
@@ -408,16 +409,17 @@ namespace math {
 	}Matrix;
 	//Collision info necessary for solver, normal points from objA to B
 	struct Manifold {
+		int numContactPoints;
 		decimal penetration;
 		math::Vector2 normal;
-		math::Vector2 contactPoint;
+		math::Vector2 contactPoints[2] = { Vector2(0,0), Vector2(0,0) };//Obb to Obb may use 2 contact points (If incident face complete interpenetrates reference face)
 		Rigidbody* rb1;
 		Rigidbody* rb2;
 
 		Manifold() {
+			numContactPoints = 0;
 			penetration = 0.0f;
 			normal = Vector2{ 0.0f, 0.0f };
-			contactPoint = Vector2{ 0.0f, 0.0f };
 			rb1 = nullptr;
 			rb2 = nullptr;
 		}

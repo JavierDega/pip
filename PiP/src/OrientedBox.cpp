@@ -47,100 +47,127 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	SatCollision collisionType;
 	//rb1's axii
 	axis = Vector2(1, 0).Rotate(m_rotation);
-	if (TestAxis(axis, m_position, rb2->m_position, rotExtents,
-		rotExtents2, penetration)) {
+	if (TestAxis(axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
 		//Store penetration and axis
 		minPen = penetration;
 		minAxis = axis;
-		collisionType = SatCollision::OBJ1X;
+		collisionType = SatCollision::OBJ1;
 	}
 	else return false;
 	axis = Vector2(0, 1).Rotate(m_rotation);
-	if (TestAxis( axis, m_position, rb2->m_position, rotExtents,
-			rotExtents2, penetration)) {
+	if (TestAxis( axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
-			collisionType = SatCollision::OBJ1Y;
+			collisionType = SatCollision::OBJ1;
 		}
 	} 
 	else return false;
 	//rb2's axii
 	axis = Vector2(1, 0).Rotate(rb2->m_rotation);
-	if (TestAxis( axis, m_position, rb2->m_position, rotExtents,
-		rotExtents2, penetration)) {
+	if (TestAxis( axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
-			collisionType = SatCollision::OBJ2X;
+			collisionType = SatCollision::OBJ2;
 		}
 	} 
 	else return false;
 	axis = Vector2(0, 1).Rotate(rb2->m_rotation);
-	if (TestAxis( axis, m_position, rb2->m_position, rotExtents,
-		rotExtents2, penetration)) {
+	if (TestAxis( axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
-			collisionType = SatCollision::OBJ2Y;
+			collisionType = SatCollision::OBJ2;
 		}
 	}
 	else return false;
 
 	//#TODO: Contact retrieval
 	//We may need to know which face the axis comes from, as well as the side planes, so that we can build a plane and clip the incident face against it
-
+	Vector2 planeNormals[4];
+	decimal planeDists[4];
+	Vector2 boxPoints[4];
 	switch (collisionType) {
-	case SatCollision::OBJ1X: 
+	case SatCollision::OBJ1: 
 	{
-		//Use relative pos to know which side of face
 		//Build reference planes
-		Vector2 planeNormals[4];
-		planeNormals[0] = minAxis;
+		planeNormals[0] = Vector2(1, 0).Rotate(m_rotation);
 		planeNormals[1] = -planeNormals[0];
-		//Side planes
-		planeNormals[2] = Vector2(1, 0).Rotate(m_rotation);
+		planeNormals[2] = Vector2(0, 1).Rotate(m_rotation);
 		planeNormals[3] = -planeNormals[2];
 
-		decimal planeDists[4];
 		planeDists[0] = (m_position + Vector2(m_halfExtents.x, 0).Rotate(m_rotation)).Dot(planeNormals[0]);
 		planeDists[1] = (m_position + Vector2(-m_halfExtents.x, 0).Rotate(m_rotation)).Dot(planeNormals[1]);
-		//Side planes
 		planeDists[2] = (m_position + Vector2(0, m_halfExtents.y).Rotate(m_rotation)).Dot(planeNormals[2]);
 		planeDists[3] = (m_position + Vector2(0, -m_halfExtents.y).Rotate(m_rotation)).Dot(planeNormals[3]);
-
-		Vector2 box2Points[4];
-		box2Points[0] = rb2->m_position + rotExtents2;
-		box2Points[1] = rb2->m_position + Vector2( -rotExtents2.x, rotExtents2.y );
-		box2Points[2] = rb2->m_position - rotExtents2;
-		box2Points[3] = rb2->m_position + Vector2( rotExtents2.x, -rotExtents2.y );
-
-		for (int i = 0; i < 3; i++) {
-			Vector2 pt = box2Points[i];
-			Vector2 nextPt = box2Points[i + 1];
-			//Clip against four planes
-
-		}
-		//We have data for four planes
-		if (minAxis.Dot(aToB) > 0) 
-		{
-			//Right side of A
-		}
-		else 
-		{
-			//Left side of A
-		}
+		//Points to clip
+		boxPoints[0] = rb2->m_position + rotExtents2;
+		boxPoints[1] = rb2->m_position + Vector2( -rotExtents2.x, rotExtents2.y );
+		boxPoints[2] = rb2->m_position - rotExtents2;
+		boxPoints[3] = rb2->m_position + Vector2( rotExtents2.x, -rotExtents2.y );
 	}
 	break;
-	case SatCollision::OBJ1Y:
+	case SatCollision::OBJ2:
 	{
+		planeNormals[0] = Vector2(1, 0).Rotate(rb2->m_rotation);
+		planeNormals[1] = -planeNormals[0];
+		planeNormals[2] = Vector2(0, 1).Rotate(rb2->m_rotation);
+		planeNormals[3] = -planeNormals[2];
+
+		planeDists[0] = (rb2->m_position + Vector2(rb2->m_halfExtents.x, 0).Rotate(rb2->m_rotation)).Dot(planeNormals[0]);
+		planeDists[1] = (rb2->m_position + Vector2(-rb2->m_halfExtents.x, 0).Rotate(rb2->m_rotation)).Dot(planeNormals[1]);
+		planeDists[2] = (rb2->m_position + Vector2(0, rb2->m_halfExtents.y).Rotate(rb2->m_rotation)).Dot(planeNormals[2]);
+		planeDists[3] = (rb2->m_position + Vector2(0, -rb2->m_halfExtents.y).Rotate(rb2->m_rotation)).Dot(planeNormals[3]);
+
+		boxPoints[0] = m_position + rotExtents;
+		boxPoints[1] = m_position + Vector2(-rotExtents.x, rotExtents.y);
+		boxPoints[2] = m_position - rotExtents;
+		boxPoints[3] = m_position + Vector2(rotExtents.x, -rotExtents.y);
 	}
 	break;
+	}
+	//Clipping
+	for (int i = 0; i < 3; i++) {
+		//Clip against four planes with sutherland hodgmann, only ignoring those sitting in reference face
+		//If pt one is out and next in, Record intersection point and point in. If both are in, record second point.
+		//If pt one is in and pt two out record intersection point
+		//In our case, ignore all intersection point
+		Vector2 pt = boxPoints[i];
+		Vector2 nextPt = boxPoints[i + 1];
+		bool ptIn = true;
+		bool nextPtIn = true;
+		for (int j = 0; j < 4; j++)
+		{
+			Vector2 curPlaneNormal = planeNormals[j];
+			decimal curPlaneDist = planeDists[j];
+			if (DistPtToPlane(pt, curPlaneNormal, curPlaneDist) <= 0) {
+				ptIn = false;
+			}
+			if (DistPtToPlane(nextPt, curPlaneNormal, curPlaneDist) <= 0) {
+				nextPtIn = false;
+			}
+		}
+
+		if (!ptIn)
+		{
+			if (nextPtIn) {
+				manifold.contactPoints[manifold.numContactPoints] = nextPt;
+				manifold.numContactPoints++;
+			}
+		}
+		else
+		{
+			if (nextPtIn) {
+				manifold.contactPoints[manifold.numContactPoints] = nextPt;
+				manifold.numContactPoints++;
+			}
+		}
 	}
 	manifold.rb1 = this;
 	manifold.rb2 = rb2;
+	manifold.normal = minAxis.Dot(aToB) > 0 ? -minAxis : minAxis;
 	return true;
-
 }
 
 decimal OrientedBox::ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold)
