@@ -92,9 +92,16 @@ void TestApp::LoadScene(unsigned int index)
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new OrientedBox(Vector2(0, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f));
+		m_solver.AddBody(new Circle(Vector2(0, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.f));
 		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(1, 1)));
 		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 46 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f));
+	}
+	break;
+	case 3:
+	{
+		m_sceneName = "Scene 3: OBB collision with SAT";
+		m_solver.AddBody(new OrientedBox(Vector2(0, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, Vector2(1, 1)));
+		m_solver.AddBody(new OrientedBox(Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, Vector2(), 10.f, false, Vector2(1, 1)));
 	}
 	default:
 		break;
@@ -319,6 +326,7 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_F1)LoadScene(0);
 	if (m_inputPressed & KEY_F2)LoadScene(1);
 	if (m_inputPressed & KEY_F3)LoadScene(2);
+	if (m_inputPressed & KEY_F4)LoadScene(3);
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
 }
