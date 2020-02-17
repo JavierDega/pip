@@ -141,10 +141,10 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		{
 			Vector2 curPlaneNormal = planeNormals[j];
 			decimal curPlaneDist = planeDists[j];
-			if (DistPtToPlane(pt, curPlaneNormal, curPlaneDist) <= 0) {
+			if (DistPtToPlane(pt, curPlaneNormal, curPlaneDist) >= 0) {
 				ptIn = false;
 			}
-			if (DistPtToPlane(nextPt, curPlaneNormal, curPlaneDist) <= 0) {
+			if (DistPtToPlane(nextPt, curPlaneNormal, curPlaneDist) >= 0) {
 				nextPtIn = false;
 			}
 		}
@@ -210,26 +210,26 @@ bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2
 
 	if (pos1Axis <= pos2Axis)
 	{
-		if (pos1Axis + max < pos2Axis - min2)
+		if (pos1Axis + max < pos2Axis + min2)
 		{
 			//Separating axis
 			return false;
 		}
 		else {
 			//Retrieve important info, like penetration amount on such axis
-			penetration = pos1Axis + max - (pos2Axis - min2);
+			penetration = pos1Axis + max - (pos2Axis + min2);
 			return true;
 		}
 	}
 	else 
 	{
-		if (pos2Axis + max2 < pos1Axis - min)
+		if (pos2Axis + max2 < pos1Axis + min)
 		{
 			//Separating axis
 			return false;
 		}
 		else {
-			penetration = pos2Axis + max2 - (pos1Axis - min);
+			penetration = pos2Axis + max2 - (pos1Axis + min);
 			return true;
 		}
 	}
