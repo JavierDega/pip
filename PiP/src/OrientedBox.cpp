@@ -141,10 +141,10 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		{
 			Vector2 curPlaneNormal = planeNormals[j];
 			decimal curPlaneDist = planeDists[j];
-			if (DistPtToPlane(pt, curPlaneNormal, curPlaneDist) >= 0) {
+			if (DistPtToPlane(pt, curPlaneNormal, curPlaneDist) > 0) {
 				ptIn = false;
 			}
-			if (DistPtToPlane(nextPt, curPlaneNormal, curPlaneDist) >= 0) {
+			if (DistPtToPlane(nextPt, curPlaneNormal, curPlaneDist) > 0) {
 				nextPtIn = false;
 			}
 		}
