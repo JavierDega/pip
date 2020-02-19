@@ -128,13 +128,13 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	break;
 	}
 	//Clipping
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 4; i++) {
 		//Clip against four planes with sutherland hodgmann, only ignoring those sitting in reference face
 		//If pt one is out and next in, Record intersection point and point in. If both are in, record second point.
 		//If pt one is in and pt two out record intersection point
 		//In our case, ignore all intersection point
 		Vector2 pt = boxPoints[i];
-		Vector2 nextPt = boxPoints[i + 1];
+		Vector2 nextPt = boxPoints[ (i + 1 < 4) ? i + 1 : 0];
 		bool ptIn = true;
 		bool nextPtIn = true;
 		for (int j = 0; j < 4; j++)
