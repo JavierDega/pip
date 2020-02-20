@@ -61,7 +61,7 @@ void Solver::ContinuousStep(decimal dt)
 		for (int i = 0; i < m_rigidbodies.size(); i++) {
 			for (int j = i + 1; j < m_rigidbodies.size(); j++) {
 				Manifold currentManifold = Manifold();
-				if (decimal t = m_rigidbodies[i]->ComputeSweep(m_rigidbodies[j], dt, currentManifold)) {
+				if (decimal t = m_rigidbodies[i]->SweepWith(m_rigidbodies[j], dt, currentManifold)) {
 					//They collide during the frame, store
 					if ( t <= firstCollision) {
 						firstCollision = t;
@@ -102,7 +102,7 @@ void Solver::Step(decimal dt)
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
 			Manifold currentManifold;
-			if (m_rigidbodies[i]->ComputeIntersect(m_rigidbodies[j], currentManifold)) {
+			if (m_rigidbodies[i]->IntersectWith(m_rigidbodies[j], currentManifold)) {
 				//They collide during the frame, store
 				manifolds.push_back(currentManifold);//add manifolds
 			}

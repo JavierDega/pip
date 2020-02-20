@@ -18,7 +18,7 @@ Circle::~Circle()
 {
 }
 
-bool Circle::ComputeIntersect(Rigidbody* rb2, Manifold& manifold)
+bool Circle::IntersectWith(Rigidbody* rb2, Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
@@ -98,7 +98,7 @@ bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	return false;
 }
 
-decimal Circle::ComputeSweep(Rigidbody* rb2, decimal dt, Manifold& manifold)
+decimal Circle::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
 	return rb2->SweepWith(this, dt, manifold);
 }

@@ -16,7 +16,7 @@ OrientedBox::~OrientedBox()
 {
 }
 
-bool OrientedBox::ComputeIntersect(Rigidbody* rb2, math::Manifold& manifold)
+bool OrientedBox::IntersectWith(Rigidbody* rb2, math::Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
@@ -170,7 +170,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	return true;
 }
 
-decimal OrientedBox::ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold)
+decimal OrientedBox::SweepWith(Rigidbody* rb2, decimal dt, math::Manifold& manifold)
 {
 	return rb2->SweepWith(this, dt, manifold);
 }

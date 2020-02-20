@@ -13,11 +13,11 @@ public:
 	~Rigidbody();
 
 	//Visitor pattern
-	virtual bool ComputeIntersect(Rigidbody* rb2, math::Manifold& manifold) = 0;
+	virtual bool IntersectWith(Rigidbody* rb2, math::Manifold& manifold) = 0;
 	virtual bool IntersectWith(Circle* rb2, math::Manifold& manifold) = 0;
 	virtual bool IntersectWith(Capsule* rb2, math::Manifold& manifold) = 0;
 	virtual bool IntersectWith(OrientedBox* rb2, math::Manifold& manifold) = 0;
-	virtual decimal ComputeSweep(Rigidbody* rb2, decimal dt, math::Manifold& manifold) = 0;
+	virtual decimal SweepWith(Rigidbody* rb2, decimal dt, math::Manifold& manifold) = 0;
 	virtual decimal SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold) = 0;
 	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) = 0;
 	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold) = 0;

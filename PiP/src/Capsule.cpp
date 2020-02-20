@@ -28,7 +28,7 @@ Capsule::~Capsule()
 {
 }
 
-bool Capsule::ComputeIntersect(Rigidbody* rb2, Manifold& manifold)
+bool Capsule::IntersectWith(Rigidbody* rb2, Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
@@ -138,7 +138,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	return false;
 }
 
-decimal Capsule::ComputeSweep(Rigidbody* rb2, decimal dt, Manifold& manifold)
+decimal Capsule::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
 	return rb2->SweepWith(this, dt, manifold);
 }
