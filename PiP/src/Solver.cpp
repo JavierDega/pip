@@ -3,7 +3,7 @@
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(0.0f)
 {
 }
 
@@ -182,10 +182,12 @@ void Solver::ComputeResponse(const Manifold& manifold)
 
 	//Contact point number agnostic collision response
 	decimal e = 1; //Coefficient of restitution
+	Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / (decimal)manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
+	rb1->m_angularVelocity = 0;
+	rb2->m_angularVelocity = 0;
 	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
 		Vector2 curContactPoint = manifold.contactPoints[i];
-		Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
 		Vector2 rA = (curContactPoint - rb1->m_position).Perp();
 		Vector2 rB = (curContactPoint - rb2->m_position).Perp();
 		decimal impulse = -(1 + e) * vBA.Dot(n) / (1 / ma + 1 / mb + Pow(rA.Dot(n), 2) / ia + Pow(rB.Dot(n), 2) / ib);

@@ -103,9 +103,9 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		planeDists[3] = (m_position + Vector2(0, -m_halfExtents.y).Rotate(m_rotation)).Dot(planeNormals[3]);
 		//Points to clip
 		boxPoints[0] = rb2->m_position + rotExtents2;
-		boxPoints[1] = rb2->m_position + Vector2( -rotExtents2.x, rotExtents2.y );
-		boxPoints[2] = rb2->m_position - rotExtents2;
-		boxPoints[3] = rb2->m_position + Vector2( rotExtents2.x, -rotExtents2.y );
+		boxPoints[1] = rb2->m_position - rotExtents2;
+		boxPoints[2] = rb2->m_position + rotExtents2.Perp();
+		boxPoints[3] = rb2->m_position - rotExtents2.Perp();
 	}
 	break;
 	case SatCollision::OBJ2:
@@ -121,9 +121,9 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		planeDists[3] = (rb2->m_position + Vector2(0, -rb2->m_halfExtents.y).Rotate(rb2->m_rotation)).Dot(planeNormals[3]);
 
 		boxPoints[0] = m_position + rotExtents;
-		boxPoints[1] = m_position + Vector2(-rotExtents.x, rotExtents.y);
-		boxPoints[2] = m_position - rotExtents;
-		boxPoints[3] = m_position + Vector2(rotExtents.x, -rotExtents.y);
+		boxPoints[1] = m_position - rotExtents;
+		boxPoints[2] = m_position + rotExtents.Perp();
+		boxPoints[3] = m_position - boxPoints[2];
 	}
 	break;
 	}
@@ -194,8 +194,8 @@ bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2
 {
 	decimal pos1Axis = pos1.Dot(axis);
 	decimal pos2Axis = pos2.Dot(axis);
-	Vector2 p[4]{ Vector2(rotExtents), Vector2(-rotExtents.x, rotExtents.y), Vector2(-rotExtents), Vector2(rotExtents.x, -rotExtents.y) };
-	Vector2 p2[4]{ Vector2(rotExtents2), Vector2(-rotExtents2.x, rotExtents2.y), Vector2(-rotExtents2), Vector2(rotExtents2.x, -rotExtents2.y) };
+	Vector2 p[4]{ rotExtents, -rotExtents, rotExtents.Perp(), -p[2] };
+	Vector2 p2[4]{ rotExtents2, -rotExtents2, rotExtents2.Perp(), -p2[2] };
 	decimal min = 0, max = 0;
 	decimal min2 = 0, max2 = 0;
 
