@@ -3,7 +3,7 @@
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(0.0f)
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
@@ -180,11 +180,12 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal ia = rb1->m_inertia;
 	decimal ib = rb2->m_inertia;
 
-	//Contact point number agnostic collision response
-	decimal e = 1; //Coefficient of restitution
 	Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / (decimal)manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
+	//Ignore separating velocities
+	if (vBA.Dot(n) > 0) return;
 	rb1->m_angularVelocity = 0;
 	rb2->m_angularVelocity = 0;
+	decimal e = 1; //Coefficient of restitution
 	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
 		Vector2 curContactPoint = manifold.contactPoints[i];
