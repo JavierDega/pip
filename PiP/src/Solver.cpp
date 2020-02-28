@@ -180,8 +180,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal ia = rb1->m_inertia;
 	decimal ib = rb2->m_inertia;
 
-	Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / (decimal)manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
 	//Ignore separating velocities
+	Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / (decimal)manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
 	if (vBA.Dot(n) > 0) return;
 	rb1->m_angularVelocity = 0;
 	rb2->m_angularVelocity = 0;

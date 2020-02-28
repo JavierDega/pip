@@ -100,7 +100,7 @@ void TestApp::LoadScene(unsigned int index)
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT";
-		m_solver.AddBody(new OrientedBox(Vector2(-5, 5), 45 * DEG2RAD, Vector2(5, 0), 0.0f, Vector2(), 10.f, false, Vector2(1, 1)));
+		m_solver.AddBody(new OrientedBox(Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, Vector2(), 10.f, false, Vector2(1, 1)));
 		m_solver.AddBody(new OrientedBox(Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, Vector2(), 10.f, false, Vector2(1, 1)));
 	}
 	default:

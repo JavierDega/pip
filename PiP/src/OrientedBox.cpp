@@ -96,11 +96,11 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		planeNormals[1] = -planeNormals[0];
 		planeNormals[2] = Vector2(0, 1).Rotate(m_rotation);
 		planeNormals[3] = -planeNormals[2];
-	
+		
 		planeDists[0] = (m_position + m_halfExtents.x * planeNormals[0]).Dot(planeNormals[0]);
-		planeDists[1] = (m_position - m_halfExtents.x * planeNormals[1]).Dot(planeNormals[1]);
+		planeDists[1] = (m_position + m_halfExtents.x * planeNormals[1]).Dot(planeNormals[1]);
 		planeDists[2] = (m_position + m_halfExtents.y * planeNormals[2]).Dot(planeNormals[2]);
-		planeDists[3] = (m_position - m_halfExtents.y * planeNormals[3]).Dot(planeNormals[3]);
+		planeDists[3] = (m_position + m_halfExtents.y * planeNormals[3]).Dot(planeNormals[3]);
 		//Points to clip (Need to be in order for clipping to work!)
 		boxPoints[0] = rb2->m_position + rotExtents2;
 		boxPoints[1] = rb2->m_position + rotExtents2.Perp();
@@ -116,9 +116,9 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		planeNormals[3] = -planeNormals[2];
 
 		planeDists[0] = (rb2->m_position + rb2->m_halfExtents.x * planeNormals[0]).Dot(planeNormals[0]);
-		planeDists[1] = (rb2->m_position - rb2->m_halfExtents.x * planeNormals[1]).Dot(planeNormals[1]);
+		planeDists[1] = (rb2->m_position + rb2->m_halfExtents.x * planeNormals[1]).Dot(planeNormals[1]);
 		planeDists[2] = (rb2->m_position + rb2->m_halfExtents.y * planeNormals[2]).Dot(planeNormals[2]);
-		planeDists[3] = (rb2->m_position - rb2->m_halfExtents.y * planeNormals[3]).Dot(planeNormals[3]);
+		planeDists[3] = (rb2->m_position + rb2->m_halfExtents.y * planeNormals[3]).Dot(planeNormals[3]);
 
 		boxPoints[0] = m_position + rotExtents;
 		boxPoints[1] = m_position + rotExtents.Perp();
