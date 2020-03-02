@@ -171,6 +171,32 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//wa' = wa + r1*j*n/Ia;
 	//wb' = wb - r2*j*n/Ib;
 
+	//Chris Hecker's physics sample
+	/*vector_2 Position =
+		Configuration.BoundingBox.aVertices[CollidingCornerIndex];
+
+	vector_2 CMToCornerPerp = GetPerpendicular(Position -
+		Configuration.CMPosition);
+
+	vector_2 Velocity = Configuration.CMVelocity +
+		Configuration.AngularVelocity * CMToCornerPerp;
+
+	real ImpulseNumerator = -(r(1) + Body.CoefficientOfRestitution) *
+		DotProduct(Velocity, CollisionNormal);
+
+	float PerpDot = DotProduct(CMToCornerPerp, CollisionNormal);
+
+	real ImpulseDenominator = Body.OneOverMass +
+		Body.OneOverCMMomentOfInertia * PerpDot * PerpDot;
+
+	real Impulse = ImpulseNumerator / ImpulseDenominator;
+
+	Configuration.CMVelocity += Impulse * Body.OneOverMass * CollisionNormal;
+
+	Configuration.AngularVelocity +=
+		Impulse * Body.OneOverCMMomentOfInertia * PerpDot;
+		*/
+
 	Rigidbody* rb1 = manifold.rb1;
 	Rigidbody* rb2 = manifold.rb2;
 	//Collision normal point to A by convention
@@ -179,26 +205,35 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal mb = rb2->m_mass;
 	decimal ia = rb1->m_inertia;
 	decimal ib = rb2->m_inertia;
-
-	//Ignore separating velocities
-	Vector2 vBA = (rb1->m_velocity - rb2->m_velocity) / (decimal)manifold.numContactPoints;//Div by zero if we submit a manifold with no contactPoints
-	if (vBA.Dot(n) > 0) return;
-	rb1->m_angularVelocity = 0;
-	rb2->m_angularVelocity = 0;
+	//Make multiple contact points work by caching velocities and then summing local impulses
+	Vector2 resultVelA = rb1->m_velocity;
+	Vector2 resultVelB = rb2->m_velocity;
+	if ((resultVelA - resultVelB).Dot(n) > 0) return;
+	decimal resultAngVelA = rb1->m_angularVelocity;
+	decimal resultAngVelB = rb2->m_angularVelocity;
 	decimal e = 1; //Coefficient of restitution
-	for (int i = 0; i < manifold.numContactPoints; i++) 
+	for (int i = 0; i < manifold.numContactPoints; i++)
 	{
 		Vector2 curContactPoint = manifold.contactPoints[i];
-		Vector2 rA = (curContactPoint - rb1->m_position).Perp();
-		Vector2 rB = (curContactPoint - rb2->m_position).Perp();
-		decimal impulse = -(1 + e) * vBA.Dot(n) / (1 / ma + 1 / mb + Pow(rA.Dot(n), 2) / ia + Pow(rB.Dot(n), 2) / ib);
+		Vector2 ra = (curContactPoint - rb1->m_position).Perp();
+		Vector2 rb = (curContactPoint - rb2->m_position).Perp();
+		Vector2 va = rb1->m_velocity; + rb1->m_angularVelocity * ra;
+		Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb;
+		Vector2 vba = va - vb;
+		decimal impulse = -(1 + e) * vba.Dot(n) / (1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib);
+		//Divide applied impulse between number of contact points
+		//impulse = impulse / manifold.numContactPoints;
 		//#TODO: Handle object kinematics
-		rb1->m_velocity += impulse * n / rb1->m_mass;
-		rb1->m_angularVelocity += rA.Dot(impulse * n) / ia;
+		resultVelA += impulse * n / rb1->m_mass;
+		resultAngVelA += ra.Dot(impulse * n) / ia;
 
-		rb2->m_velocity -= impulse * n / rb2->m_mass;
-		rb2->m_angularVelocity -= rB.Dot(impulse * n) / ib;
+		resultVelB -= impulse * n / rb2->m_mass;
+		resultAngVelB -= rb.Dot(impulse * n) / ib;
 	}
+	rb1->m_velocity = resultVelA;
+	rb1->m_angularVelocity = resultAngVelA;
+	rb2->m_velocity = resultVelB;
+	rb2->m_angularVelocity = resultAngVelB;
 }
 
 Rigidbody * Solver::AddBody(Rigidbody * rb)
