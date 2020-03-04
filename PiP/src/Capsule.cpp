@@ -191,7 +191,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 
 		Vector2 closestPt = ClosestPtToSegment(a, b, c);//Segment in caps1, to point in caps2
 		Vector2 closestVec = closestPt - c;//Point to closestpt in caps segment, also normal
-		if (closestVec.LengthSqr() <= m_radius) {
+		if (closestVec.LengthSqr() <= m_radius * m_radius) {
 			//Fill manifold
 			manifold.normal = closestVec;//Point to A by convention
 			manifold.numContactPoints = 1;
@@ -202,46 +202,38 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		}
 		closestPt = ClosestPtToSegment(a, b, d);
 		closestVec = closestPt - d;
-		if (closestVec.LengthSqr() <= m_radius) {
+		if (closestVec.LengthSqr() <= m_radius * m_radius) {
 			//Fill manifold
-			Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
-			Vector2 sphereEdge = d + closestVec * rb2->m_radius;
 			manifold.normal = closestVec;//Point to A
 			manifold.numContactPoints = 1;
-			manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+			manifold.contactPoints[0] = d;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
 			return true;
 		}
 		closestPt = ClosestPtToSegment(c, d, a);//Segment in caps2, to point in caps1
 		closestVec = closestPt - a;
-		if (closestVec.LengthSqr() <= rab * rab) {
+		if (closestVec.LengthSqr() <= m_radius * m_radius) {
 			//Fill manifold
-			Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
-			Vector2 sphereEdge = a + closestVec * m_radius;
 			manifold.normal = -closestVec;//Point to A
 			manifold.numContactPoints = 1;
-			manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
 			return true;
 		}
 		closestPt = ClosestPtToSegment(c, d, b);
 		closestVec = closestPt - b;
-		if (closestVec.LengthSqr() <= rab * rab) {
+		if (closestVec.LengthSqr() <= m_radius * m_radius) {
 			//Fill manifold
-			Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
-			Vector2 sphereEdge = b + closestVec * m_radius;
 			manifold.normal = -closestVec;//Point to A
 			manifold.numContactPoints = 1;
-			manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
 			return true;
 		}
-		return false;
 	}
-
 	return false;
 }
 
