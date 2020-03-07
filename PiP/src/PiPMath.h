@@ -132,12 +132,12 @@ namespace math {
 			return *this = *this / Rhs;
 		}
 		// Comparison operators
-		inline bool operator==(const Vector2& Rhs)
+		inline bool operator==(const Vector2& Rhs) const
 		{
 			return x == Rhs.x && y == Rhs.y;
 		}
 
-		inline bool operator!=(const Vector2& Rhs)
+		inline bool operator!=(const Vector2& Rhs) const
 		{
 			return !(*this == Rhs);
 		}
@@ -197,9 +197,8 @@ namespace math {
 	inline Vector2 operator*( const decimal& scalar, const Vector2& v ) {
 		return v * scalar;
 	}
-
+	//Return point in segment ab closest to point p
 	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p) {
-		//Return point in segment ab closest to point p
 		Vector2 ab = b - a;
 		Vector2 ap = p - a;
 		Vector2 bp = p - b;

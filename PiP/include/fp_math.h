@@ -226,12 +226,12 @@ namespace fp64 {
 		}
 
 		// Comparison operators
-		inline bool operator==(const Fp64& Rhs)
+		inline bool operator==(const Fp64& Rhs) const
 		{
 			return m_Internal.internal == Rhs.m_Internal.internal;
 		}
 
-		inline bool operator!=(const Fp64& Rhs) 
+		inline bool operator!=(const Fp64& Rhs) const
 		{
 			return !(*this == Rhs);
 		}
