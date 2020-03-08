@@ -79,16 +79,17 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Scene 0: Desc here";
 		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
-		m_solver.AddBody(new Circle(Vector2(-7, 5), 0, Vector2(5, 0), 0, Vector2()));
+		m_solver.AddBody(new Circle(Vector2(-5, 6), 0, Vector2(5, 0), 0, Vector2()));
 		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, 2.f, 1.0f));
+		m_solver.AddBody(new Circle(Vector2(5, 5), 0, Vector2(-5, 0), 0, Vector2()));
 	}
 	break;
 	case 1:
 	{
 		m_sceneName = "Scene 1: Desc here";
 		//m_solver.AddBody(new Capsule(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
-		m_solver.AddBody(new Capsule(Vector2(0, 2), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, 2.0f, 1.0f));
-		m_solver.AddBody(new OrientedBox(Vector2(0, -5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1000.f, false, Vector2(3, 3)));
+		m_solver.AddBody(new Capsule(Vector2(0, 5), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, 2.0f, 1.0f));
+		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 5), 0.0f, Vector2(), 10.f, false, Vector2(2, 2)));
 	}
 	break;
 	case 2:
@@ -248,7 +249,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		}
 		//Turn to char*
 		char* objDesc2 = new char[100];
-		strcpy_s(objDesc2, objDesc.size(), objDesc.c_str());
+		strcpy_s(objDesc2, objDesc.size() + 1, objDesc.c_str());
 		size_t firstPartLength = objDesc.length();
 		snprintf(objDesc2 + firstPartLength, 100 - firstPartLength, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
 

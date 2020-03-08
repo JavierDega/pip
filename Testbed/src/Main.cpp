@@ -6,7 +6,7 @@ using namespace math;
 
 TEST_CASE("Base math queries") {
 	REQUIRE( ClosestPtToSegment(Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)) == Vector2(0, 0) );
-	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2));
+	REQUIRE( DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2) );
 }
 
 int main(int argc, char* argv[])

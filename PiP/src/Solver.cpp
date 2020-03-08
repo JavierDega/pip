@@ -211,25 +211,29 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal resultAngVelA = 0;
 	decimal resultAngVelB = 0;
 	decimal e = 1; //Coefficient of restitution
-	if ((resultVelA - resultVelB).Dot(n) > 0) return;
-	for (int i = 0; i < manifold.numContactPoints; i++)
+	//if ((resultVelA - resultVelB).Dot(n) > 0) return;
+	Vector2 avgContactPoint = Vector2();
+	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
-		Vector2 curContactPoint = manifold.contactPoints[i];
-		Vector2 ra = (curContactPoint - rb1->m_position).Perp();
-		Vector2 rb = (curContactPoint - rb2->m_position).Perp();
-		Vector2 va = rb1->m_velocity; + rb1->m_angularVelocity * ra;
-		Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb;
-		Vector2 vba = va - vb;
-		decimal impulse = -(1 + e) * vba.Dot(n) / (1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib);
-		//Divide applied impulse between number of contact points
-		impulse = impulse / manifold.numContactPoints;
-		//#TODO: Handle object kinematics
-		resultVelA += impulse * n / rb1->m_mass;
-		resultAngVelA += ra.Dot(impulse * n) / ia;
-
-		resultVelB -= impulse * n / rb2->m_mass;
-		resultAngVelB -= rb.Dot(impulse * n) / ib;
+		avgContactPoint += manifold.contactPoints[i];
 	}
+	avgContactPoint /= manifold.numContactPoints;
+
+	Vector2 ra = (avgContactPoint - rb1->m_position).Perp();
+	Vector2 rb = (avgContactPoint - rb2->m_position).Perp();
+	Vector2 va = rb1->m_velocity; + rb1->m_angularVelocity * ra;
+	Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb;
+	Vector2 vba = va - vb;
+	decimal impulse = -(1 + e) * vba.Dot(n) / (1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib);
+	//Divide applied impulse between number of contact points
+	//impulse = impulse / manifold.numContactPoints;
+	//#TODO: Handle object kinematics
+	resultVelA += impulse * n / rb1->m_mass;
+	resultAngVelA += ra.Dot(impulse * n) / ia;
+
+	resultVelB -= impulse * n / rb2->m_mass;
+	resultAngVelB -= rb.Dot(impulse * n) / ib;
+
 	rb1->m_velocity = resultVelA;
 	rb1->m_angularVelocity = resultAngVelA;
 	rb2->m_velocity = resultVelB;
