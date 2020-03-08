@@ -22,4 +22,5 @@ public:
 	decimal m_timestep;
 	decimal m_gravity;
 	std::vector<Rigidbody*> m_rigidbodies;
+	std::vector<math::Manifold> m_currentManifolds;
 };

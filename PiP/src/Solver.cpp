@@ -98,18 +98,18 @@ void Solver::Step(decimal dt)
 		rb->m_rotation += rb->m_angularVelocity * dt;
 	}
 	//Upwards collision check
-	std::vector<Manifold> manifolds;
+	m_currentManifolds.clear();
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
 			Manifold currentManifold;
 			if (m_rigidbodies[i]->IntersectWith(m_rigidbodies[j], currentManifold)) {
 				//They collide during the frame, store
-				manifolds.push_back(currentManifold);//add manifolds
+				m_currentManifolds.push_back(currentManifold);//add manifolds
 			}
 		}
 	}
 	//Collision response
-	for (Manifold manifold : manifolds) ComputeResponse(manifold);
+	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
 
 }
 

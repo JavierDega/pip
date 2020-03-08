@@ -230,30 +230,33 @@ void TestApp::DrawImgui()
 void TestApp::ImGuiShowRigidbodyEditor()
 {
 	ImGui::Begin("Rigidbody Editor", &m_showRigidbodyEditor);
+	ImGui::Text("Rigidbodies");
 	ImGui::Columns(2);
 	ImGui::Separator();
 
 	for (int i = 0; i < m_solver.m_rigidbodies.size(); i++) {
 		Rigidbody * rb = m_solver.m_rigidbodies[i];
+		std::string objShape;
+		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
+			objShape = "Circle";
+		}
+		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
+			objShape = "Capsule";
+		}
+		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(rb)) {
+			objShape = "OrientedBox";
+		}
 		//Turn to char*
 		char* strId = new char[10];
 		snprintf(strId, 10, "Rb%i", i);//Worth revising this
-		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u", "Rigidbody", i);
+		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u", objShape.c_str(), i);
 		ImGui::NextColumn();
-		std::string objDesc;
-		if (Circle * circle = dynamic_cast<Circle*>(rb)) {
-			objDesc = "Circle, pos: ";
-		}
-		else if (Capsule * capsule = dynamic_cast<Capsule*>(rb)) {
-			objDesc = "Capsule, pos: ";
-		}
-		//Turn to char*
-		char* objDesc2 = new char[100];
-		strcpy_s(objDesc2, objDesc.size() + 1, objDesc.c_str());
-		size_t firstPartLength = objDesc.length();
-		snprintf(objDesc2 + firstPartLength, 100 - firstPartLength, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
 
-		ImGui::Text(objDesc2);
+		//Turn to char*
+		char* objDesc = new char[100];
+		snprintf(objDesc, 100, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
+
+		ImGui::Text(objDesc);
 		ImGui::NextColumn();
 		if (nodeOpen)
 		{
@@ -300,6 +303,77 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::NextColumn();
 
 			ImGui::TreePop();
+		}
+	}
+	ImGui::Columns(1);
+	ImGui::Separator();
+
+	ImGui::Text("Manifolds, contact point information");
+	ImGui::Columns(2);
+	ImGui::Separator();
+
+	for (int i = 0; i < m_solver.m_currentManifolds.size(); i++) {
+		//Turn to char*
+		Manifold curManifold = m_solver.m_currentManifolds[i];
+		char* strId = new char[10];
+		snprintf(strId, 10, "Mf%i", i);//Worth revising this
+		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u", "Manifold", i);
+		ImGui::NextColumn();
+
+		std::string obj1;
+		std::string obj2;
+		//Turn to char*
+		if (Circle* circle = dynamic_cast<Circle*>(curManifold.rb1)) {
+			obj1 = "Circle";
+		}
+		else if (Capsule* capsule = dynamic_cast<Capsule*>(curManifold.rb1)) {
+			obj1 = "Capsule";
+		}
+		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(curManifold.rb1)) {
+			obj1 = "OrientedBox";
+		}
+
+		if (Circle* circle = dynamic_cast<Circle*>(curManifold.rb2)) {
+			obj2 = "Circle";
+		}
+		else if (Capsule* capsule = dynamic_cast<Capsule*>(curManifold.rb2)) {
+			obj2 = "Capsule";
+		}
+		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(curManifold.rb2)) {
+			obj2 = "OrientedBox";
+		}
+		char* manifoldTitle = new char[100];
+		snprintf(manifoldTitle, 100, "%s vs %s", obj1.c_str(), obj2.c_str());//Worth revising this
+
+		ImGui::Text(manifoldTitle);
+		ImGui::NextColumn();
+		if (nodeOpen) {
+			ImGui::Text("%s, position:", obj1.c_str());
+			ImGui::NextColumn();
+			ImGui::Text("X(%f), Y(%f)", curManifold.rb1->m_position.x, curManifold.rb1->m_position.y);
+			ImGui::NextColumn();
+
+			ImGui::Text("%s, position:", obj2.c_str());
+			ImGui::NextColumn();
+			ImGui::Text("X(%f), Y(%f)", curManifold.rb2->m_position.x, curManifold.rb2->m_position.y);
+			ImGui::NextColumn();
+
+			ImGui::Text("Penetration:");
+			ImGui::NextColumn();
+			ImGui::Text("%f", curManifold.penetration);
+			ImGui::NextColumn();
+
+			ImGui::Text("Normal:");
+			ImGui::NextColumn();
+			ImGui::Text("X(%f), Y(%f)", curManifold.normal.x, curManifold.normal.y);
+			ImGui::NextColumn();
+
+			for (int i = 0; i < curManifold.numContactPoints; i++) {
+				ImGui::Text("ContactPoint_%i", i);
+				ImGui::NextColumn();
+				ImGui::Text("X(%f), Y(%f)", curManifold.contactPoints[i].x, curManifold.contactPoints[i].y);
+				ImGui::NextColumn();
+			}
 		}
 	}
 	ImGui::Columns(1);
