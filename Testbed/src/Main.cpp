@@ -2,6 +2,7 @@
 #include "catch.h"
 #include "TestApp.h"
 #include "Circle.h"
+#include "OrientedBox.h"
 using namespace math;
 
 TEST_CASE("Base math queries") {
@@ -27,9 +28,28 @@ TEST_CASE("Collision response behavior") {
 
 	REQUIRE( (circle1->m_velocity == Vector2(-1, 0) && circle2->m_velocity == Vector2(1, 0)) );
 
-	delete mockSolver; mockSolver = nullptr;
 	delete circle1; circle1 = nullptr;
 	delete circle2, circle2 = nullptr;
+	
+	OrientedBox* obb1 = new OrientedBox(Vector2(-1.f, 0.f), 0.f, Vector2(5.f, 1.f));
+	OrientedBox* obb2 = new OrientedBox(Vector2(1.f, 0.f), 0.f, Vector2(-5.f, 1.f));
+
+	testManifold.contactPoints[0] = Vector2(0, 1.0f);
+	testManifold.contactPoints[1] = Vector2(0, -1.0f);
+	testManifold.numContactPoints = 2;
+	testManifold.normal = Vector2(-1, 0);
+	testManifold.rb1 = obb1;
+	testManifold.rb2 = obb2;
+
+	mockSolver->ComputeResponse(testManifold);
+
+	REQUIRE((obb1->m_velocity == Vector2(-5.f, 1.f) && obb2->m_velocity == Vector2(5.f, 1.f)));
+
+	delete obb1; obb1 = nullptr;
+	delete obb2; obb2 = nullptr;
+
+	delete mockSolver; mockSolver = nullptr;
+	//Possibly test collision detection logging aswell?
 }
 
 int main(int argc, char* argv[])
