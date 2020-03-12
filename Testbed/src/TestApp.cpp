@@ -374,6 +374,8 @@ void TestApp::ImGuiShowRigidbodyEditor()
 				ImGui::Text("X(%f), Y(%f)", curManifold.contactPoints[i].x, curManifold.contactPoints[i].y);
 				ImGui::NextColumn();
 			}
+
+			ImGui::TreePop();
 		}
 	}
 	ImGui::Columns(1);
