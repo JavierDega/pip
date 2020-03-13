@@ -7,7 +7,7 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(false), m_inputDown(0), m_inputPressed(0), 
+	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(false), m_displayManifolds(false), m_inputDown(0), m_inputPressed(0), 
 	m_inputHeld(0), m_inputReleased(0)
 {
 }
@@ -189,6 +189,23 @@ void TestApp::UpdateLoop()
 			}
 			glEnd();
 		}
+
+		//Render manifolds
+		if (m_displayManifolds) {
+			//Draw in red: Normal with magnitude at all contact points
+			for (const Manifold& manifold : m_solver.m_currentManifolds) {
+				for (int i = 0; i < manifold.numContactPoints; i++) {
+					Vector2 currentPoint = manifold.contactPoints[i];
+					glLoadIdentity();
+					//Draw arrow of normal
+					glTranslatef(currentPoint.x, currentPoint.y, -1);
+					glBegin(GL_LINE_STRIP);
+					glVertex3f(0, 0, 0);
+					glVertex3f(manifold.normal.x, manifold.normal.y, 0);
+					glEnd();
+				}
+			}
+		}
 		DrawImgui();
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_window);
@@ -218,8 +235,9 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Show Rigidbody Editor", &m_showRigidbodyEditor);      // Edit bools storing our window open/close state
-
+		ImGui::Checkbox("Show Rigidbody Editor", &m_showRigidbodyEditor); 
+		ImGui::Checkbox("Display manifolds", &m_displayManifolds);
+		
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
