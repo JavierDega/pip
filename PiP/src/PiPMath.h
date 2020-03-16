@@ -166,7 +166,7 @@ namespace math {
 			return Vector2(-y, x);
 		}
 		//Rotate a point about the origin
-		inline Vector2 Rotated(decimal rad) {
+		inline Vector2 Rotated(decimal rad) const {
 			Vector2 copy = *this;
 			return copy.Rotate(rad);
 		}

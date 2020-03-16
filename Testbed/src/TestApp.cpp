@@ -130,6 +130,7 @@ void TestApp::UpdateLoop()
 		m_solver.Update(dt);
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
+		glColor3f(255, 255, 255);
 		for (Rigidbody* rb : m_solver.m_rigidbodies) {
 			//Draw
 			glLoadIdentity();
@@ -192,15 +193,21 @@ void TestApp::UpdateLoop()
 
 		//Render manifolds
 		if (m_displayManifolds) {
+			glColor3f(255, 0, 0);
 			//Draw in red: Normal with magnitude at all contact points
-			for (const Manifold& manifold : m_solver.m_currentManifolds) {
+			for ( Manifold& manifold : m_solver.m_currentManifolds) {
 				for (int i = 0; i < manifold.numContactPoints; i++) {
 					Vector2 currentPoint = manifold.contactPoints[i];
+					Vector2 normalRotLeft = manifold.normal.Rotated(15 * DEG2RAD)*0.9f;
+					Vector2 normalRotRight = manifold.normal.Rotated(-15 * DEG2RAD)*0.9f;
 					glLoadIdentity();
 					//Draw arrow of normal
 					glTranslatef(currentPoint.x, currentPoint.y, -1);
 					glBegin(GL_LINE_STRIP);
 					glVertex3f(0, 0, 0);
+					glVertex3f(manifold.normal.x, manifold.normal.y, 0);
+					glVertex3f(normalRotLeft.x, normalRotLeft.y, 0);
+					glVertex3f(normalRotRight.x, normalRotRight.y, 0);
 					glVertex3f(manifold.normal.x, manifold.normal.y, 0);
 					glEnd();
 				}
