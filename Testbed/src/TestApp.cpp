@@ -89,15 +89,15 @@ void TestApp::LoadScene(unsigned int index)
 		m_sceneName = "Scene 1: Desc here";
 		//m_solver.AddBody(new Capsule(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
 		m_solver.AddBody(new Capsule(Vector2(0, 5), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, 2.0f, 1.0f));
-		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 5), 0.0f, Vector2(), 10.f, false, Vector2(2, 2)));
+		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, Vector2(), 1000.f, false, Vector2(2, 2)));
 	}
 	break;
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new Circle(Vector2(0, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.f));
+		m_solver.AddBody(new Circle(Vector2(0.1f, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.f));
 		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false));
-		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 46 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(0.5f, 0.5f)));
+		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(0.5f, 0.5f)));
 	}
 	break;
 	case 3:
