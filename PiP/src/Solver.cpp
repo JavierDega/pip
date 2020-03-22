@@ -211,7 +211,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal resultAngVelA = 0;
 	decimal resultAngVelB = 0;
 	decimal e = 1; //Coefficient of restitution
-	//if ((resultVelA - resultVelB).Dot(n) > 0) return;
+
 	Vector2 avgContactPoint = Vector2();
 	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
@@ -225,9 +225,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb;
 	Vector2 vba = va - vb;
 	decimal impulse = -(1 + e) * vba.Dot(n) / (1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib);
-	//Divide applied impulse between number of contact points
-	//impulse = impulse / manifold.numContactPoints;
-	//#TODO: Handle object kinematics
+
 	resultVelA += impulse * n / rb1->m_mass;
 	resultAngVelA += ra.Dot(impulse * n) / ia;
 

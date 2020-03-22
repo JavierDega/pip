@@ -142,6 +142,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		rb2->m_position - rotExtents.Perp()
 	};
 	
+	decimal biggestPen = 0;
 	for (int i = 0; i < 3; i++) {
 		//Generate box segment and do like Caps-Caps query
 		Vector2 c = boxPoints[i];
@@ -149,50 +150,46 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 
 		Vector2 closestPt = ClosestPtToSegment(a, b, c);//Segment in caps, to point in box
 		Vector2 closestVec = closestPt - c;//Point to closestpt in caps segment, also normal
-		if (closestVec.LengthSqr() <= m_radius * m_radius) {
+		if ( m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = closestVec;//Point to A by convention
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = c;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
-			return true;
 		}
 		closestPt = ClosestPtToSegment(a, b, d);
 		closestVec = closestPt - d;
-		if (closestVec.LengthSqr() <= m_radius * m_radius) {
+		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = closestVec;
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = d;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
-			return true;
 		}
 		closestPt = ClosestPtToSegment(c, d, a);
 		closestVec = closestPt - a;
-		if (closestVec.LengthSqr() <= m_radius * m_radius) {
+		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = -closestVec;
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
-			return true;
 		}
 		closestPt = ClosestPtToSegment(c, d, b);
 		closestVec = closestPt - b;
-		if (closestVec.LengthSqr() <= m_radius * m_radius) {
+		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = -closestVec;
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
-			return true;
 		}
 	}
-	return false;
+	return manifold.numContactPoints;
 }
 
 decimal Capsule::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)
