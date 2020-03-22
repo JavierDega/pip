@@ -40,7 +40,7 @@ public:
 	//Timestep
 	decimal m_prevTime;
 	//Imgui
-	bool m_showDemoWindow, m_showRigidbodyEditor, m_displayManifolds;
+	bool m_showDemoWindow, m_showRigidbodyEditor, m_displayManifolds, m_drawGrid;
 	//Input: Short =16 bits. 0-5 load scenes. 6 = Step mode(Q).
 	short m_inputDown, m_inputPressed, m_inputHeld, m_inputReleased;
 };

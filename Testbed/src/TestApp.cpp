@@ -7,8 +7,8 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(false), m_displayManifolds(false), m_inputDown(0), m_inputPressed(0), 
-	m_inputHeld(0), m_inputReleased(0)
+	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(false), m_displayManifolds(false), m_drawGrid(false),
+	m_inputDown(0), m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
 {
 }
 
@@ -213,6 +213,33 @@ void TestApp::UpdateLoop()
 				}
 			}
 		}
+		//Render grid
+		if (m_drawGrid) {
+			glColor3f(0, 255, 0);
+			//Calculate the space we can see? To see how far to draw lines
+			//Draw in positive and negative x, and positive and negative y
+			glLoadIdentity();
+			glTranslatef( 0, 0, -1);//Slightly in front of geometry
+			glBegin(GL_LINE);
+			glVertex3f(-100.f, 0, 0);
+			glVertex3f(100.f, 0, 0);
+			glVertex3f(0, -100.f, 0);
+			glVertex3f(0, 100.f, 0);
+			glColor3f(0, 200.f, 0);
+			for (int i = 1; i < 100; i++) {
+				//Horizontal
+				glVertex3f(-100.f, i, 0);
+				glVertex3f(100.f, i, 0);
+				glVertex3f(-100.f, -i, 0);
+				glVertex3f(100.f, -i, 0);
+				//Vertical
+				glVertex3f(i, -100.f, 0);
+				glVertex3f(i, 100.f, 0);
+				glVertex3f(-i, -100.f, 0);
+				glVertex3f(-i, 100.f, 0);
+			}
+			glEnd();
+		}
 		DrawImgui();
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_window);
@@ -244,7 +271,7 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Show Rigidbody Editor", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds", &m_displayManifolds);
-		
+		ImGui::Checkbox("Show Grid", &m_drawGrid);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
