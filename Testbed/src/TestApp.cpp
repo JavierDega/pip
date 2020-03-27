@@ -89,7 +89,7 @@ void TestApp::LoadScene(unsigned int index)
 		m_sceneName = "Scene 1: Desc here";
 		//m_solver.AddBody(new Capsule(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
 		m_solver.AddBody(new Capsule(Vector2(0, 5), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, 2.0f, 1.0f));
-		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, Vector2(), 1000.f, false, Vector2(2, 2)));
+		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 46 * DEG2RAD, Vector2(0, 0), 0.0f, Vector2(), 100.f, false, Vector2(2, 2)));
 	}
 	break;
 	case 2:

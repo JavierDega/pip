@@ -157,6 +157,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 			manifold.contactPoints[0] = c;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 		closestPt = ClosestPtToSegment(a, b, d);
 		closestVec = closestPt - d;
@@ -167,6 +168,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 			manifold.contactPoints[0] = d;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 		closestPt = ClosestPtToSegment(c, d, a);
 		closestVec = closestPt - a;
@@ -177,6 +179,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 		closestPt = ClosestPtToSegment(c, d, b);
 		closestVec = closestPt - b;
@@ -187,6 +190,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
 			manifold.rb2 = rb2;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 	}
 	return manifold.numContactPoints;
