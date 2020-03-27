@@ -208,10 +208,9 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Make multiple contact points work by caching velocities and then summing local impulses
 	Vector2 resultVelA = rb1->m_velocity;
 	Vector2 resultVelB = rb2->m_velocity;
-	decimal resultAngVelA = 0;
-	decimal resultAngVelB = 0;
+	decimal resultAngVelA = rb1->m_angularVelocity;
+	decimal resultAngVelB = rb2->m_angularVelocity;
 	decimal e = 1; //Coefficient of restitution
-
 	Vector2 avgContactPoint = Vector2();
 	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
@@ -225,10 +224,9 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb;
 	Vector2 vba = va - vb;
 	decimal impulse = -(1 + e) * vba.Dot(n) / (1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib);
-
+	
 	resultVelA += impulse * n / rb1->m_mass;
 	resultAngVelA += ra.Dot(impulse * n) / ia;
-
 	resultVelB -= impulse * n / rb2->m_mass;
 	resultAngVelB -= rb.Dot(impulse * n) / ib;
 

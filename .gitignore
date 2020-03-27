@@ -35,3 +35,8 @@
 
 #Build
 Build/*
+
+#Vim / vimdiff
+*.swp
+*.swo
+*.orig

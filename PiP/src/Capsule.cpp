@@ -152,7 +152,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		Vector2 closestVec = closestPt - c;//Point to closestpt in caps segment, also normal
 		if ( m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
-			manifold.normal = closestVec;//Point to A by convention
+			manifold.normal = closestVec.Normalized();//Point to A by convention
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = c;
 			manifold.rb1 = this;
@@ -162,7 +162,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		closestVec = closestPt - d;
 		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
-			manifold.normal = closestVec;
+			manifold.normal = closestVec.Normalized();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = d;
 			manifold.rb1 = this;
@@ -172,7 +172,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		closestVec = closestPt - a;
 		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
-			manifold.normal = -closestVec;
+			manifold.normal = -closestVec.Normalized();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
@@ -182,7 +182,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		closestVec = closestPt - b;
 		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
-			manifold.normal = -closestVec;
+			manifold.normal = -closestVec.Normalized();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = closestPt;
 			manifold.rb1 = this;
