@@ -218,17 +218,25 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	}
 	avgContactPoint /= manifold.numContactPoints;
 
-	Vector2 ra = (avgContactPoint - rb1->m_position).Perp();
-	Vector2 rb = (avgContactPoint - rb2->m_position).Perp();
-	Vector2 va = rb1->m_velocity; + rb1->m_angularVelocity * ra;
-	Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb;
+	Vector2 ra = (avgContactPoint - rb1->m_position);
+	Vector2 rb = (avgContactPoint - rb2->m_position);
+	Vector3 ra3d = ra.ToVector3();
+	Vector3 rb3d = rb.ToVector3();
+	Vector3 n3d = n.ToVector3();
+	Vector2 va = rb1->m_velocity; + rb1->m_angularVelocity * ra.Perp();
+	Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb.Perp();
 	Vector2 vba = va - vb;
-	decimal impulse = -(1 + e) * vba.Dot(n) / (1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib);
+	decimal num = -(1 + e) * vba.Dot(n);
+	decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
+	//decimal denom = 1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib;
+	decimal impulse = num/denom;
 	
 	resultVelA += impulse * n / rb1->m_mass;
-	resultAngVelA += ra.Dot(impulse * n) / ia;
+	resultAngVelA += impulse * ra.Cross(n) / ia;
+	//resultAngVelA += ra.Perp().Dot(impulse * n) / ia;
 	resultVelB -= impulse * n / rb2->m_mass;
-	resultAngVelB -= rb.Dot(impulse * n) / ib;
+	resultAngVelB -= impulse * rb.Cross(n) / ib;
+	//resultAngVelB -= rb.Perp().Dot(impulse * n) / ib;
 
 	rb1->m_velocity = resultVelA;
 	rb1->m_angularVelocity = resultAngVelA;

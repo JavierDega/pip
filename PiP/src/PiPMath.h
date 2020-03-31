@@ -69,6 +69,7 @@ namespace math {
 #endif
 	}
 	
+	struct Vector3;
 	struct Vector2 {
 
 		decimal x, y;
@@ -80,6 +81,14 @@ namespace math {
 		Vector2(decimal x, decimal y)
 			: x(x), y(y) {
 		}
+
+		// Conversions
+		inline explicit operator bool() const
+		{
+			return x != 0 || y != 0;
+		}
+
+		inline Vector3 ToVector3();
 
 		//Arithmetic operators
 		inline Vector2 operator+(Vector2 Rhs) const
@@ -190,6 +199,7 @@ namespace math {
 		
 	};
 
+
 	inline Vector2 operator*( const Vector2& v, const decimal& scalar ) {
 		return Vector2(v.x * scalar, v.y * scalar);
 	}
@@ -197,6 +207,7 @@ namespace math {
 	inline Vector2 operator*( const decimal& scalar, const Vector2& v ) {
 		return v * scalar;
 	}
+
 	//Return point in segment ab closest to point p
 	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p) {
 		Vector2 ab = b - a;
@@ -223,6 +234,146 @@ namespace math {
 		Vector2 planeToP = p - q;
 		return planeToP.Dot(n);
 	}
+
+	struct Vector3 {
+
+		decimal x, y, z;
+
+		Vector3()
+			: x(0), y(0), z(0)
+		{}
+
+		Vector3(decimal x, decimal y, decimal z)
+			: x(x), y(y), z(z) {
+		}
+
+		// Conversions
+		inline explicit operator bool() const
+		{
+			return x != 0 || y != 0 || z!=0;
+		}
+
+		inline Vector2 ToVector2() const
+		{
+			return Vector2(x, y);//Lose Z data
+		}
+
+		//Arithmetic operators
+		inline Vector3 operator+(Vector3 Rhs) const
+		{
+			return Vector3(x + Rhs.x, y + Rhs.y, z + Rhs.z);
+		}
+
+		inline Vector3 operator-(Vector3 Rhs) const
+		{
+			return Vector3(x - Rhs.x, y - Rhs.y, z - Rhs.z);
+		}
+
+		inline Vector3 operator-() const
+		{
+			return Vector3(-x, -y, -z);
+		}
+
+		inline friend Vector3 operator*(const Vector3& v, const decimal& scalar);
+
+		inline friend Vector3 operator*(const decimal& scalar, const Vector3& v);
+
+		inline Vector3 operator/(const decimal& scalar) const
+		{
+			return Vector3(x / scalar, y / scalar, z / scalar);
+		}
+
+		// Arithmetic assignment operators
+		inline Vector3& operator+=(Vector3 Rhs)
+		{
+			*this = *this + Rhs;
+			return *this;
+		}
+
+		inline Vector3& operator-=(Vector3 Rhs)
+		{
+			*this = *this - Rhs;
+			return *this;
+		}
+
+		inline Vector3& operator*=(decimal Rhs)
+		{
+			*this = *this * Rhs;
+			return *this;
+		}
+
+		inline Vector3& operator/=(decimal Rhs)
+		{
+			*this = *this / Rhs;
+			return *this;
+		}
+		// Comparison operators
+		inline bool operator==(const Vector3& Rhs) const
+		{
+			return x == Rhs.x && y == Rhs.y && z == Rhs.z;
+		}
+
+		inline bool operator!=(const Vector3& Rhs) const
+		{
+			return !(*this == Rhs);
+		}
+
+		inline decimal Length() {
+			return Sqrt(x * x + y * y + z * z);
+		}
+
+		inline Vector3 Normalize() {
+			decimal length = Length();
+			x /= length;
+			y /= length;
+			z /= length;
+			return *this;
+		}
+
+		inline Vector3 Normalized() {
+			decimal length = Length();
+			return Vector3(x / length, y / length, z / length);
+		}
+
+		inline decimal LengthSqr() {
+			return this->Dot(*this);
+		}
+
+		inline Vector3 RotateAxisAngle(Vector3 axis, decimal rad) {
+			//axis must be unit vector;
+			*this = *this * Cos(rad) + axis.Cross(*this) * Sin(rad) + (1 - Cos(rad)) * axis.Dot(*this) * axis;
+			return *this;
+		}
+
+		//Rotate a point about the origin
+		inline Vector3 RotatedAxisAngle(Vector3 axis, decimal rad) const {
+			Vector3 copy = *this;
+			return copy.RotateAxisAngle(axis, rad);
+		}
+
+		inline decimal Dot(Vector3 v2) {
+			return x * v2.x + y * v2.y + z * v2.z;//Same as LengthSqr
+		}
+
+		inline Vector3 Cross(const Vector3& v2) const
+		{
+			return Vector3(y * v2.z - z * v2.y, z * v2.x - x * v2.z, x * v2.y - y * v2.x);
+		}
+	};
+
+	inline Vector3 Vector2::ToVector3()
+	{
+		return Vector3(x, y, 0);
+	}
+
+	inline Vector3 operator*(const Vector3& v, const decimal& scalar) {
+		return Vector3(v.x * scalar, v.y * scalar, v.z * scalar);
+	}
+
+	inline Vector3 operator*(const decimal& scalar, const Vector3& v) {
+		return v * scalar;
+	}
+
 	//Quaternions
 	typedef struct Vector4Str {
 		decimal x, y, z, w;

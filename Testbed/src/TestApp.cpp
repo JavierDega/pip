@@ -226,7 +226,7 @@ void TestApp::UpdateLoop()
 			glVertex3f(0, -100.f, 0);
 			glVertex3f(0, 100.f, 0);
 			glColor3f(0, 200.f, 0);
-			for (int i = 1; i < 100; i++) {
+			for (float i = 1; i < 100; i++) {
 				//Horizontal
 				glVertex3f(-100.f, i, 0);
 				glVertex3f(100.f, i, 0);
