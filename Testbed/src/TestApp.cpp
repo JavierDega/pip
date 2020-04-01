@@ -106,6 +106,14 @@ void TestApp::LoadScene(unsigned int index)
 		m_solver.AddBody(new OrientedBox(Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, Vector2(), 100.f, false));
 		m_solver.AddBody(new OrientedBox(Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, Vector2(), 100.f, false));
 	}
+	break;
+	case 4:
+	{
+		m_sceneName = "Scene 4: Capsule to capsule";
+		m_solver.AddBody(new Capsule(Vector2(0, 5), 0 * DEG2RAD));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 15.f, false, 2.f));
+	}
+	break;
 	default:
 		break;
 	}
@@ -458,6 +466,8 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_F2)LoadScene(1);
 	if (m_inputPressed & KEY_F3)LoadScene(2);
 	if (m_inputPressed & KEY_F4)LoadScene(3);
+	if (m_inputPressed & KEY_F5)LoadScene(4);
+
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
 }

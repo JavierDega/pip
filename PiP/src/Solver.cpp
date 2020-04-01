@@ -229,7 +229,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal num = -(1 + e) * vba.Dot(n);
 	decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
 	//decimal denom = 1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib;
-	decimal impulse = num/denom;
+	decimal impulse = num / denom;
 	
 	resultVelA += impulse * n / rb1->m_mass;
 	resultAngVelA += impulse * ra.Cross(n) / ia;
