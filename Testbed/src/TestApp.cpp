@@ -281,7 +281,7 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
-		ImGui::Checkbox("Show Grid", &m_drawGrid);
+		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
@@ -457,7 +457,9 @@ void TestApp::ProcessInput()
 	short t = glfwGetKey(m_window, GLFW_KEY_T);
 	short y = glfwGetKey(m_window, GLFW_KEY_Y);
 	short u = glfwGetKey(m_window, GLFW_KEY_U);
-	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6) | (y << 7) | (u << 8);
+	short i = glfwGetKey(m_window, GLFW_KEY_I);
+
+	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6) | (y << 7) | (u << 8) | (i << 9);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
@@ -476,4 +478,5 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
 	if (m_inputPressed & KEY_Y)m_showRigidbodyEditor ^= 1;
 	if (m_inputPressed & KEY_U)m_displayManifolds ^= 1;
+	if (m_inputPressed & KEY_I)m_drawGrid ^= 1;
 }
