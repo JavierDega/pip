@@ -138,7 +138,7 @@ void TestApp::UpdateLoop()
 		m_solver.Update(dt);
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
-		glColor3f(255, 255, 255);
+		glColor3f(1, 1, 1);
 		for (Rigidbody* rb : m_solver.m_rigidbodies) {
 			//Draw
 			glLoadIdentity();
@@ -201,7 +201,7 @@ void TestApp::UpdateLoop()
 
 		//Render manifolds
 		if (m_displayManifolds) {
-			glColor3f(255, 0, 0);
+			glColor3f(1, 0, 0);
 			//Draw in red: Normal with magnitude at all contact points
 			for ( Manifold& manifold : m_solver.m_currentManifolds) {
 				for (int i = 0; i < manifold.numContactPoints; i++) {
@@ -223,17 +223,19 @@ void TestApp::UpdateLoop()
 		}
 		//Render grid
 		if (m_drawGrid) {
-			glColor3f(0, 255, 0);
+			glColor3f(0, 1, 0);
 			//Calculate the space we can see? To see how far to draw lines
 			//Draw in positive and negative x, and positive and negative y
 			glLoadIdentity();
 			glTranslatef( 0, 0, -1);//Slightly in front of geometry
-			glBegin(GL_LINE);
+			glBegin(GL_LINES);
 			glVertex3f(-100.f, 0, 0);
 			glVertex3f(100.f, 0, 0);
 			glVertex3f(0, -100.f, 0);
 			glVertex3f(0, 100.f, 0);
-			glColor3f(0, 200.f, 0);
+			glEnd();
+			glBegin(GL_LINES);
+			glColor3f(0, 0.5f, 0);
 			for (float i = 1; i < 100; i++) {
 				//Horizontal
 				glVertex3f(-100.f, i, 0);
@@ -277,8 +279,8 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Show Rigidbody Editor", &m_showRigidbodyEditor); 
-		ImGui::Checkbox("Display manifolds", &m_displayManifolds);
+		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
+		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid", &m_drawGrid);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
@@ -453,7 +455,9 @@ void TestApp::ProcessInput()
 	short f5 = glfwGetKey(m_window, GLFW_KEY_F5);
 	short r = glfwGetKey(m_window, GLFW_KEY_R);
 	short t = glfwGetKey(m_window, GLFW_KEY_T);
-	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6);
+	short y = glfwGetKey(m_window, GLFW_KEY_Y);
+	short u = glfwGetKey(m_window, GLFW_KEY_U);
+	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6) | (y << 7) | (u << 8);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
@@ -470,4 +474,6 @@ void TestApp::ProcessInput()
 
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
+	if (m_inputPressed & KEY_Y)m_showRigidbodyEditor ^= 1;
+	if (m_inputPressed & KEY_U)m_displayManifolds ^= 1;
 }
