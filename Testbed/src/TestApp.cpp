@@ -25,7 +25,7 @@ int TestApp::Init()
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
 	/* Create a windowed mode window and its OpenGL context */
-	m_window = glfwCreateWindow(800, 800, "Hello World", NULL, NULL);
+	m_window = glfwCreateWindow(800, 800, "PiP physics demo", NULL, NULL);
 	if (!m_window){
 		glfwTerminate();
 		return -1;
@@ -299,30 +299,35 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	for (int i = 0; i < m_solver.m_rigidbodies.size(); i++) {
 		Rigidbody * rb = m_solver.m_rigidbodies[i];
 		std::string objShape;
+		char* objDesc = new char[100];
 		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 			objShape = "Circle";
+			snprintf(objDesc, 100, "Radius(%f)", circle->m_radius);
 		}
 		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
 			objShape = "Capsule";
+			snprintf(objDesc, 100, "Radius(%f), Length(%f)", capsule->m_radius, capsule->m_length);
 		}
 		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(rb)) {
 			objShape = "OrientedBox";
+			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", orientedBox->m_halfExtents.x, orientedBox->m_halfExtents.y);//Worth revising this
 		}
 		//Turn to char*
 		char* strId = new char[10];
 		snprintf(strId, 10, "Rb%i", i);//Worth revising this
 		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u", objShape.c_str(), i);
 		ImGui::NextColumn();
-
-		//Turn to char*
-		char* objDesc = new char[100];
-		snprintf(objDesc, 100, "X(%f), Y(%f)", rb->m_position.x, rb->m_position.y);//Worth revising this
-
 		ImGui::Text(objDesc);
 		ImGui::NextColumn();
 		if (nodeOpen)
 		{
 			//Show rotation, velocity, angular velocity
+			ImGui::Text("Position");
+			ImGui::NextColumn();
+			char position[50];
+			snprintf(position, 50, "x(%f), y(%f)", rb->m_position.x, rb->m_position.y);
+			ImGui::Text(position);
+			ImGui::NextColumn();
 			ImGui::Text("Rotation");
 			ImGui::NextColumn();
 			char rotation[50];
