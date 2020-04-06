@@ -89,7 +89,7 @@ void TestApp::LoadScene(unsigned int index)
 		m_sceneName = "Scene 1: Desc here";
 		//m_solver.AddBody(new Capsule(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
 		m_solver.AddBody(new Capsule(Vector2(0, 5), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, 2.0f, 1.0f));
-		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 46 * DEG2RAD, Vector2(0, 0), 0.0f, Vector2(), 100.f, false, Vector2(2, 2)));
+		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, Vector2(), 100.f, false, Vector2(2, 2)));
 	}
 	break;
 	case 2:
@@ -111,7 +111,7 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
 		m_solver.AddBody(new Capsule(Vector2(0, 5), 0 * DEG2RAD));
-		m_solver.AddBody(new Capsule(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 15.f, false, 2.f));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 5.f, false, 2.f));
 	}
 	break;
 	default:
@@ -315,19 +315,13 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		//Turn to char*
 		char* strId = new char[10];
 		snprintf(strId, 10, "Rb%i", i);//Worth revising this
-		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u", objShape.c_str(), i);
+		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u Pos: x(%f), y(%f)", objShape.c_str(), i, rb->m_position.x, rb->m_position.y);
 		ImGui::NextColumn();
 		ImGui::Text(objDesc);
 		ImGui::NextColumn();
 		if (nodeOpen)
 		{
 			//Show rotation, velocity, angular velocity
-			ImGui::Text("Position");
-			ImGui::NextColumn();
-			char position[50];
-			snprintf(position, 50, "x(%f), y(%f)", rb->m_position.x, rb->m_position.y);
-			ImGui::Text(position);
-			ImGui::NextColumn();
 			ImGui::Text("Rotation");
 			ImGui::NextColumn();
 			char rotation[50];

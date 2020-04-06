@@ -21,6 +21,15 @@ class Rigidbody;//Manifold needs fwdecl
 
 namespace math {
 
+	inline decimal Abs(decimal x) 
+	{
+#if USE_FIXEDPOINT
+		return (x >= 0) ? x : -x;
+#else 
+		return abs(x);
+#endif
+	}
+
 	inline decimal Min(decimal x, decimal max) {
 		return x < max ? x : max;
 	}
