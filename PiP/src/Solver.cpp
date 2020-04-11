@@ -231,8 +231,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector3 rb3d = rb.ToVector3();
 	Vector3 n3d = n.ToVector3();
 	//Velocity at contact point seems not to change even with rotating bodies
-	Vector2 va = rb1->m_velocity; + rb1->m_angularVelocity * ra.Perp();
-	Vector2 vb = rb2->m_velocity; + rb2->m_angularVelocity * rb.Perp();
+	Vector2 va = rb1->m_velocity + rb1->m_angularVelocity * ra.Perp();
+	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rb.Perp();
 	cout << "rb1 velocity: x(" << rb1->m_velocity.x << ") y(" << rb1->m_velocity.y << ") velocity at contact point: x(" <<
 		va.x << ") y(" << va.y << ")" << endl;
 	cout << "rb2 velocity: x(" << rb2->m_velocity.x << ") y(" << rb2->m_velocity.y << ") velocity at contact point: x(" <<
