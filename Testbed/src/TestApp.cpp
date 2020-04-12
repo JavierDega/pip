@@ -110,8 +110,11 @@ void TestApp::LoadScene(unsigned int index)
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
-		m_solver.AddBody(new Capsule(Vector2(0, 5), 0 * DEG2RAD));
-		m_solver.AddBody(new Capsule(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 5.f, false, 2.f));
+		m_solver.AddBody(new Capsule(Vector2(0, 4), 15 * DEG2RAD));
+		m_solver.AddBody(new Capsule(Vector2(0, -5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 5000.f, false, 4.f));
+		m_solver.AddBody(new Capsule(Vector2(0, 7), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 5000.f, false, 4.f));
+		m_solver.AddBody(new Capsule(Vector2(-5, 0), 90 * DEG2RAD, Vector2(), 0.0f, Vector2(), 5000.f, false, 4.f));
+		m_solver.AddBody(new Capsule(Vector2(5, 0), 90 * DEG2RAD, Vector2(), 0.0f, Vector2(), 5000.f, false, 4.f));
 	}
 	break;
 	default:

@@ -223,34 +223,34 @@ void Solver::ComputeResponse(const Manifold& manifold)
 
 	Vector2 ra = (avgContactPoint - rb1->m_position);
 	Vector2 rb = (avgContactPoint - rb2->m_position);
+	Vector2 raP = ra.Perp();
+	Vector2 rbP = rb.Perp();
+	//Velocity at contact point seems not to change even with rotating bodies
+	Vector2 va = rb1->m_velocity + rb1->m_angularVelocity * raP;
+	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
+	Vector2 vba = va - vb;// There might be a problem with this collision response approach for objects that dont directly strike each other
+	decimal num = -(1 + e) * vba.Dot(n);
+	//decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
+	decimal denom = 1 / ma + 1 / mb + Pow(raP.Dot(n), 2) / ia + Pow(rbP.Dot(n), 2) / ib;
+	decimal impulse = num / denom;
 	cout << "-----------------------------------Collision Response Info-------------------------------" << endl;
 	cout << "Normal: x(" << n.x << ") y(" << n.y << ")" << endl;
 	cout << "ra (rb1 to contact point): x(" << ra.x << ") y(" << ra.y << ")" << endl;
 	cout << "rb (rb2 to contact point): x(" << rb.x << ") y(" << rb.y << ")" << endl;
-	Vector3 ra3d = ra.ToVector3();
-	Vector3 rb3d = rb.ToVector3();
-	Vector3 n3d = n.ToVector3();
-	//Velocity at contact point seems not to change even with rotating bodies
-	Vector2 va = rb1->m_velocity + rb1->m_angularVelocity * ra.Perp();
-	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rb.Perp();
 	cout << "rb1 velocity: x(" << rb1->m_velocity.x << ") y(" << rb1->m_velocity.y << ") velocity at contact point: x(" <<
 		va.x << ") y(" << va.y << ")" << endl;
 	cout << "rb2 velocity: x(" << rb2->m_velocity.x << ") y(" << rb2->m_velocity.y << ") velocity at contact point: x(" <<
 		vb.x << ") y(" << vb.y << ")" << endl;
-	Vector2 vba = va - vb;
 	cout << "relative velocity vba:" << "x(" << vba.x << ") y(" << vba.y << ")" << endl;
-	decimal num = -(1 + e) * vba.Dot(n);
-	decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
-	//decimal denom = 1 / ma + 1 / mb + Pow(ra.Dot(n), 2) / ia + Pow(rb.Dot(n), 2) / ib;
-	decimal impulse = abs(num / denom);
 	cout << "impulse = " << num << " / " << denom << " = " << impulse << endl;
-	_ASSERT(impulse > 0);
-	resultVelA += (impulse * n3d / rb1->m_mass).ToVector2();
-	resultAngVelA += impulse * ra3d.Cross(n3d).z / ia;
-	//resultAngVelA += ra.Perp().Dot(impulse * n) / ia;
-	resultVelB -= (impulse * n3d / rb2->m_mass).ToVector2();
-	resultAngVelB -= impulse * rb3d.Cross(n3d).z / ib;
-	//resultAngVelB -= rb.Perp().Dot(impulse * n) / ib;
+	//_ASSERT(impulse > 0);
+	impulse = Abs(impulse);
+	resultVelA += impulse * n / rb1->m_mass;
+	//resultAngVelA += impulse * ra3d.Cross(n3d).z / ia;
+	resultAngVelA += raP.Dot(impulse * n) / ia;
+	resultVelB -= impulse * n / rb2->m_mass;
+	//resultAngVelB -= impulse * rb3d.Cross(n3d).z / ib;
+	resultAngVelB -= rbP.Dot(impulse * n) / ib;
 
 	rb1->m_velocity = resultVelA;
 	rb1->m_angularVelocity = resultAngVelA;
