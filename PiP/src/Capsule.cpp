@@ -65,11 +65,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = c + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A by convention
-		manifold.numContactPoints = 1;
-		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints++;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
-		return true;
 	}
 	closestPt = ClosestPtToSegment(a, b, d);
 	closestVec = closestPt - d;
@@ -78,11 +77,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = d + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A
-		manifold.numContactPoints = 1;
-		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints++;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
-		return true;
 	}
 	closestPt = ClosestPtToSegment(c, d, a);//Segment in caps2, to point in caps1
 	closestVec = closestPt - a;
@@ -91,11 +89,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = a + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.numContactPoints = 1;
-		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints++;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
-		return true;
 	}
 	closestPt = ClosestPtToSegment(c, d, b);
 	closestVec = closestPt - b;
@@ -104,13 +101,12 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = b + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.numContactPoints = 1;
 		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+		manifold.numContactPoints++;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
-		return true;
 	}
-	return false;
+	return manifold.numContactPoints;
 }
 
 bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
