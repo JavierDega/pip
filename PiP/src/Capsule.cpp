@@ -65,10 +65,8 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = c + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A by convention
-		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
+		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;//#Things like this assume a static collision resolution that displaces both objects equally
 		manifold.numContactPoints++;
-		manifold.rb1 = this;
-		manifold.rb2 = rb2;
 	}
 	closestPt = ClosestPtToSegment(a, b, d);
 	closestVec = closestPt - d;
@@ -79,8 +77,6 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		manifold.normal = closestVec;//Point to A
 		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
 		manifold.numContactPoints++;
-		manifold.rb1 = this;
-		manifold.rb2 = rb2;
 	}
 	closestPt = ClosestPtToSegment(c, d, a);//Segment in caps2, to point in caps1
 	closestVec = closestPt - a;
@@ -91,8 +87,6 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		manifold.normal = -closestVec;//Point to A
 		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
 		manifold.numContactPoints++;
-		manifold.rb1 = this;
-		manifold.rb2 = rb2;
 	}
 	closestPt = ClosestPtToSegment(c, d, b);
 	closestVec = closestPt - b;
@@ -101,12 +95,16 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = b + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
+		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
 		manifold.numContactPoints++;
+	}
+	if (manifold.numContactPoints) {
+		manifold.penetration = rab - closestVec.Length();
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
+		return true;
 	}
-	return manifold.numContactPoints;
+	else return false;
 }
 
 bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
@@ -123,6 +121,8 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	
 	//Rotate to get line-AABB query
 	//Rotate by cap's rotation and - rotation of the Obb to get it in the AABB's reference frame
+
+	//#TODO: Still need to deal with multiple contact points in this case, just like Caps-caps, caps may be laying on a box side, or the opposite
 
 	//Get Capsule's AB
 	decimal halfLength = m_length / 2;
@@ -149,10 +149,9 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if ( m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = closestVec.Normalized();//Point to A by convention
+			manifold.penetration = m_radius - closestVec.Length();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = c;
-			manifold.rb1 = this;
-			manifold.rb2 = rb2;
 			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 		closestPt = ClosestPtToSegment(a, b, d);
@@ -160,10 +159,9 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = closestVec.Normalized();
+			manifold.penetration = m_radius - closestVec.Length();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = d;
-			manifold.rb1 = this;
-			manifold.rb2 = rb2;
 			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 		closestPt = ClosestPtToSegment(c, d, a);
@@ -171,10 +169,9 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = -closestVec.Normalized();
+			manifold.penetration = m_radius - closestVec.Length();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = closestPt;
-			manifold.rb1 = this;
-			manifold.rb2 = rb2;
 			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 		closestPt = ClosestPtToSegment(c, d, b);
@@ -182,14 +179,18 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
 			//Fill manifold
 			manifold.normal = -closestVec.Normalized();
+			manifold.penetration = m_radius - closestVec.Length();
 			manifold.numContactPoints = 1;
 			manifold.contactPoints[0] = closestPt;
-			manifold.rb1 = this;
-			manifold.rb2 = rb2;
 			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
 		}
 	}
-	return manifold.numContactPoints;
+	if (manifold.numContactPoints) {
+		manifold.rb1 = this;
+		manifold.rb2 = rb2;
+		return true;
+	}
+	else return false;
 }
 
 decimal Capsule::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)

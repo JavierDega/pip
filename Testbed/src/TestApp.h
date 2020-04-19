@@ -19,7 +19,9 @@ enum Keys {
 	KEY_T = (1 << 6),
 	KEY_Y = (1 << 7),
 	KEY_U = (1 << 8),
-	KEY_I = (1 << 9)
+	KEY_I = (1 << 9),
+	KEY_O = (1 << 10),
+	KEY_P = (1 << 11)
 };
 class TestApp
 {

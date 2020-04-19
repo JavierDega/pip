@@ -167,6 +167,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	manifold.rb1 = this;
 	manifold.rb2 = rb2;
 	manifold.normal = minAxis.Dot(aToB) > 0 ? -minAxis : minAxis;
+	manifold.penetration = minPen;
 	return true;
 }
 

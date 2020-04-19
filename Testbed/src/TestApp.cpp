@@ -285,6 +285,8 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
+		ImGui::Checkbox("Ignore separating bodies (O)", &m_solver.m_ignoreSeparatingBodies);
+		ImGui::Checkbox("Static collision resolution (penetration) (P)", &m_solver.m_staticResolution);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
@@ -460,8 +462,10 @@ void TestApp::ProcessInput()
 	short y = glfwGetKey(m_window, GLFW_KEY_Y);
 	short u = glfwGetKey(m_window, GLFW_KEY_U);
 	short i = glfwGetKey(m_window, GLFW_KEY_I);
+	short o = glfwGetKey(m_window, GLFW_KEY_O);
+	short p = glfwGetKey(m_window, GLFW_KEY_P);
 
-	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6) | (y << 7) | (u << 8) | (i << 9);
+	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6) | (y << 7) | (u << 8) | (i << 9) | (o << 10) | (p << 11);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
@@ -481,4 +485,6 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_Y)m_showRigidbodyEditor ^= 1;
 	if (m_inputPressed & KEY_U)m_displayManifolds ^= 1;
 	if (m_inputPressed & KEY_I)m_drawGrid ^= 1;
+	if (m_inputPressed & KEY_O)m_solver.m_ignoreSeparatingBodies ^= 1;
+	if (m_inputPressed & KEY_P)m_solver.m_staticResolution ^= 1;
 }

@@ -29,6 +29,7 @@ bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 	if (ab.LengthSqr() <= Pow((m_radius + rb2->m_radius), 2)) {
 		//Manifold
 		manifold.normal = -ab.Normalize();//Point to A by convention
+		manifold.penetration = m_radius + rb2->m_radius - ab.Length();
 		Vector2 circle1Edge = m_position + ab * m_radius;
 		Vector2 circle2Edge = rb2->m_position - ab * rb2->m_radius;
 		manifold.numContactPoints = 1;
@@ -61,6 +62,7 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = c + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A by convention
+		manifold.penetration = rab - closestVec.Length();
 		manifold.numContactPoints = 1;
 		manifold.contactPoints[0] = (capsuleEdge + sphereEdge) / 2;
 		manifold.rb1 = this;
@@ -89,6 +91,7 @@ bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	if (circleToClosestPt.LengthSqr() <= m_radius * m_radius) {
 		//Assume circle is outside
 		manifold.normal = -circleToClosestPt.Normalize();
+		manifold.penetration = m_radius - circleToClosestPt.Length();
 		manifold.numContactPoints = 1;
 		manifold.contactPoints[0] = (m_position + m_radius * circleToClosestPt + p) / 2;
 		manifold.rb1 = this;

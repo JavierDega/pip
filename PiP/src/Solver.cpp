@@ -6,7 +6,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
@@ -96,7 +96,7 @@ void Solver::Step(decimal dt)
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
-		if( !rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
+		if(!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
 	}
@@ -230,6 +230,13 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
 	Vector2 vba = va - vb;// There might be a problem with this collision response approach for objects that dont directly strike each other
 	decimal vbaDotN = vba.Dot(n);
+	if (m_ignoreSeparatingBodies) {
+		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
+	}
+	if (m_staticResolution) {
+		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
+
+	}
 	_ASSERT(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
 	//decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
