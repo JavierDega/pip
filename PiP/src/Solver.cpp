@@ -229,7 +229,9 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 va = rb1->m_velocity + rb1->m_angularVelocity * raP;
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
 	Vector2 vba = va - vb;// There might be a problem with this collision response approach for objects that dont directly strike each other
-	decimal num = -(1 + e) * vba.Dot(n);
+	decimal vbaDotN = vba.Dot(n);
+	_ASSERT(vbaDotN < 0);
+	decimal num = -(1 + e) * vbaDotN;
 	//decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
 	decimal denom = 1 / ma + 1 / mb + Pow(raP.Dot(n), 2) / ia + Pow(rbP.Dot(n), 2) / ib;
 	decimal impulse = num / denom;
@@ -243,7 +245,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		vb.x << ") y(" << vb.y << ")" << endl;
 	cout << "relative velocity vba:" << "x(" << vba.x << ") y(" << vba.y << ")" << endl;
 	cout << "impulse = " << num << " / " << denom << " = " << impulse << endl;
-	//_ASSERT(impulse > 0);
+	_ASSERT(impulse > 0);
 	impulse = Abs(impulse);
 	resultVelA += impulse * n / rb1->m_mass;
 	//resultAngVelA += impulse * ra3d.Cross(n3d).z / ia;
