@@ -235,6 +235,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	}
 	if (m_staticResolution) {
 		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
+		//If we do this, will kinematic objects get displaced by much?
 
 	}
 	_ASSERT(vbaDotN < 0);
