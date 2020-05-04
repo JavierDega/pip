@@ -204,6 +204,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Rigidbody* rb2 = manifold.rb2;
 	//Collision normal point to A by convention
 	Vector2 n = manifold.normal;//Expected to come normalized already
+	decimal pen = manifold.penetration;
 	decimal ma = rb1->m_mass;
 	decimal mb = rb2->m_mass;
 	decimal ia = rb1->m_inertia;
@@ -228,17 +229,19 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Velocity at contact point seems not to change even with rotating bodies
 	Vector2 va = rb1->m_velocity + rb1->m_angularVelocity * raP;
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
-	Vector2 vba = va - vb;// There might be a problem with this collision response approach for objects that dont directly strike each other
+	Vector2 vba = va - vb;//#There might be a problem with this collision response approach for objects that dont directly strike each other
 	decimal vbaDotN = vba.Dot(n);
+	_ASSERT(vbaDotN < 0);
 	if (m_ignoreSeparatingBodies) {
 		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
 	}
 	if (m_staticResolution) {
 		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
 		//If we do this, will kinematic objects get displaced by much?
-
+		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5;
+		rb1->m_position += pen * n * dispFactor;
+		rb2->m_position -= pen * n * dispFactor;
 	}
-	_ASSERT(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
 	//decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
 	decimal denom = 1 / ma + 1 / mb + Pow(raP.Dot(n), 2) / ia + Pow(rbP.Dot(n), 2) / ib;

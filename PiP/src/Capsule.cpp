@@ -62,10 +62,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	Vector2 closestVec = closestPt - c;//Center of sphere to closestpt in caps segment, also normal
 	if (closestVec.LengthSqr() <= rab * rab) {
 		//Fill manifold
+		manifold.penetration = rab - closestVec.Length();
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = c + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A by convention
-		manifold.penetration = rab - closestVec.Length();
 		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;//#Things like this assume a static collision resolution that displaces both objects equally
 		manifold.numContactPoints++;
 	}
@@ -73,10 +73,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	closestVec = closestPt - d;
 	if (closestVec.LengthSqr() <= rab * rab) {
 		//Fill manifold
+		manifold.penetration = rab - closestVec.Length();
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * m_radius;
 		Vector2 sphereEdge = d + closestVec * rb2->m_radius;
 		manifold.normal = closestVec;//Point to A
-		manifold.penetration = rab - closestVec.Length();
 		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
 		manifold.numContactPoints++;
 	}
@@ -84,10 +84,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	closestVec = closestPt - a;
 	if (closestVec.LengthSqr() <= rab*rab) {
 		//Fill manifold
+		manifold.penetration = rab - closestVec.Length();
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = a + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.penetration = rab - closestVec.Length();
 		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
 		manifold.numContactPoints++;
 	}
@@ -95,10 +95,10 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	closestVec = closestPt - b;
 	if (closestVec.LengthSqr() <= rab * rab) {
 		//Fill manifold
+		manifold.penetration = rab - closestVec.Length();
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;
 		Vector2 sphereEdge = b + closestVec * m_radius;
 		manifold.normal = -closestVec;//Point to A
-		manifold.penetration = rab - closestVec.Length();
 		manifold.contactPoints[manifold.numContactPoints] = (capsuleEdge + sphereEdge) / 2;
 		manifold.numContactPoints++;
 	}
