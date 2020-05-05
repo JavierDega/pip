@@ -6,7 +6,8 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(false), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(false), m_logCollisionInfo(false),
+	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
@@ -246,6 +247,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
 	decimal denom = 1 / ma + 1 / mb + Pow(raP.Dot(n), 2) / ia + Pow(rbP.Dot(n), 2) / ib;
 	decimal impulse = num / denom;
+
+	if (m_logCollisionInfo) {
 	cout << "-----------------------------------Collision Response Info-------------------------------" << endl;
 	cout << "Normal: x(" << n.x << ") y(" << n.y << ")" << endl;
 	cout << "ra (rb1 to contact point): x(" << ra.x << ") y(" << ra.y << ")" << endl;
@@ -256,6 +259,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		vb.x << ") y(" << vb.y << ")" << endl;
 	cout << "relative velocity vba:" << "x(" << vba.x << ") y(" << vba.y << ")" << endl;
 	cout << "impulse = " << num << " / " << denom << " = " << impulse << endl;
+	}
 	_ASSERT(impulse > 0);
 	impulse = Abs(impulse);
 	resultVelA += impulse * n / rb1->m_mass;

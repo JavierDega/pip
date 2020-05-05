@@ -282,6 +282,7 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
