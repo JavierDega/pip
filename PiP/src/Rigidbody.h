@@ -28,6 +28,6 @@ public:
 	decimal m_angularVelocity;
 	math::Vector2 m_acceleration;
 	decimal m_mass;
-	bool m_isKinematic;
+	bool m_isKinematic, m_isSleeping, m_wasSleeping;
 	decimal m_inertia;//Scalar in 2D aka 2nd moment of mass, tensor or matrix in 3D
 };

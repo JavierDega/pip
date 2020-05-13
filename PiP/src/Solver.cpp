@@ -100,6 +100,11 @@ void Solver::Step(decimal dt)
 		if(!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
+		//Send bodies to sleep
+		if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
+			
+		}
+		
 	}
 	//Upwards collision check
 	m_currentManifolds.clear();
@@ -206,10 +211,10 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Collision normal point to A by convention
 	Vector2 n = manifold.normal;//Expected to come normalized already
 	decimal pen = manifold.penetration;
-	decimal ma = rb1->m_mass;
-	decimal mb = rb2->m_mass;
-	decimal ia = rb1->m_inertia;
-	decimal ib = rb2->m_inertia;
+	decimal invMassA = rb1->m_isKinematic ? 0 : 1 / rb1->m_mass;
+	decimal invMassB = rb2->m_isKinematic ? 0 : 1 / rb2->m_mass;
+	decimal invIA = rb1->m_isKinematic ? 0 : 1 / rb1->m_inertia;//Inverse Inertia
+	decimal invIB = rb2->m_isKinematic ? 0 : 1 / rb2->m_inertia;
 	//Make multiple contact points work by caching velocities and then summing local impulses
 	Vector2 resultVelA = rb1->m_velocity;
 	Vector2 resultVelB = rb2->m_velocity;
@@ -217,6 +222,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal resultAngVelB = rb2->m_angularVelocity;
 	decimal e = 1; //Coefficient of restitution
 	Vector2 avgContactPoint = Vector2();
+	//#TODO: Not final
 	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
 		avgContactPoint += manifold.contactPoints[i];
@@ -241,33 +247,31 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		//If we do this, will kinematic objects get displaced by much?
 		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5;
 		rb1->m_position += pen * n * dispFactor;
-		rb2->m_position -= pen * n * dispFactor;
+		rb2->m_position -= pen * n * (1 - dispFactor);
 	}
 	decimal num = -(1 + e) * vbaDotN;
-	//decimal denom = 1 / ma + 1 / mb + (ra3d.Cross(ra3d.Cross(n3d)) / ia + rb3d.Cross(rb3d.Cross(n3d)) / ib).Dot(n3d);
-	decimal denom = 1 / ma + 1 / mb + Pow(raP.Dot(n), 2) / ia + Pow(rbP.Dot(n), 2) / ib;
+	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulse = num / denom;
 
 	if (m_logCollisionInfo) {
-	cout << "-----------------------------------Collision Response Info-------------------------------" << endl;
-	cout << "Normal: x(" << n.x << ") y(" << n.y << ")" << endl;
-	cout << "ra (rb1 to contact point): x(" << ra.x << ") y(" << ra.y << ")" << endl;
-	cout << "rb (rb2 to contact point): x(" << rb.x << ") y(" << rb.y << ")" << endl;
-	cout << "rb1 velocity: x(" << rb1->m_velocity.x << ") y(" << rb1->m_velocity.y << ") velocity at contact point: x(" <<
-		va.x << ") y(" << va.y << ")" << endl;
-	cout << "rb2 velocity: x(" << rb2->m_velocity.x << ") y(" << rb2->m_velocity.y << ") velocity at contact point: x(" <<
-		vb.x << ") y(" << vb.y << ")" << endl;
-	cout << "relative velocity vba:" << "x(" << vba.x << ") y(" << vba.y << ")" << endl;
-	cout << "impulse = " << num << " / " << denom << " = " << impulse << endl;
+	cout << "-----------------------------------Collision Response Info-------------------------------" << endl
+	<< "Normal: x(" << n.x << ") y(" << n.y << ")" << endl
+	<< "ra (rb1 to contact point): x(" << ra.x << ") y(" << ra.y << ")" << endl
+	<< "rb (rb2 to contact point): x(" << rb.x << ") y(" << rb.y << ")" << endl
+	<< "rb1 velocity: x(" << rb1->m_velocity.x << ") y(" << rb1->m_velocity.y << ") velocity at contact point: x(" <<
+	va.x << ") y(" << va.y << ")" << endl
+	<< "rb2 velocity: x(" << rb2->m_velocity.x << ") y(" << rb2->m_velocity.y << ") velocity at contact point: x(" <<
+	vb.x << ") y(" << vb.y << ")" << endl
+	<< "relative velocity vba:" << "x(" << vba.x << ") y(" << vba.y << ")" << endl
+	<< "impulse = " << num << " / " << denom << " = " << impulse << endl;
 	}
+
 	_ASSERT(impulse > 0);
 	impulse = Abs(impulse);
-	resultVelA += impulse * n / rb1->m_mass;
-	//resultAngVelA += impulse * ra3d.Cross(n3d).z / ia;
-	resultAngVelA += raP.Dot(impulse * n) / ia;
-	resultVelB -= impulse * n / rb2->m_mass;
-	//resultAngVelB -= impulse * rb3d.Cross(n3d).z / ib;
-	resultAngVelB -= rbP.Dot(impulse * n) / ib;
+	resultVelA += impulse * n * invMassA;
+	resultAngVelA += raP.Dot(impulse * n) * invIA;
+	resultVelB -= impulse * n * invMassB;
+	resultAngVelB -= rbP.Dot(impulse * n) * invIB;
 
 	rb1->m_velocity = resultVelA;
 	rb1->m_angularVelocity = resultAngVelA;
