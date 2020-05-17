@@ -58,7 +58,7 @@ void Solver::ContinuousStep(decimal dt)
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration*dt;
 	}
-	while ( dt > (decimal) 0.f) {
+	while (dt >  0.f) {
 		decimal firstCollision = 1;//Normalized dt
 		Manifold firstManifold = Manifold();
 		//Upwards collision check
@@ -100,11 +100,22 @@ void Solver::Step(decimal dt)
 		if(!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
-		//Send bodies to sleep
-		if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
-			
+		//Send dynamic bodies to sleep
+		if (!rb->m_isKinematic) {
+			if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
+				rb->m_timeInSleep += dt;
+				//If its static for two timesteps or more, put to sleep
+				if (rb->m_timeInSleep >= m_timestep * 2) {
+					rb->m_isSleeping = true;
+				}
+			}
+			else {
+				rb->m_timeInSleep = 0;
+				if (rb->m_isSleeping) {
+					rb->m_isSleeping = false;
+				}
+			}
 		}
-		
 	}
 	//Upwards collision check
 	m_currentManifolds.clear();

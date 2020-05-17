@@ -354,10 +354,6 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::InputFloat("Mass", &rb->m_mass, 0.1f);
 			ImGui::NextColumn();
 
-			ImGui::Text("Kinematic");
-			ImGui::NextColumn();
-			ImGui::Checkbox("Is Kinematic?", &rb->m_isKinematic);
-			ImGui::NextColumn();
 
 			ImGui::Text("Inertia");
 			ImGui::NextColumn();
@@ -366,6 +362,15 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text(inertia);
 			ImGui::NextColumn();
 
+			ImGui::Text("Kinematic");
+			ImGui::NextColumn();
+			ImGui::Checkbox("Is Kinematic?", &rb->m_isKinematic);
+			ImGui::NextColumn();
+
+			ImGui::Text("Sleeping");
+			ImGui::NextColumn();
+			ImGui::Checkbox("Is Sleeping?", &rb->m_isSleeping);
+			ImGui::NextColumn();
 			ImGui::TreePop();
 		}
 	}
