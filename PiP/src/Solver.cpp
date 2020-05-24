@@ -92,14 +92,27 @@ void Solver::ContinuousStep(decimal dt)
 
 void Solver::Step(decimal dt)
 {
+	//Upwards collision check
+	m_currentManifolds.clear();
+	for (int i = 0; i < m_rigidbodies.size(); i++) {
+		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
+			Manifold currentManifold;
+			if (m_rigidbodies[i]->IntersectWith(m_rigidbodies[j], currentManifold)) {
+				//They collide during the frame, store
+				m_currentManifolds.push_back(currentManifold);//add manifolds
+			}
+		}
+	}
+	//Collision response
+	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
 	//Integration
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
-		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
-		if(!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
+		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
+		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		//Send dynamic bodies to sleep
 		if (!rb->m_isKinematic) {
 			if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
@@ -117,20 +130,6 @@ void Solver::Step(decimal dt)
 			}
 		}
 	}
-	//Upwards collision check
-	m_currentManifolds.clear();
-	for (int i = 0; i < m_rigidbodies.size(); i++) {
-		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
-			Manifold currentManifold;
-			if (m_rigidbodies[i]->IntersectWith(m_rigidbodies[j], currentManifold)) {
-				//They collide during the frame, store
-				m_currentManifolds.push_back(currentManifold);//add manifolds
-			}
-		}
-	}
-	//Collision response
-	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
-
 }
 
 void Solver::ComputeResponse(const Manifold& manifold)
@@ -249,7 +248,6 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
 	Vector2 vba = va - vb;//#There might be a problem with this collision response approach for objects that dont directly strike each other
 	decimal vbaDotN = vba.Dot(n);
-	_ASSERT(vbaDotN < 0);
 	if (m_ignoreSeparatingBodies) {
 		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
 	}
@@ -260,22 +258,10 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		rb1->m_position += pen * n * dispFactor;
 		rb2->m_position -= pen * n * (1 - dispFactor);
 	}
+	_ASSERT(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulse = num / denom;
-
-	if (m_logCollisionInfo) {
-	cout << "-----------------------------------Collision Response Info-------------------------------" << endl
-	<< "Normal: x(" << n.x << ") y(" << n.y << ")" << endl
-	<< "ra (rb1 to contact point): x(" << ra.x << ") y(" << ra.y << ")" << endl
-	<< "rb (rb2 to contact point): x(" << rb.x << ") y(" << rb.y << ")" << endl
-	<< "rb1 velocity: x(" << rb1->m_velocity.x << ") y(" << rb1->m_velocity.y << ") velocity at contact point: x(" <<
-	va.x << ") y(" << va.y << ")" << endl
-	<< "rb2 velocity: x(" << rb2->m_velocity.x << ") y(" << rb2->m_velocity.y << ") velocity at contact point: x(" <<
-	vb.x << ") y(" << vb.y << ")" << endl
-	<< "relative velocity vba:" << "x(" << vba.x << ") y(" << vba.y << ")" << endl
-	<< "impulse = " << num << " / " << denom << " = " << impulse << endl;
-	}
 
 	_ASSERT(impulse > 0);
 	impulse = Abs(impulse);
@@ -283,6 +269,19 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	resultAngVelA += raP.Dot(impulse * n) * invIA;
 	resultVelB -= impulse * n * invMassB;
 	resultAngVelB -= rbP.Dot(impulse * n) * invIB;
+
+	/*if (m_logCollisionInfo) {
+		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
+			<< "Normal: " << n << endl
+			<< "ra (rb1 to contact point): " << ra << endl
+			<< "rb (rb2 to contact point): " << rb << endl
+			<< "rb1 velocity: " << rb1->m_velocity << " velocity at contact point: " << va << endl
+			<< "rb2 velocity: " << rb2->m_velocity << " velocity at contact point: " << vb << endl
+			<< "relative velocity vba: " << vba << endl
+			<< "impulse = " << num << " / " << denom << " = " << impulse << endl
+			<< "Result: velA: x(" << resultVelA << " velB = " << resultVelB << endl
+			<< "angVelA = " << resultAngVelA << " angVelB = " << resultAngVelB << endl;
+	}*/
 
 	rb1->m_velocity = resultVelA;
 	rb1->m_angularVelocity = resultAngVelA;

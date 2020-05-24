@@ -2,14 +2,14 @@
 #define PIP_MATH
 
 #include <cmath>
-
+#include <iostream>
 #include "fp_math.h"
 
 #define USE_FIXEDPOINT 0
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
 #define RAD2DEG 180/(PI)
-
+ 
 //Inline Base Math, Vector, Matrix, Quaternion library
 #if USE_FIXEDPOINT
 typedef fp64::Fp64 decimal;
@@ -206,6 +206,9 @@ namespace math {
 			return (x * v2.y) - (y * v2.x);
 		}
 		
+		//cout overrides
+		//friend std::ostream& operator << (std::ostream& out, const Vector2& v);
+		//friend std::istream& operator >> (std::istream& in, Vector2& v);
 	};
 
 
@@ -216,6 +219,22 @@ namespace math {
 	inline Vector2 operator*( const decimal& scalar, const Vector2& v ) {
 		return v * scalar;
 	}
+
+	/*std::ostream& operator << (std::ostream& out, const Vector2& v)
+	{
+		out << "x(" << v.x << ")" << " y(" << v.y << ")";
+		return out;
+	}*/
+	
+
+	/*std::istream& operator >> (std::istream& in, Vector2& v)
+	{
+		std::cout << "Enter X";
+		in >> v.x;
+		std::cout << "Enter Y";
+		in >> v.y;
+		return in;
+	}*/
 
 	//Return point in segment ab closest to point p
 	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p) {
