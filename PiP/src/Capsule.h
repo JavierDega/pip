@@ -6,7 +6,7 @@ class Capsule :
 {
 public:
 	Capsule(math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
-		decimal angVel = 0.0f, math::Vector2 accel = math::Vector2(), decimal mass = 1.0f, bool isKinematic = false, 
+		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false, 
 		decimal length = 1.0f, decimal radius = 1.0f);
 	~Capsule();
 	virtual bool IntersectWith(Rigidbody* rb2, math::Manifold& manifold) override;

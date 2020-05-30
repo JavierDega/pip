@@ -77,41 +77,40 @@ void TestApp::LoadScene(unsigned int index)
 	switch (index) {
 	case 0:
 	{
-		m_sceneName = "Scene 0: Desc here";
+		m_sceneName = "Scene 0: Circles v Capsule";
 		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
-		m_solver.AddBody(new Circle(Vector2(-5, 6), 0, Vector2(5, 0), 0, Vector2()));
-		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, 2.f, 1.0f));
-		m_solver.AddBody(new Circle(Vector2(5, 5), 0, Vector2(-5, 0), 0, Vector2()));
+		m_solver.AddBody(new Circle(Vector2(-5, 6), 0, Vector2(5, 0)));
+		m_solver.AddBody(new Capsule(Vector2(0, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f, 0.9f, false, 2.f, 1.0f));
+		m_solver.AddBody(new Circle(Vector2(5, 5), 0, Vector2(-5, 0)));
 	}
 	break;
 	case 1:
 	{
-		m_sceneName = "Scene 1: Desc here";
-		//m_solver.AddBody(new Capsule(Vector2(0, 10), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, false, .5f, 1.0f));
-		m_solver.AddBody(new Capsule(Vector2(0, 5), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 10.f, false, 2.0f, 1.0f));
-		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, Vector2(), 100.f, false, Vector2(2, 2)));
+		m_sceneName = "Scene 1: Capsule v OrientedBox";
+		m_solver.AddBody(new Capsule(Vector2(0, 5), 45 * DEG2RAD, Vector2(), 0.0f, 10.f, 1.0f, false, 2.0f, 1.0f));
+		m_solver.AddBody(new OrientedBox(Vector2( 0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f, 1.0f, false, Vector2(2, 2)));
 	}
 	break;
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new Circle(Vector2(0.1f, 5), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.f));
-		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false));
-		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, Vector2(), 100.f, false, Vector2(0.5f, 0.5f)));
+		m_solver.AddBody(new Circle(Vector2(0.1f, 5), 0 * DEG2RAD, Vector2(), 0.0f, 1.f));
+		m_solver.AddBody(new OrientedBox(Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f));
+		m_solver.AddBody(new OrientedBox(Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f, 1.f, false, Vector2(0.5f, 0.5f)));
 	}
 	break;
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT";
-		m_solver.AddBody(new OrientedBox(Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, Vector2(), 100.f, false));
-		m_solver.AddBody(new OrientedBox(Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, Vector2(), 100.f, false));
+		m_solver.AddBody(new OrientedBox(Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f));
+		m_solver.AddBody(new OrientedBox(Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f));
 	}
 	break;
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
-		m_solver.AddBody(new Capsule(Vector2(0, 4), 0 * DEG2RAD));
-		m_solver.AddBody(new Capsule(Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, Vector2(), 1.0f, true, 4.0f));
+		m_solver.AddBody(new Capsule(Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.0f, 1.0f, 0.9f));
+		m_solver.AddBody(new Capsule(Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.0f, 1.0f, true, 4.0f));
 	}
 	break;
 	default:

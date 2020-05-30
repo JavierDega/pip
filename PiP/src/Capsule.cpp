@@ -5,9 +5,9 @@
 
 using namespace math;
 
-Capsule::Capsule(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, math::Vector2 accel, decimal mass, bool isKinematic, 
+Capsule::Capsule(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic, 
 	decimal length, decimal radius)
-	: Rigidbody(pos, rot, vel, angVel, accel, mass, isKinematic), m_length(length), m_radius(radius)
+	: Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic), m_length(length), m_radius(radius)
 {
 	//Inertia tensor of two hemispheres (Parallel axis to translate CM) + the one of the rectangle
 	//Calculate mass of individual parts (assuming uniform density)

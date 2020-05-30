@@ -9,7 +9,7 @@ class Rigidbody
 {
 public:
 	Rigidbody(math::Vector2 pos = math::Vector2(), decimal rot = (decimal)0.f, math::Vector2 vel = math::Vector2(),
-		decimal angVel = (decimal)0.f, math::Vector2 accel = math::Vector2(), decimal mass = 1.f, bool isKinematic = false);
+		decimal angVel = (decimal)0.f, decimal mass = 1.f, decimal e = 1.f, bool isKinematic = false);
 	~Rigidbody();
 
 	//Visitor pattern
@@ -28,6 +28,7 @@ public:
 	decimal m_angularVelocity;
 	math::Vector2 m_acceleration;
 	decimal m_mass;
+	decimal m_e;//coefficient of restitution
 	decimal m_timeInSleep;
 	bool m_isKinematic, m_isSleeping;
 	decimal m_inertia;//Scalar in 2D aka 2nd moment of mass, tensor or matrix in 3D

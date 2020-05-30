@@ -205,10 +205,6 @@ namespace math {
 		{
 			return (x * v2.y) - (y * v2.x);
 		}
-		
-		//cout overrides
-		//friend std::ostream& operator << (std::ostream& out, const Vector2& v);
-		//friend std::istream& operator >> (std::istream& in, Vector2& v);
 	};
 
 
@@ -220,11 +216,11 @@ namespace math {
 		return v * scalar;
 	}
 
-	/*std::ostream& operator << (std::ostream& out, const Vector2& v)
+	inline std::ostream& operator << (std::ostream& out, const Vector2& v)
 	{
 		out << "x(" << v.x << ")" << " y(" << v.y << ")";
 		return out;
-	}*/
+	}
 	
 
 	/*std::istream& operator >> (std::istream& in, Vector2& v)

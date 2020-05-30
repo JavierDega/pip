@@ -230,7 +230,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 resultVelB = rb2->m_velocity;
 	decimal resultAngVelA = rb1->m_angularVelocity;
 	decimal resultAngVelB = rb2->m_angularVelocity;
-	decimal e = 1; //Coefficient of restitution
+	decimal e = (rb1->m_e + rb2->m_e) * 0.5f; //Coefficient of restitution
 	Vector2 avgContactPoint = Vector2();
 	//#TODO: Not final
 	for (int i = 0; i < manifold.numContactPoints; i++) 
@@ -248,15 +248,15 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
 	Vector2 vba = va - vb;//#There might be a problem with this collision response approach for objects that dont directly strike each other
 	decimal vbaDotN = vba.Dot(n);
-	if (m_ignoreSeparatingBodies) {
-		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
-	}
 	if (m_staticResolution) {
 		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
 		//If we do this, will kinematic objects get displaced by much?
 		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5;
 		rb1->m_position += pen * n * dispFactor;
 		rb2->m_position -= pen * n * (1 - dispFactor);
+	}
+	if (m_ignoreSeparatingBodies) {
+		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
 	}
 	_ASSERT(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
@@ -270,7 +270,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	resultVelB -= impulse * n * invMassB;
 	resultAngVelB -= rbP.Dot(impulse * n) * invIB;
 
-	/*if (m_logCollisionInfo) {
+	if (m_logCollisionInfo) {
 		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
 			<< "Normal: " << n << endl
 			<< "ra (rb1 to contact point): " << ra << endl
@@ -281,7 +281,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 			<< "impulse = " << num << " / " << denom << " = " << impulse << endl
 			<< "Result: velA: x(" << resultVelA << " velB = " << resultVelB << endl
 			<< "angVelA = " << resultAngVelA << " angVelB = " << resultAngVelB << endl;
-	}*/
+	}
 
 	rb1->m_velocity = resultVelA;
 	rb1->m_angularVelocity = resultAngVelA;
