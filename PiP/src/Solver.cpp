@@ -111,8 +111,8 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = m_rigidbodies[i];
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
-		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
+		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		//Send dynamic bodies to sleep
 		if (!rb->m_isKinematic) {
 			if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
@@ -123,9 +123,11 @@ void Solver::Step(decimal dt)
 				}
 			}
 			else {
-				rb->m_timeInSleep = 0;
 				if (rb->m_isSleeping) {
 					rb->m_isSleeping = false;
+				}
+				if (rb->m_timeInSleep > 0) {
+					rb->m_timeInSleep = 0;
 				}
 			}
 		}
@@ -134,87 +136,6 @@ void Solver::Step(decimal dt)
 
 void Solver::ComputeResponse(const Manifold& manifold)
 {
-	/*// First, find the normalized vector n from the center of
-	// circle1 to the center of circle2
-	Vector n = circle1.center - circle2.center;
-	n.normalize();
-	// Find the length of the component of each of the movement
-	// vectors along n.
-	// a1 = v1 . n
-	// a2 = v2 . n
-	float a1 = v1.dot(n);
-	float a2 = v2.dot(n);
-
-	// Using the optimized version,
-	// optimizedP =  2(a1 - a2)
-	//              -----------
-	//                m1 + m2
-	float optimizedP = (2.0 * (a1 - a2)) / (circle1.mass + circle2.mass);
-
-	// Calculate v1', the new movement vector of circle1
-	// v1' = v1 - optimizedP * m2 * n
-	Vector v1' = v1 - optimizedP * circle2.mass * n;
-
-	// Calculate v1', the new movement vector of circle1
-	// v2' = v2 + optimizedP * m1 * n
-	Vector v2' = v2 + optimizedP * circle1.mass * n;
-
-	circle1.setMovementVector(v1');
-	circle2.setMovementVector(v2');
-	// Find the length of the component of each of the movement vectors along n.
-	//decimal a1 = rb1->m_velocity.Dot(n);
-	//decimal a2 = rb2->m_velocity.Dot(n);
-	// Using the optimized version,
-	// optimizedP =  2(a1 - a2)
-	//              -----------
-	//                m1 + m2
-	//decimal optimizedP = ((decimal)2.f * (a1 - a2)) / (rb1->m_mass + rb2->m_mass);
-	// Calculate v1', the new movement vector of circle1
-	// v1' = v1 - optimizedP * m2 * n
-	//rb1->m_velocity -= n * optimizedP * rb2->m_mass;
-	// Calculate v1', the new movement vector of circle1
-	// v2' = v2 + optimizedP * m1 * n
-	//rb2->m_velocity += n * optimizedP * rb1->m_mass;
-
-	//Use contact points for rotation
-	//torque = Force X (Contact point - center of mass);
-	//We want to apply angular impulse ie an immediate change in angular velocity
-	//Use Vector2Str.Cross>*/
-
-	//Chris Hecker's physics column (Using j impulse)
-	//Norma expected to point to A, e = coefficient of restitution (0 = inelastic, 1 = elastic)
-	//ra = perp of A to point of contact, same rb 
-	//j = -((1 + e)*vAB * n)/( n*n*(1/ma + 1/mb) + (ra*n)^2/Ia + (rb*n)^2/Ib )
-	//va' = v1 + j*n/ma 
-	//vb' = v2 - j*n/mb
-	//wa' = wa + r1*j*n/Ia;
-	//wb' = wb - r2*j*n/Ib;
-
-	//Chris Hecker's physics sample
-	/*vector_2 Position =
-		Configuration.BoundingBox.aVertices[CollidingCornerIndex];
-
-	vector_2 CMToCornerPerp = GetPerpendicular(Position -
-		Configuration.CMPosition);
-
-	vector_2 Velocity = Configuration.CMVelocity +
-		Configuration.AngularVelocity * CMToCornerPerp;
-
-	real ImpulseNumerator = -(r(1) + Body.CoefficientOfRestitution) *
-		DotProduct(Velocity, CollisionNormal);
-
-	float PerpDot = DotProduct(CMToCornerPerp, CollisionNormal);
-
-	real ImpulseDenominator = Body.OneOverMass +
-		Body.OneOverCMMomentOfInertia * PerpDot * PerpDot;
-
-	real Impulse = ImpulseNumerator / ImpulseDenominator;
-
-	Configuration.CMVelocity += Impulse * Body.OneOverMass * CollisionNormal;
-
-	Configuration.AngularVelocity +=
-		Impulse * Body.OneOverCMMomentOfInertia * PerpDot;
-		*/
 
 	Rigidbody* rb1 = manifold.rb1;
 	Rigidbody* rb2 = manifold.rb2;
@@ -230,7 +151,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 resultVelB = rb2->m_velocity;
 	decimal resultAngVelA = rb1->m_angularVelocity;
 	decimal resultAngVelB = rb2->m_angularVelocity;
-	decimal e = (rb1->m_e + rb2->m_e) * 0.5f; //Coefficient of restitution
+	decimal e = Sqrt(rb1->m_e * rb2->m_e); //Coefficient of restitution
 	Vector2 avgContactPoint = Vector2();
 	//#TODO: Not final
 	for (int i = 0; i < manifold.numContactPoints; i++) 
@@ -264,7 +185,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal impulse = num / denom;
 
 	_ASSERT(impulse > 0);
-	impulse = Abs(impulse);
+	//impulse = Abs(impulse);
 	resultVelA += impulse * n * invMassA;
 	resultAngVelA += raP.Dot(impulse * n) * invIA;
 	resultVelB -= impulse * n * invMassB;
@@ -277,7 +198,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 			<< "rb (rb2 to contact point): " << rb << endl
 			<< "rb1 velocity: " << rb1->m_velocity << " velocity at contact point: " << va << endl
 			<< "rb2 velocity: " << rb2->m_velocity << " velocity at contact point: " << vb << endl
-			<< "relative velocity vba: " << vba << endl
+			<< "relative velocity vba: " << vba << "combined coefficient of restituion (e): " << e << endl
 			<< "impulse = " << num << " / " << denom << " = " << impulse << endl
 			<< "Result: velA: x(" << resultVelA << " velB = " << resultVelB << endl
 			<< "angVelA = " << resultAngVelA << " angVelB = " << resultAngVelB << endl;
