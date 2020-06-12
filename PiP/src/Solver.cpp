@@ -109,10 +109,10 @@ void Solver::Step(decimal dt)
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
+		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
+		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
-		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
-		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		//Send dynamic bodies to sleep
 		if (!rb->m_isKinematic) {
 			if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
