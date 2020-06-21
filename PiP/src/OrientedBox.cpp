@@ -4,9 +4,9 @@
 
 using namespace math;
 
-OrientedBox::OrientedBox(math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass,
-	decimal e, bool isKinematic, math::Vector2 halfExtents)
-	: Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic), m_halfExtents(halfExtents)
+OrientedBox::OrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass,
+	decimal e, bool isKinematic)
+	: m_halfExtents(halfExtents), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
 	//Find inertia tensor formula for an oriented box (Derived from capsule's)
 	m_inertia = m_mass * (Pow(m_halfExtents.x * 2, 2) + Pow(m_halfExtents.y * 2, 2)) / 12;

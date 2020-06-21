@@ -16,6 +16,12 @@ public:
 	void Step(decimal dt);// Discrete step
 	void ComputeResponse(const math::Manifold& manifold);
 	Rigidbody * AddBody(Rigidbody * rb);
+	Circle * CreateCircle(decimal rad = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
+		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
+	Capsule* CreateCapsule(decimal length = 1.0f, decimal radius = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
+		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
+	OrientedBox* CreateOrientedBox(math::Vector2 halfExtents = math::Vector2(1.f, 1.f), math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
+		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 
 	bool m_continuousCollision, m_stepMode, m_stepOnce, m_ignoreSeparatingBodies, m_staticResolution, m_logCollisionInfo;
 	decimal m_accumulator;

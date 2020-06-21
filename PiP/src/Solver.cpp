@@ -216,3 +216,18 @@ Rigidbody * Solver::AddBody(Rigidbody * rb)
 	m_rigidbodies.push_back(rb);
 	return m_rigidbodies.back();
 }
+//Go through custom allocator
+Circle* Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+{
+	return nullptr;
+}
+
+Capsule* Solver::CreateCapsule(decimal length, decimal radius, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+{
+	return nullptr;
+}
+
+OrientedBox* Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+{
+	return nullptr;
+}
