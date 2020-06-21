@@ -6,7 +6,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(false), m_logCollisionInfo(false),
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(false),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
@@ -94,32 +94,42 @@ void Solver::Step(decimal dt)
 {
 	//Upwards collision check
 	m_currentManifolds.clear();
+	//Integration
+	for (int i = 0; i < m_rigidbodies.size(); i++) {
+		//Semi euler integration
+		Rigidbody* rb = m_rigidbodies[i];
+		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
+		if (!(rb->m_isKinematic || rb->m_isSleeping)) rb->m_velocity += rb->m_acceleration * dt;
+		rb->m_prevPos = rb->m_position;
+		rb->m_position += rb->m_velocity * dt;
+		rb->m_rotation += rb->m_angularVelocity * dt;
+	}
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
 		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
 			Manifold currentManifold;
+			Rigidbody* rb1 = m_rigidbodies[i];
+			Rigidbody* rb2 = m_rigidbodies[j];
+			//If both objects are sleeping/kinematic, skip test
+			if ((rb1->m_isSleeping || rb1->m_isKinematic) && (rb2->m_isSleeping || rb2->m_isKinematic)) continue;
 			if (m_rigidbodies[i]->IntersectWith(m_rigidbodies[j], currentManifold)) {
 				//They collide during the frame, store
 				m_currentManifolds.push_back(currentManifold);//add manifolds
 			}
 		}
 	}
-	//Collision response
+	//Collision response, may displace objects directly for static collision resolution
 	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
-	//Integration
+	//Sleep check
 	for (int i = 0; i < m_rigidbodies.size(); i++) {
-		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
-		rb->m_position += rb->m_velocity * dt;
-		rb->m_rotation += rb->m_angularVelocity * dt;
-		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration * dt;
-		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		//Send dynamic bodies to sleep
 		if (!rb->m_isKinematic) {
-			if (rb->m_velocity.LengthSqr() < FLT_EPSILON) {
+			if ( (rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON) {
 				rb->m_timeInSleep += dt;
 				//If its static for two timesteps or more, put to sleep
 				if (rb->m_timeInSleep >= m_timestep * 2) {
 					rb->m_isSleeping = true;
+					rb->m_velocity = Vector2();
 				}
 			}
 			else {

@@ -23,6 +23,7 @@ public:
 	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold) = 0;
 
 	math::Vector2 m_position;
+	math::Vector2 m_prevPos;
 	decimal m_rotation;//In radians
 	math::Vector2 m_velocity;
 	decimal m_angularVelocity;
