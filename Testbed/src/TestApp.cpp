@@ -7,7 +7,7 @@
 using namespace math;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(false), m_displayManifolds(false), m_drawGrid(false),
+	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(true), m_displayManifolds(true), m_drawGrid(true),
 	m_inputDown(0), m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
 {
 }

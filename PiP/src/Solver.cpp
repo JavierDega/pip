@@ -6,7 +6,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(false),
+	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(true),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
