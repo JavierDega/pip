@@ -74,34 +74,36 @@ void TestApp::InitImgui()
 void TestApp::LoadScene(unsigned int index)
 {
 	m_solver.m_rigidbodies.clear();
+	//Deallocate m_allocator pool
 	switch (index) {
 	case 0:
 	{
 		m_sceneName = "Scene 0: Circles v Capsule";
 		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
-		m_solver.AddBody(new Circle(1.0f, Vector2(-5, 6), 0, Vector2(5, 0)));
-		m_solver.AddBody(new Capsule(2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true));
-		m_solver.AddBody(new Circle(1.0f, Vector2(5, 5), 0, Vector2(-5, 0)));
+		m_solver.CreateCircle(1.0f, Vector2(-5, 6), 0, Vector2(5, 0));
+		m_solver.CreateCapsule(2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true);
+		m_solver.CreateCircle(1.0f, Vector2(5, 5), 0, Vector2(-5, 0));
 	}
 	break;
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		m_solver.AddBody(new Capsule(2.0f, 1.0f, Vector2(0, 5), 45 * DEG2RAD));
-		m_solver.AddBody(new OrientedBox(Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f));
+		m_solver.CreateCapsule(2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD);
+		m_solver.CreateOrientedBox(Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f);
 	}
 	break;
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.AddBody(new Circle(1.0f, Vector2(0.1f, 5)));
-		m_solver.AddBody(new OrientedBox(Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f));
-		m_solver.AddBody(new OrientedBox(Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f));
+		m_solver.CreateCircle(1.0f, Vector2(0.1f, 5));
+		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f);
+		m_solver.CreateOrientedBox(Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f);
 	}
 	break;
 	case 3:
 	{
-		m_sceneName = "Scene 3: OBB collision with SAT";
+		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
+		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f);
 		m_solver.AddBody(new OrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f));
 		m_solver.AddBody(new OrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f));
 	}
@@ -109,8 +111,8 @@ void TestApp::LoadScene(unsigned int index)
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
-		m_solver.AddBody(new Capsule(1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f));
-		m_solver.AddBody(new Capsule(4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true));
+		m_solver.CreateCapsule(1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f);
+		m_solver.CreateCapsule(4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
 	}
 	break;
 	default:
@@ -138,6 +140,67 @@ void TestApp::UpdateLoop()
 		/* Render here */
 		glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1, 1, 1);
+		//Loop through solver's rigidbody pool
+		char* itNext = m_solver.m_allocator.m_pool.start;
+		char* itEnd = m_solver.m_allocator.m_pool.end;
+		while (itNext != itEnd) {
+			//Then displace pointer accordingly
+			if (Circle* circle = dynamic_cast<Circle*>(itNext)) {
+				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
+				glBegin(GL_TRIANGLES);
+				//Circle vertices from trig
+				for (int i = 0; i < 350; i += 10) {
+					//Counter clockwise
+					glVertex3f(0, 0, 0);
+					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
+					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
+				}
+			}
+			else if (Capsule* capsule = dynamic_cast<Capsule*>(itNext)) {
+				//Capsule matrix stuff
+				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glBegin(GL_TRIANGLES);
+				//Capsule vertices (Two circles and rectangle?)
+				float offSet = (float)capsule->m_length / 2;
+				float rad = (float)capsule->m_radius;
+				for (int i = 0; i < 350; i += 10) {
+					glVertex3f(-offSet, 0, 0);
+					glVertex3f(-offSet + rad * cos(i * DEG2RAD), rad * sin(i * DEG2RAD), 0);
+					glVertex3f(-offSet + rad * cos((i + 10.f) * DEG2RAD), rad * sin((i + 10.f) * DEG2RAD), 0);
+				}
+				for (int i = 0; i < 350; i += 10) {
+					glVertex3f(offSet, 0, 0);
+					glVertex3f(offSet + rad * cos(i * DEG2RAD), rad * sin(i * DEG2RAD), 0);
+					glVertex3f(offSet + rad * cos((i + 10.f) * DEG2RAD), rad * sin((i + 10.f) * DEG2RAD), 0);
+				}
+				//Draw rectangle in gltriangles
+				glVertex3f(-offSet, -rad, 0);
+				glVertex3f(offSet, -rad, 0);
+				glVertex3f(offSet, rad, 0);
+				//Tri2
+				glVertex3f(-offSet, -rad, 0);
+				glVertex3f(offSet, rad, 0);
+				glVertex3f(-offSet, rad, 0);
+			}
+			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(itNext)) {
+				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
+				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glBegin(GL_TRIANGLES);
+				//Rectangle made up of two triangles
+				Vector2 halfExtents = obb->m_halfExtents;
+				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
+				glVertex3f(halfExtents.x, -halfExtents.y, 0);
+				glVertex3f(halfExtents.x, halfExtents.y, 0);
+				//Upper tri
+				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
+				glVertex3f(halfExtents.x, halfExtents.y, 0);
+				glVertex3f(-halfExtents.x, halfExtents.y, 0);
+			}
+
+		}
 		for (Rigidbody* rb : m_solver.m_rigidbodies) {
 			//Draw
 			glLoadIdentity();

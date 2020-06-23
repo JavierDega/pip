@@ -3,7 +3,7 @@
 
 #include "PiPMath.h"
 #include "Rigidbody.h"
-#include "StackAllocator.h"
+#include "DefaultAllocator.h"
 
 class Solver
 {
@@ -18,15 +18,16 @@ public:
 	Rigidbody * AddBody(Rigidbody * rb);
 	Circle * CreateCircle(decimal rad = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
-	Capsule* CreateCapsule(decimal length = 1.0f, decimal radius = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
+	Capsule* CreateCapsule(decimal length = 1.0f, decimal rad = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 	OrientedBox* CreateOrientedBox(math::Vector2 halfExtents = math::Vector2(1.f, 1.f), math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 
+	DefaultAllocator m_allocator;
 	bool m_continuousCollision, m_stepMode, m_stepOnce, m_ignoreSeparatingBodies, m_staticResolution, m_logCollisionInfo;
 	decimal m_accumulator;
 	decimal m_timestep;
 	decimal m_gravity;
-	std::vector<Rigidbody*> m_rigidbodies;
+	std::vector<Rigidbody*> m_rigidbodies;//Deprecated
 	std::vector<math::Manifold> m_currentManifolds;
 };

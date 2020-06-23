@@ -1,6 +1,9 @@
 #include "Solver.h"
-
+#include "Circle.h"
+#include "Capsule.h"
+#include "OrientedBox.h"
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 using namespace math;
@@ -9,6 +12,8 @@ Solver::Solver()
 	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(true),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
+	//unsigned int size = sizeof(OrientedBox);
+	m_allocator.CreatePool(50*sizeof(OrientedBox));//Each orientedbox size in uint = 80.
 }
 
 
@@ -189,12 +194,12 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	if (m_ignoreSeparatingBodies) {
 		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
 	}
-	_ASSERT(vbaDotN < 0);
+	assert(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulse = num / denom;
 
-	_ASSERT(impulse > 0);
+	assert(impulse > 0);
 	//impulse = Abs(impulse);
 	resultVelA += impulse * n * invMassA;
 	resultAngVelA += raP.Dot(impulse * n) * invIA;
@@ -229,15 +234,19 @@ Rigidbody * Solver::AddBody(Rigidbody * rb)
 //Go through custom allocator
 Circle* Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
-	return nullptr;
+	// Create the collision body, presumably a pool has been created beforehand
+	Circle* circle = new (m_allocator.AllocateBody(sizeof(Circle))) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	return circle;
 }
 
-Capsule* Solver::CreateCapsule(decimal length, decimal radius, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Capsule* Solver::CreateCapsule(decimal length, decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
-	return nullptr;
+	Capsule* capsule = new (m_allocator.AllocateBody(sizeof(Capsule))) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	return capsule;
 }
 
 OrientedBox* Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
-	return nullptr;
+	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox))) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
+	return obb;
 }

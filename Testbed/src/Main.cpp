@@ -14,8 +14,8 @@ TEST_CASE("Collision response behavior") {
 	//Mock objects
 	Solver* mockSolver = new Solver();
 
-	Circle* circle1 = new Circle(Vector2(-1, 0), 0.0f, Vector2(1, 0));
-	Circle* circle2 = new Circle(Vector2(1, 0), 0.0f, Vector2(-1, 0));
+	Circle* circle1 = new Circle(1.f, Vector2(-1, 0), 0.0f, Vector2(1, 0));
+	Circle* circle2 = new Circle(1.f, Vector2(1, 0), 0.0f, Vector2(-1, 0));
 
 	Manifold testManifold;
 	testManifold.contactPoints[0] = Vector2(0, 0);
@@ -31,8 +31,8 @@ TEST_CASE("Collision response behavior") {
 	delete circle1; circle1 = nullptr;
 	delete circle2, circle2 = nullptr;
 	
-	OrientedBox* obb1 = new OrientedBox(Vector2(-1.f, 0.f), 0.f, Vector2(5.f, 1.f));
-	OrientedBox* obb2 = new OrientedBox(Vector2(1.f, 0.f), 0.f, Vector2(-5.f, 1.f));
+	OrientedBox* obb1 = new OrientedBox(Vector2(1.f, 1.f), Vector2(-1.f, 0.f), 0.f, Vector2(5.f, 1.f));
+	OrientedBox* obb2 = new OrientedBox(Vector2(1.f, 1.f), Vector2(1.f, 0.f), 0.f, Vector2(-5.f, 1.f));
 
 	testManifold.contactPoints[0] = Vector2(0, 1.0f);
 	testManifold.contactPoints[1] = Vector2(0, -1.0f);
