@@ -75,6 +75,7 @@ void TestApp::LoadScene(unsigned int index)
 {
 	m_solver.m_rigidbodies.clear();
 	//Deallocate m_allocator pool
+	m_solver.m_allocator.DestroyAllBodies();
 	switch (index) {
 	case 0:
 	{
@@ -145,7 +146,8 @@ void TestApp::UpdateLoop()
 		char* itEnd = m_solver.m_allocator.m_pool.end;
 		while (itNext != itEnd) {
 			//Then displace pointer accordingly
-			if (Circle* circle = dynamic_cast<Circle*>(itNext)) {
+			Rigidbody* rb = (Rigidbody*)itNext;
+			if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
@@ -157,8 +159,9 @@ void TestApp::UpdateLoop()
 					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
 					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
 				}
+				itNext += sizeof(Circle);
 			}
-			else if (Capsule* capsule = dynamic_cast<Capsule*>(itNext)) {
+			else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
@@ -184,65 +187,8 @@ void TestApp::UpdateLoop()
 				glVertex3f(-offSet, -rad, 0);
 				glVertex3f(offSet, rad, 0);
 				glVertex3f(-offSet, rad, 0);
-			}
-			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(itNext)) {
-				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
-				glBegin(GL_TRIANGLES);
-				//Rectangle made up of two triangles
-				Vector2 halfExtents = obb->m_halfExtents;
-				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
-				glVertex3f(halfExtents.x, -halfExtents.y, 0);
-				glVertex3f(halfExtents.x, halfExtents.y, 0);
-				//Upper tri
-				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
-				glVertex3f(halfExtents.x, halfExtents.y, 0);
-				glVertex3f(-halfExtents.x, halfExtents.y, 0);
-			}
 
-		}
-		for (Rigidbody* rb : m_solver.m_rigidbodies) {
-			//Draw
-			glLoadIdentity();
-			if ( Circle * circle = dynamic_cast<Circle*>(rb)) {
-				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
-				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
-				glBegin(GL_TRIANGLES);
-				//Circle vertices from trig
-				for (int i = 0; i < 350; i += 10) {
-					//Counter clockwise
-					glVertex3f(0, 0, 0);
-					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
-					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
-				}
-			} 
-			else if ( Capsule * capsule = dynamic_cast<Capsule*>(rb)) {
-				//Capsule matrix stuff
-				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
-				glBegin(GL_TRIANGLES);
-				//Capsule vertices (Two circles and rectangle?)
-				float offSet = (float)capsule->m_length / 2;
-				float rad = (float)capsule->m_radius;
-				for (int i = 0; i < 350; i += 10) {
-					glVertex3f(-offSet, 0, 0);
-					glVertex3f(-offSet + rad * cos(i * DEG2RAD), rad * sin(i * DEG2RAD), 0);
-					glVertex3f(-offSet + rad * cos((i + 10.f) * DEG2RAD), rad * sin((i + 10.f) * DEG2RAD), 0);
-				}
-				for (int i = 0; i < 350; i += 10) {
-					glVertex3f(offSet, 0, 0);
-					glVertex3f(offSet + rad * cos(i * DEG2RAD), rad * sin(i * DEG2RAD), 0);
-					glVertex3f(offSet + rad * cos((i + 10.f) * DEG2RAD), rad * sin((i + 10.f) * DEG2RAD), 0);
-				}
-				//Draw rectangle in gltriangles
-				glVertex3f(-offSet, -rad, 0);
-				glVertex3f(offSet, -rad, 0);
-				glVertex3f(offSet, rad, 0);
-				//Tri2
-				glVertex3f(-offSet, -rad, 0);
-				glVertex3f(offSet, rad, 0);
-				glVertex3f(-offSet, rad, 0);
+				itNext += sizeof(Capsule);
 			}
 			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
@@ -257,8 +203,10 @@ void TestApp::UpdateLoop()
 				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
 				glVertex3f(halfExtents.x, halfExtents.y, 0);
 				glVertex3f(-halfExtents.x, halfExtents.y, 0);
+
+				itNext += sizeof(OrientedBox);
 			}
-			glEnd();
+
 		}
 
 		//Render manifolds

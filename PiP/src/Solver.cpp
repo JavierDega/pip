@@ -97,39 +97,76 @@ void Solver::ContinuousStep(decimal dt)
 
 void Solver::Step(decimal dt)
 {
+	//#TODO THIS ISNT PRETTY WITH THIS POOL ITERATOR
 	//Upwards collision check
 	m_currentManifolds.clear();
 	//Integration
-	for (int i = 0; i < m_rigidbodies.size(); i++) {
-		//Semi euler integration
-		Rigidbody* rb = m_rigidbodies[i];
+	char* itNext = m_allocator.m_pool.start;
+	char* itEnd = m_allocator.m_pool.end;
+	while (itNext != itEnd) {
+		//Then displace pointer accordingly
+		Rigidbody* rb = (Rigidbody*)itNext;
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_prevPos = rb->m_position;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
+		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
+			itNext += sizeof(Circle);
+		}
+		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
+			itNext += sizeof(Capsule);
+		}
+		else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb)) {
+			itNext += sizeof(OrientedBox);
+		}
 	}
-	for (int i = 0; i < m_rigidbodies.size(); i++) {
-		for (int j = i + 1; j < m_rigidbodies.size(); j++) {
+	itNext = m_allocator.m_pool.start;
+	while (itNext != itEnd) {
+		//Then displace pointer accordingly
+		Rigidbody* rb1 = (Rigidbody*)itNext;
+		char* itNextPlus1 = itNext;
+		if (Circle* circle = dynamic_cast<Circle*>(rb1)) {
+			itNextPlus1 += sizeof(Circle);
+		}
+		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb1)) {
+			itNextPlus1 += sizeof(Capsule);
+		}
+		else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb1)) {
+			itNextPlus1 += sizeof(OrientedBox);
+		}
+		char* nextItNext = itNextPlus1;
+		while (itNextPlus1 != itEnd) {
 			Manifold currentManifold;
-			Rigidbody* rb1 = m_rigidbodies[i];
-			Rigidbody* rb2 = m_rigidbodies[j];
+			Rigidbody* rb2 = (Rigidbody*)itNextPlus1;
 			//If both objects are sleeping/kinematic, skip test
-			if ((rb1->m_isSleeping || rb1->m_isKinematic) && (rb2->m_isSleeping || rb2->m_isKinematic)) continue;
-			if (m_rigidbodies[i]->IntersectWith(m_rigidbodies[j], currentManifold)) {
+			if ((rb1->m_isSleeping || rb1->m_isKinematic) && (rb2->m_isSleeping || rb2->m_isKinematic)) goto next;
+			if (rb1->IntersectWith(rb2, currentManifold)) {
 				//They collide during the frame, store
 				m_currentManifolds.push_back(currentManifold);//add manifolds
 			}
+			next:
+			if (Circle* circle = dynamic_cast<Circle*>(rb2)) {
+				itNextPlus1 += sizeof(Circle);
+			}
+			else if (Capsule* capsule = dynamic_cast<Capsule*>(rb2)) {
+				itNextPlus1 += sizeof(Capsule);
+			}
+			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb2)) {
+				itNextPlus1 += sizeof(OrientedBox);
+			}
 		}
+		itNext = nextItNext;
 	}
 	//Collision response, may displace objects directly for static collision resolution
 	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
 	//Sleep check
-	for (int i = 0; i < m_rigidbodies.size(); i++) {
-		Rigidbody* rb = m_rigidbodies[i];
-		//Send dynamic bodies to sleep
+	itNext = m_allocator.m_pool.start;
+	while (itNext != itEnd) {
+		//Then displace pointer accordingly
+		Rigidbody* rb = (Rigidbody*)itNext;
 		if (!rb->m_isKinematic) {
-			if ( (rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON) {
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON) {
 				rb->m_timeInSleep += dt;
 				//If its static for two timesteps or more, put to sleep
 				if (rb->m_timeInSleep >= m_timestep * 2) {

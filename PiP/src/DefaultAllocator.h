@@ -8,7 +8,9 @@ public:
 	~DefaultAllocator();
 
 	void CreatePool(size_t size);
+	void DestroyPool();//Profile whether free deallocates whole pool
 	void * AllocateBody(size_t length);
+	void DestroyAllBodies();//Won't call destructors
 	size_t AvailableInPool();
 
 	typedef struct PoolStr
