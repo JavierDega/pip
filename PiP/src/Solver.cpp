@@ -9,7 +9,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(false), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(true),
+	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(true),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 	//unsigned int size = sizeof(OrientedBox);
@@ -102,7 +102,7 @@ void Solver::Step(decimal dt)
 	m_currentManifolds.clear();
 	//Integration
 	char* itNext = m_allocator.m_pool.start;
-	char* itEnd = m_allocator.m_pool.end;
+	char* itEnd = m_allocator.m_pool.next;
 	while (itNext != itEnd) {
 		//Then displace pointer accordingly
 		Rigidbody* rb = (Rigidbody*)itNext;
@@ -182,6 +182,15 @@ void Solver::Step(decimal dt)
 					rb->m_timeInSleep = 0;
 				}
 			}
+		}
+		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
+			itNext += sizeof(Circle);
+		}
+		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
+			itNext += sizeof(Capsule);
+		}
+		else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb)) {
+			itNext += sizeof(OrientedBox);
 		}
 	}
 }

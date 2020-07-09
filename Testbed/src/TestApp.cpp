@@ -143,7 +143,7 @@ void TestApp::UpdateLoop()
 		glColor3f(1, 1, 1);
 		//Loop through solver's rigidbody pool
 		char* itNext = m_solver.m_allocator.m_pool.start;
-		char* itEnd = m_solver.m_allocator.m_pool.end;
+		char* itEnd = m_solver.m_allocator.m_pool.next;
 		while (itNext != itEnd) {
 			//Then displace pointer accordingly
 			Rigidbody* rb = (Rigidbody*)itNext;
