@@ -73,7 +73,6 @@ void TestApp::InitImgui()
 
 void TestApp::LoadScene(unsigned int index)
 {
-	m_solver.m_rigidbodies.clear();
 	//Deallocate m_allocator pool
 	m_solver.m_allocator.DestroyAllBodies();
 	switch (index) {
@@ -105,8 +104,7 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
 		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f);
-		m_solver.AddBody(new OrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f));
-		m_solver.AddBody(new OrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f));
+		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f);
 	}
 	break;
 	case 4:
@@ -147,6 +145,7 @@ void TestApp::UpdateLoop()
 		while (itNext != itEnd) {
 			//Then displace pointer accordingly
 			Rigidbody* rb = (Rigidbody*)itNext;
+			glLoadIdentity();
 			if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
@@ -206,7 +205,7 @@ void TestApp::UpdateLoop()
 
 				itNext += sizeof(OrientedBox);
 			}
-
+			glEnd();
 		}
 
 		//Render manifolds
@@ -309,21 +308,28 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	ImGui::Columns(2);
 	ImGui::Separator();
 
-	for (int i = 0; i < m_solver.m_rigidbodies.size(); i++) {
-		Rigidbody * rb = m_solver.m_rigidbodies[i];
+	char* itNext = m_solver.m_allocator.m_pool.start;
+	char* itEnd = m_solver.m_allocator.m_pool.next;
+	int i = 0;
+	while (itNext != itEnd) {
+		Rigidbody* rb = (Rigidbody*)itNext;
+		char* nextItNext = itNext;
 		std::string objShape;
 		char* objDesc = new char[100];
 		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 			objShape = "Circle";
 			snprintf(objDesc, 100, "Radius(%f)", circle->m_radius);
+			nextItNext += sizeof(Circle);
 		}
 		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
 			objShape = "Capsule";
 			snprintf(objDesc, 100, "Radius(%f), Length(%f)", capsule->m_radius, capsule->m_length);
+			nextItNext += sizeof(Capsule);
 		}
 		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(rb)) {
 			objShape = "OrientedBox";
 			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", orientedBox->m_halfExtents.x, orientedBox->m_halfExtents.y);//Worth revising this
+			nextItNext += sizeof(OrientedBox);
 		}
 		//Turn to char*
 		char* strId = new char[10];
@@ -338,14 +344,14 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Rotation");
 			ImGui::NextColumn();
 			char rotation[50];
-			snprintf(rotation, 50, "Rad(%f), Deg(%f)", rb->m_rotation, rb->m_rotation*RAD2DEG);
+			snprintf(rotation, 50, "Rad(%f), Deg(%f)", rb->m_rotation, rb->m_rotation * RAD2DEG);
 			ImGui::Text(rotation);
 			ImGui::NextColumn();
 
 			ImGui::Text("Velocity");
 			ImGui::NextColumn();
-			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f );//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
-			ImGui::DragFloat("VelY", &rb->m_velocity.y, 1.0f );
+			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f);//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
+			ImGui::DragFloat("VelY", &rb->m_velocity.y, 1.0f);
 			ImGui::NextColumn();
 
 			ImGui::Text("AngVel");
@@ -383,6 +389,8 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::NextColumn();
 			ImGui::TreePop();
 		}
+		i++;
+		itNext = nextItNext;
 	}
 	ImGui::Columns(1);
 	ImGui::Separator();

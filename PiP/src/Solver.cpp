@@ -9,7 +9,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(false), m_staticResolution(true), m_logCollisionInfo(true),
+	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(true),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 	//unsigned int size = sizeof(OrientedBox);
@@ -19,7 +19,6 @@ Solver::Solver()
 
 Solver::~Solver()
 {
-	m_rigidbodies.clear();
 }
 
 void Solver::Update(decimal dt)
@@ -49,6 +48,7 @@ void Solver::Update(decimal dt)
 
 void Solver::ContinuousStep(decimal dt) 
 {
+	//#TODO: Move code onto pool iterator
 	//We need to have up to date velocities to perform sweeps
 	//1: Perform sweeps, storing collision deltas
 	//2: Only acknowledge first collision time
@@ -57,7 +57,7 @@ void Solver::ContinuousStep(decimal dt)
 	//5: Reperform sweeps  (for(i){for (j = i + 1; ..)}
 	//6: If new collisions, repeat
 	//7: Apply gravity forces (Collisions are impulse based, friction is force based) *optionally do this at step 0
-	for (int i = 0; i < m_rigidbodies.size(); i++) {
+	/*for (int i = 0; i < m_rigidbodies.size(); i++) {
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
@@ -92,7 +92,7 @@ void Solver::ContinuousStep(decimal dt)
 		if (firstManifold.rb1) {
 			ComputeResponse(firstManifold);
 		}
-	}
+	}*/
 }
 
 void Solver::Step(decimal dt)
@@ -219,7 +219,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	{
 		avgContactPoint += manifold.contactPoints[i];
 	}
-	avgContactPoint /= manifold.numContactPoints;
+	avgContactPoint /= (decimal)manifold.numContactPoints;
 
 	Vector2 ra = (avgContactPoint - rb1->m_position);
 	Vector2 rb = (avgContactPoint - rb2->m_position);
@@ -233,7 +233,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	if (m_staticResolution) {
 		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
 		//If we do this, will kinematic objects get displaced by much?
-		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5;
+		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5f;
 		rb1->m_position += pen * n * dispFactor;
 		rb2->m_position -= pen * n * (1 - dispFactor);
 	}
@@ -271,12 +271,6 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	rb2->m_angularVelocity = resultAngVelB;
 }
 
-Rigidbody * Solver::AddBody(Rigidbody * rb)
-{
-	//Create default sphere and pass reference, using allocator
-	m_rigidbodies.push_back(rb);
-	return m_rigidbodies.back();
-}
 //Go through custom allocator
 Circle* Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {

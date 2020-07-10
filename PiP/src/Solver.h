@@ -15,8 +15,7 @@ public:
 	void ContinuousStep(decimal dt);//CCD Step physics forward
 	void Step(decimal dt);// Discrete step
 	void ComputeResponse(const math::Manifold& manifold);
-	Rigidbody * AddBody(Rigidbody * rb);
-	Circle * CreateCircle(decimal rad = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
+	Circle* CreateCircle(decimal rad = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 	Capsule* CreateCapsule(decimal length = 1.0f, decimal rad = 1.0f, math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
@@ -28,6 +27,5 @@ public:
 	decimal m_accumulator;
 	decimal m_timestep;
 	decimal m_gravity;
-	std::vector<Rigidbody*> m_rigidbodies;//Deprecated
 	std::vector<math::Manifold> m_currentManifolds;
 };
