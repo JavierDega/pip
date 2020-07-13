@@ -1,6 +1,8 @@
 #pragma once
 #include <stdlib.h>
 
+#include "Rigidbody.h"
+
 class DefaultAllocator
 {
 public:
@@ -12,6 +14,7 @@ public:
 	void * AllocateBody(size_t length);
 	void DestroyAllBodies();//Won't call destructors
 	size_t AvailableInPool();
+	Rigidbody* GetNextBody(Rigidbody* prev);
 
 	typedef struct PoolStr
 	{

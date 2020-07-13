@@ -1,4 +1,7 @@
 #include "DefaultAllocator.h"
+#include "Circle.h"
+#include "Capsule.h"
+#include "OrientedBox.h"
 #include <assert.h>
 #include <string.h>
 
@@ -44,4 +47,22 @@ void DefaultAllocator::DestroyAllBodies()
 size_t DefaultAllocator::AvailableInPool()
 {
 	return m_pool.end - m_pool.next;
+}
+
+Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
+{
+	assert(AvailableInPool() > sizeof(Rigidbody));
+	char* charP = (char*)prev;
+	char* charPNext;
+	if (Circle* circle = dynamic_cast<Circle*>(prev)) {
+		charPNext = charP + sizeof(Circle);
+	}
+	else if (Capsule* capsule = dynamic_cast<Capsule*>(prev)) {
+		charPNext = charP + sizeof(Capsule);
+	}
+	else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(prev)) {
+		charPNext = charP + sizeof(OrientedBox);
+	}
+	if (charPNext == m_pool.next) return nullptr;
+	return (Rigidbody*)charPNext;
 }

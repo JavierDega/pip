@@ -140,11 +140,7 @@ void TestApp::UpdateLoop()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1, 1, 1);
 		//Loop through solver's rigidbody pool
-		char* itNext = m_solver.m_allocator.m_pool.start;
-		char* itEnd = m_solver.m_allocator.m_pool.next;
-		while (itNext != itEnd) {
-			//Then displace pointer accordingly
-			Rigidbody* rb = (Rigidbody*)itNext;
+		for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.m_pool.start; rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
 			glLoadIdentity();
 			if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
@@ -158,7 +154,6 @@ void TestApp::UpdateLoop()
 					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
 					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
 				}
-				itNext += sizeof(Circle);
 			}
 			else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
 				//Capsule matrix stuff
@@ -186,8 +181,6 @@ void TestApp::UpdateLoop()
 				glVertex3f(-offSet, -rad, 0);
 				glVertex3f(offSet, rad, 0);
 				glVertex3f(-offSet, rad, 0);
-
-				itNext += sizeof(Capsule);
 			}
 			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
@@ -202,8 +195,6 @@ void TestApp::UpdateLoop()
 				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
 				glVertex3f(halfExtents.x, halfExtents.y, 0);
 				glVertex3f(-halfExtents.x, halfExtents.y, 0);
-
-				itNext += sizeof(OrientedBox);
 			}
 			glEnd();
 		}
@@ -307,29 +298,21 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	ImGui::Text("Rigidbodies");
 	ImGui::Columns(2);
 	ImGui::Separator();
-
-	char* itNext = m_solver.m_allocator.m_pool.start;
-	char* itEnd = m_solver.m_allocator.m_pool.next;
 	int i = 0;
-	while (itNext != itEnd) {
-		Rigidbody* rb = (Rigidbody*)itNext;
-		char* nextItNext = itNext;
+	for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.m_pool.start; rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
 		std::string objShape;
 		char* objDesc = new char[100];
 		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 			objShape = "Circle";
 			snprintf(objDesc, 100, "Radius(%f)", circle->m_radius);
-			nextItNext += sizeof(Circle);
 		}
 		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
 			objShape = "Capsule";
 			snprintf(objDesc, 100, "Radius(%f), Length(%f)", capsule->m_radius, capsule->m_length);
-			nextItNext += sizeof(Capsule);
 		}
 		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(rb)) {
 			objShape = "OrientedBox";
 			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", orientedBox->m_halfExtents.x, orientedBox->m_halfExtents.y);//Worth revising this
-			nextItNext += sizeof(OrientedBox);
 		}
 		//Turn to char*
 		char* strId = new char[10];
@@ -390,7 +373,6 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::TreePop();
 		}
 		i++;
-		itNext = nextItNext;
 	}
 	ImGui::Columns(1);
 	ImGui::Separator();
