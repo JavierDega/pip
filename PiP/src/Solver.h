@@ -4,6 +4,7 @@
 #include "PiPMath.h"
 #include "Rigidbody.h"
 #include "DefaultAllocator.h"
+#include "QuadTree.h"
 
 class Solver
 {
@@ -23,6 +24,7 @@ public:
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 
 	DefaultAllocator m_allocator;
+	QuadTree m_quadTreeRoot;
 	bool m_continuousCollision, m_stepMode, m_stepOnce, m_ignoreSeparatingBodies, m_staticResolution, m_logCollisionInfo;
 	decimal m_accumulator;
 	decimal m_timestep;
