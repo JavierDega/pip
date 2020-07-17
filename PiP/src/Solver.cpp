@@ -113,6 +113,7 @@ void Solver::Step(decimal dt)
 
 	//When to subdivide Q-node? When number of body checks in one bin would surpass number of body checks in multiple bins (assuming uniform division?)
 	//+ checking each body against necessary bins (9 approx?)
+	//#TODO: Qtree step
 	for (Rigidbody* rb1 = (Rigidbody*)m_allocator.m_pool.start; rb1 != nullptr; rb1 = m_allocator.GetNextBody(rb1)) {
 		for (Rigidbody* rb2 = m_allocator.GetNextBody(rb1); rb2 != nullptr; rb2 = m_allocator.GetNextBody(rb2)) {
 			Manifold currentManifold;
