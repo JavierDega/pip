@@ -97,7 +97,6 @@ void Solver::ContinuousStep(decimal dt)
 
 void Solver::Step(decimal dt)
 {
-	//#TODO THIS ISNT PRETTY WITH THIS POOL ITERATOR
 	//Upwards collision check
 	m_currentManifolds.clear();
 	//Integration
@@ -108,6 +107,12 @@ void Solver::Step(decimal dt)
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
 	}
+
+	//Q-tree: Assume space time coherence. Space: Objects cannot have a velocity bigger than the extent of a Q-node. Time: If we know what Q-node we were on
+	//previous frame, we know to only check against Q-nodes adjacent to it, up to a max of 9.
+
+	//When to subdivide Q-node? When number of body checks in one bin would surpass number of body checks in multiple bins (assuming uniform division?)
+	//+ checking each body against necessary bins (9 approx?)
 	for (Rigidbody* rb1 = (Rigidbody*)m_allocator.m_pool.start; rb1 != nullptr; rb1 = m_allocator.GetNextBody(rb1)) {
 		for (Rigidbody* rb2 = m_allocator.GetNextBody(rb1); rb2 != nullptr; rb2 = m_allocator.GetNextBody(rb2)) {
 			Manifold currentManifold;
