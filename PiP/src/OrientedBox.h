@@ -14,6 +14,7 @@ public:
 	OrientedBox(math::Vector2 halfExtents = math::Vector2(1.f, 1.f), math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 	~OrientedBox();
+	virtual bool IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft) override;
 	virtual bool IntersectWith(Rigidbody* rb2, math::Manifold& manifold) override;
 	virtual bool IntersectWith(Circle* rb2, math::Manifold& manifold) override;
 	virtual bool IntersectWith(Capsule* rb2, math::Manifold& manifold) override;

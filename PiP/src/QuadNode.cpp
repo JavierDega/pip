@@ -46,3 +46,4 @@ unsigned int QuadNode::GetLeafNodes(std::vector<QuadNode*>& leafNodes)
 	}
 	return leafCount;
 }
+

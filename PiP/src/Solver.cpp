@@ -101,6 +101,7 @@ void Solver::Step(decimal dt)
 	m_currentManifolds.clear();
 	//Integration
 	std::vector<Rigidbody*> rigidbodies;
+	std::vector<QuadNode*> quadTreeLeafNodes;
 	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
@@ -112,22 +113,46 @@ void Solver::Step(decimal dt)
 
 	//Q-tree: Assume space time coherence. Space: Objects cannot have a velocity bigger than the extent of a Q-node. Time: If we know what Q-node we were on
 	//previous frame, we know to only check against Q-nodes adjacent to it, up to a max of 9.
-
 	//When to subdivide Q-node? When number of body checks in one bin would surpass number of body checks in multiple bins (assuming uniform division?)
 	//+ checking each body against necessary bins (9 approx?)
 	//#TODO: Qtree step
-	std::vector<QuadNode*> quadTreeLeafNodes;
-	for (Rigidbody* rb1 = (Rigidbody*)m_allocator.m_pool.start; rb1 != nullptr; rb1 = m_allocator.GetNextBody(rb1)) {
-		rigidbodies.push_back(rb1);
-		for (Rigidbody* rb2 = m_allocator.GetNextBody(rb1); rb2 != nullptr; rb2 = m_allocator.GetNextBody(rb2)) {
-			Manifold currentManifold;
-			//If both objects are sleeping/kinematic, skip test
-			if ((rb1->m_isSleeping || rb1->m_isKinematic) && (rb2->m_isSleeping || rb2->m_isKinematic)) continue;
-			if (rb1->IntersectWith(rb2, currentManifold)) {
-				//They collide during the frame, store
-				m_currentManifolds.push_back(currentManifold);//add manifolds
+	m_quadTreeRoot.GetLeafNodes(quadTreeLeafNodes);
+	for (int i = 0; i < rigidbodies.size(); i++) {
+		//Figure which bin theyre on
+		Rigidbody* rb = rigidbodies[i];
+		for (int j = 0; j < quadTreeLeafNodes.size(); j++) {
+			QuadNode* leafNode = quadTreeLeafNodes[j];
+			if (rb->IntersectWith(leafNode->m_topRight, leafNode->m_bottomLeft))
+			{
+				leafNode->m_ownedBodies.push_back(rb);
 			}
 		}
+	}
+	//#TODO You might test twice for bodies that are both part of two QuadNodes at the same time, this might be why m_ignoreSeparatingBodies should be true
+	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+	{
+		QuadNode* leafNode = quadTreeLeafNodes[i];
+		for (int j = 0; j < leafNode->m_ownedBodies.size(); j++)
+		{
+			Rigidbody* rb1 = leafNode->m_ownedBodies[j];
+			for (int k = j + 1; k < leafNode->m_ownedBodies.size(); k++) {
+				Rigidbody* rb2 = leafNode->m_ownedBodies[k];
+				Manifold currentManifold;
+				//If both objects are sleeping/kinematic, skip test
+				if ((rb1->m_isSleeping || rb1->m_isKinematic) && (rb2->m_isSleeping || rb2->m_isKinematic)) continue;
+				if (rb1->IntersectWith(rb2, currentManifold))
+				{
+					//They collide during the frame, store
+					m_currentManifolds.push_back(currentManifold);//add manifolds
+				}
+			}
+		}
+	}
+
+	//Remember to clear qnodes m_ownedBodies for next frame
+	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+	{
+		quadTreeLeafNodes[i]->m_ownedBodies.clear();
 	}
 
 	//Collision response, may displace objects directly for static collision resolution

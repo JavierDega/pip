@@ -16,6 +16,11 @@ Circle::Circle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, d
 Circle::~Circle()
 {
 }
+//Intersect with AABB for Quad Nodes
+bool Circle::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
+{
+	return false;
+}
 
 bool Circle::IntersectWith(Rigidbody* rb2, Manifold& manifold)
 {

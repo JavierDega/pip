@@ -26,6 +26,11 @@ Capsule::Capsule(decimal length, decimal radius, math::Vector2 pos, decimal rot,
 Capsule::~Capsule()
 {
 }
+//Intersect test with AABB (Quad Nodes)
+bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
+{
+	return false;
+}
 
 bool Capsule::IntersectWith(Rigidbody* rb2, Manifold& manifold)
 {

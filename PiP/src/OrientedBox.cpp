@@ -15,6 +15,11 @@ OrientedBox::OrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal r
 OrientedBox::~OrientedBox()
 {
 }
+//Intersect AABB for Quad Nodes (Simplified SAT?)
+bool OrientedBox::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
+{
+	return false;
+}
 
 bool OrientedBox::IntersectWith(Rigidbody* rb2, math::Manifold& manifold)
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "PiPMath.h"
-
+#include "QuadNode.h"
 class Circle;
 class Capsule;
 class OrientedBox;
@@ -13,6 +13,7 @@ public:
 	~Rigidbody();
 
 	//Visitor pattern
+	virtual bool IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft) = 0;
 	virtual bool IntersectWith(Rigidbody* rb2, math::Manifold& manifold) = 0;
 	virtual bool IntersectWith(Circle* rb2, math::Manifold& manifold) = 0;
 	virtual bool IntersectWith(Capsule* rb2, math::Manifold& manifold) = 0;
