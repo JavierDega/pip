@@ -100,7 +100,9 @@ void Solver::Step(decimal dt)
 	//Upwards collision check
 	m_currentManifolds.clear();
 	//Integration
+	std::vector<Rigidbody*> rigidbodies;
 	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
+		rigidbodies.push_back(rb);
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_prevPos = rb->m_position;
@@ -114,7 +116,9 @@ void Solver::Step(decimal dt)
 	//When to subdivide Q-node? When number of body checks in one bin would surpass number of body checks in multiple bins (assuming uniform division?)
 	//+ checking each body against necessary bins (9 approx?)
 	//#TODO: Qtree step
+	std::vector<QuadNode*> quadTreeLeafNodes;
 	for (Rigidbody* rb1 = (Rigidbody*)m_allocator.m_pool.start; rb1 != nullptr; rb1 = m_allocator.GetNextBody(rb1)) {
+		rigidbodies.push_back(rb1);
 		for (Rigidbody* rb2 = m_allocator.GetNextBody(rb1); rb2 != nullptr; rb2 = m_allocator.GetNextBody(rb2)) {
 			Manifold currentManifold;
 			//If both objects are sleeping/kinematic, skip test
@@ -246,3 +250,4 @@ OrientedBox* Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 
 	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox))) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
 	return obb;
 }
+
