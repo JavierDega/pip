@@ -29,6 +29,66 @@ Capsule::~Capsule()
 //Intersect test with AABB (Quad Nodes)
 bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 {
+	//Clamp line segment to aabb, compare sqdist to sqrRad
+	//Get Capsule's AB
+	decimal halfLength = m_length / 2;
+	Vector2 a = Vector2{ -halfLength, 0 };
+	Vector2 b = Vector2{ halfLength, 0 };
+	//Rotate about position
+	a.Rotate(m_rotation);
+	b.Rotate(m_rotation);
+	a += m_position;
+	b += m_position;
+
+	Vector2 boxPoints[4] =
+	{
+		topRight,
+		Vector2(topRight.x, bottomLeft.y), //bottomRight
+		bottomLeft,
+		Vector2(bottomLeft.x, topRight.y) //topLeft
+	};
+
+	for (int i = 0; i < 3; i++) {
+		//Generate box segment and do like Caps-Caps query
+		Vector2 c = boxPoints[i];
+		Vector2 d = boxPoints[(i < 3) ? i + 1 : 0];
+
+		Vector2 closestPt = ClosestPtToSegment(a, b, c);//Segment in caps, to point in box
+		Vector2 closestVec = closestPt - c;//Point to closestpt in caps segment, also normal
+		if (m_radius * m_radius - closestVec.LengthSqr() >= 0) {
+			return true;
+		}
+		closestPt = ClosestPtToSegment(a, b, d);
+		closestVec = closestPt - d;
+		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
+			//Fill manifold
+			manifold.normal = closestVec.Normalized();
+			manifold.penetration = m_radius - closestVec.Length();
+			manifold.numContactPoints = 1;
+			manifold.contactPoints[0] = d;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
+		}
+		closestPt = ClosestPtToSegment(c, d, a);
+		closestVec = closestPt - a;
+		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
+			//Fill manifold
+			manifold.normal = -closestVec.Normalized();
+			manifold.penetration = m_radius - closestVec.Length();
+			manifold.numContactPoints = 1;
+			manifold.contactPoints[0] = closestPt;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
+		}
+		closestPt = ClosestPtToSegment(c, d, b);
+		closestVec = closestPt - b;
+		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
+			//Fill manifold
+			manifold.normal = -closestVec.Normalized();
+			manifold.penetration = m_radius - closestVec.Length();
+			manifold.numContactPoints = 1;
+			manifold.contactPoints[0] = closestPt;
+			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
+		}
+	}
 	return false;
 }
 

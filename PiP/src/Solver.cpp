@@ -117,17 +117,20 @@ void Solver::Step(decimal dt)
 	//+ checking each body against necessary bins (9 approx?)
 	//#TODO: Qtree step
 	m_quadTreeRoot.GetLeafNodes(quadTreeLeafNodes);
-	for (int i = 0; i < rigidbodies.size(); i++) {
-		//Figure which bin theyre on
-		Rigidbody* rb = rigidbodies[i];
-		for (int j = 0; j < quadTreeLeafNodes.size(); j++) {
-			QuadNode* leafNode = quadTreeLeafNodes[j];
-			if (rb->IntersectWith(leafNode->m_topRight, leafNode->m_bottomLeft))
+	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+	{
+		QuadNode* leafNode = quadTreeLeafNodes[i];
+		for (int j = 0; j < rigidbodies.size(); j++)
+		{
+			//Figure which bin rigidbody is on
+			Rigidbody* rb = rigidbodies[j];
+			if (rb->IntersectWith(leafNode->m_topRight, leafNode->m_bottomLeft)
 			{
 				leafNode->m_ownedBodies.push_back(rb);
 			}
 		}
 	}
+	
 	//#TODO You might test twice for bodies that are both part of two QuadNodes at the same time, this might be why m_ignoreSeparatingBodies should be true
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
@@ -135,7 +138,8 @@ void Solver::Step(decimal dt)
 		for (int j = 0; j < leafNode->m_ownedBodies.size(); j++)
 		{
 			Rigidbody* rb1 = leafNode->m_ownedBodies[j];
-			for (int k = j + 1; k < leafNode->m_ownedBodies.size(); k++) {
+			for (int k = j + 1; k < leafNode->m_ownedBodies.size(); k++) 
+			{
 				Rigidbody* rb2 = leafNode->m_ownedBodies[k];
 				Manifold currentManifold;
 				//If both objects are sleeping/kinematic, skip test
@@ -158,7 +162,9 @@ void Solver::Step(decimal dt)
 	//Collision response, may displace objects directly for static collision resolution
 	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
 	//Sleep check
-	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
+	for (int i = 0; i < rigidbodies.size(); i++) 
+	{
+		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic) {
 			if ((rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON) {
 				rb->m_timeInSleep += dt;
