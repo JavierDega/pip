@@ -19,7 +19,8 @@ typedef float decimal;
 
 class Rigidbody;//Manifold needs fwdecl
 
-namespace math {
+namespace math 
+{
 
 	inline decimal Abs(decimal x) 
 	{
@@ -30,15 +31,18 @@ namespace math {
 #endif
 	}
 
-	inline decimal Min(decimal x, decimal max) {
+	inline decimal Min(decimal x, decimal max) 
+	{
 		return x < max ? x : max;
 	}
 
-	inline decimal Max(decimal x, decimal min) {
+	inline decimal Max(decimal x, decimal min) 
+	{
 		return x > min ? x : min;
 	}
 
-	inline decimal Clamp(decimal x, decimal min, decimal max) {
+	inline decimal Clamp(decimal x, decimal min, decimal max) 
+	{
 #if USE_FIXEDPOINT
 		return Max(min, Min(x, max));
 #else
@@ -46,7 +50,8 @@ namespace math {
 #endif
 	}
 
-	inline decimal Sqrt(decimal x) {
+	inline decimal Sqrt(decimal x) 
+	{
 #if USE_FIXEDPOINT
 		return fp64::Fp64::EasySqrt(x);
 #else
@@ -54,7 +59,8 @@ namespace math {
 #endif
 	}
 
-	inline decimal Pow(decimal x, unsigned short exponent) {
+	inline decimal Pow(decimal x, unsigned short exponent) 
+	{
 #if USE_FIXEDPOINT
 		return fp64::Fp64::Pow(x, exponent);
 #else
@@ -62,7 +68,8 @@ namespace math {
 #endif
 	}
 
-	inline decimal Cos(decimal rad) {
+	inline decimal Cos(decimal rad) 
+	{
 #if USE_FIXEDPOINT
 		return fp64::Fp64::Cos(rad);
 #else
@@ -70,25 +77,38 @@ namespace math {
 #endif
 	}
 
-	inline decimal Sin(decimal rad) {
+	inline decimal Sin(decimal rad) 
+	{
 #if USE_FIXEDPOINT
 		return fp64::Fp64::Sin(rad);
 #else 
 		return sin(rad);
 #endif
 	}
+
+	inline decimal Tan(decimal rad)
+	{
+#if USE_FIXEDPOINT
+		return fp64::Fp64::Sin(rad) / fp64::Fp64::Cos(rad);
+#else
+		return tan(rad);
+#endif
+	}
 	
 	struct Vector3;
-	struct Vector2 {
+	struct Vector2 
+	{
 
 		decimal x, y;
 
 		Vector2()
 			: x(0.f), y(0.f)
-		{}
+		{
+		}
 
 		Vector2(decimal x, decimal y)
-			: x(x), y(y) {
+			: x(x), y(y) 
+		{
 		}
 
 		// Conversions
@@ -160,36 +180,43 @@ namespace math {
 			return !(*this == Rhs);
 		}
 
-		inline decimal Length() {
+		inline decimal Length()
+		{
 			return Sqrt(x * x + y * y);
 		}
 
-		inline Vector2 Normalize() {
+		inline Vector2 Normalize() 
+		{
 			decimal length = Length();
 			x /= length;
 			y /= length;
 			return *this;
 		}
 		
-		inline Vector2 Normalized() {
+		inline Vector2 Normalized() 
+		{
 			decimal length = Length();
 			return Vector2(x / length, y / length);
 		}
 		
-		inline decimal LengthSqr() {
+		inline decimal LengthSqr()
+		{
 			return this->Dot(*this);
 		}
 
-		inline Vector2 Perp() {
+		inline Vector2 Perp() 
+		{
 			return Vector2(-y, x);
 		}
 		//Rotate a point about the origin
-		inline Vector2 Rotated(decimal rad) const {
+		inline Vector2 Rotated(decimal rad) const 
+		{
 			Vector2 copy = *this;
 			return copy.Rotate(rad);
 		}
 
-		inline Vector2 Rotate(decimal rad) {
+		inline Vector2 Rotate(decimal rad) 
+		{
 			decimal x2 = x * Cos(rad) - y * Sin(rad);
 			decimal y2 = y * Cos(rad) + x * Sin(rad);
 			x = x2;
@@ -197,7 +224,8 @@ namespace math {
 			return *this;
 		}
 
-		inline decimal Dot(Vector2 v2) {
+		inline decimal Dot(Vector2 v2) 
+		{
 			return x * v2.x + y * v2.y;//Same as LengthSqr
 		}
 
@@ -208,11 +236,13 @@ namespace math {
 	};
 
 
-	inline Vector2 operator*( const Vector2& v, const decimal& scalar ) {
+	inline Vector2 operator*( const Vector2& v, const decimal& scalar ) 
+	{
 		return Vector2(v.x * scalar, v.y * scalar);
 	}
 
-	inline Vector2 operator*( const decimal& scalar, const Vector2& v ) {
+	inline Vector2 operator*( const decimal& scalar, const Vector2& v )
+	{
 		return v * scalar;
 	}
 
@@ -233,42 +263,50 @@ namespace math {
 	}*/
 
 	//Return point in segment ab closest to point p
-	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p) {
+	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p)
+	{
 		Vector2 ab = b - a;
 		Vector2 ap = p - a;
 		Vector2 bp = p - b;
 		//Case 1
-		if (ab.Dot(ap) <= 0) {
+		if (ab.Dot(ap) <= 0) 
+		{
 			return a;
 		}
 		//Case2
-		else if (-ab.Dot(bp) <= 0) {
+		else if (-ab.Dot(bp) <= 0) 
+		{
 			return b;
 		}
-		else {
+		else 
+		{
 			//Dot project
 			ab.Normalize();
 			return  a + (ab * ab.Dot(ap));
 		}
 	}
 	//Point, plane normal, plane dist to origin along n
-	inline decimal DistPtToPlane(Vector2 p, Vector2 n, decimal dist) {
+	inline decimal DistPtToPlane(Vector2 p, Vector2 n, decimal dist)
+	{
 		n.Normalize();
 		Vector2 q = n * dist;//Plane's centre
 		Vector2 planeToP = p - q;
 		return planeToP.Dot(n);
 	}
 
-	struct Vector3 {
+	struct Vector3 
+	{
 
 		decimal x, y, z;
 
 		Vector3()
 			: x(0), y(0), z(0)
-		{}
+		{
+		}
 
 		Vector3(decimal x, decimal y, decimal z)
-			: x(x), y(y), z(z) {
+			: x(x), y(y), z(z) 
+		{
 		}
 
 		// Conversions
@@ -346,7 +384,8 @@ namespace math {
 			return Sqrt(x * x + y * y + z * z);
 		}
 
-		inline Vector3 Normalize() {
+		inline Vector3 Normalize()
+		{
 			decimal length = Length();
 			x /= length;
 			y /= length;
@@ -354,28 +393,33 @@ namespace math {
 			return *this;
 		}
 
-		inline Vector3 Normalized() {
+		inline Vector3 Normalized() 
+		{
 			decimal length = Length();
 			return Vector3(x / length, y / length, z / length);
 		}
 
-		inline decimal LengthSqr() {
+		inline decimal LengthSqr() 
+		{
 			return this->Dot(*this);
 		}
 
-		inline Vector3 RotateAxisAngle(Vector3 axis, decimal rad) {
+		inline Vector3 RotateAxisAngle(Vector3 axis, decimal rad)
+		{
 			//axis must be unit vector;
 			*this = *this * Cos(rad) + axis.Cross(*this) * Sin(rad) + (1 - Cos(rad)) * axis.Dot(*this) * axis;
 			return *this;
 		}
 
 		//Rotate a point about the origin
-		inline Vector3 RotatedAxisAngle(Vector3 axis, decimal rad) const {
+		inline Vector3 RotatedAxisAngle(Vector3 axis, decimal rad) const
+		{
 			Vector3 copy = *this;
 			return copy.RotateAxisAngle(axis, rad);
 		}
 
-		inline decimal Dot(Vector3 v2) {
+		inline decimal Dot(Vector3 v2) 
+		{
 			return x * v2.x + y * v2.y + z * v2.z;//Same as LengthSqr
 		}
 
@@ -390,25 +434,30 @@ namespace math {
 		return Vector3(x, y, 0);
 	}
 
-	inline Vector3 operator*(const Vector3& v, const decimal& scalar) {
+	inline Vector3 operator*(const Vector3& v, const decimal& scalar) 
+	{
 		return Vector3(v.x * scalar, v.y * scalar, v.z * scalar);
 	}
 
-	inline Vector3 operator*(const decimal& scalar, const Vector3& v) {
+	inline Vector3 operator*(const decimal& scalar, const Vector3& v) 
+	{
 		return v * scalar;
 	}
 
 	//Quaternions
-	typedef struct Vector4Str {
+	typedef struct Vector4Str 
+	{
 		decimal x, y, z, w;
 		
 		Vector4Str( decimal x = 0.f, decimal y = 0.f, decimal z = 0.f, decimal w = 0.f) 
 			: x(0.f), y(0.f), z(0.f), w(0.f)
-		{}
+		{
+		}
 
 	}Vector4;
 	//Column major for OpenGL
-	typedef struct MatrixStr {
+	typedef struct MatrixStr 
+	{
 
 		decimal m[4][4];
 
@@ -421,7 +470,8 @@ namespace math {
 		}
 		{}
 
-		MatrixStr(Vector4 c1, Vector4 c2, Vector4 c3, Vector4 c4) {
+		MatrixStr(Vector4 c1, Vector4 c2, Vector4 c3, Vector4 c4) 
+		{
 			m[0][0] = c1.x;
 			m[0][1] = c1.y;
 			m[0][2] = c1.z;
@@ -444,17 +494,20 @@ namespace math {
 		}
 
 		//#WARNING ALL THIS MOVED STUFF MAY ORIGINALLY BE IN ROW MAJOR ORDERING (SEE INV TRANSLATION)
-		inline Vector4 GetColumn(int index) {
+		inline Vector4 GetColumn(int index) 
+		{
 			Vector4 v4 = Vector4(m[index][0], m[index][1], m[index][2], m[index][3]);
 			return v4;
 		}
 
-		inline Vector4 GetRow(int index) {
+		inline Vector4 GetRow(int index) 
+		{
 			Vector4 v4 = Vector4(m[0][index], m[1][index], m[2][index], m[3][index]);
 			return v4;
 		}
 
-		inline static MatrixStr Identity() {
+		inline static MatrixStr Identity() 
+		{
 			MatrixStr m = MatrixStr();
 			m.m[0][0] = 1;
 			m.m[1][1] = 1;
@@ -462,7 +515,8 @@ namespace math {
 			m.m[3][3] = 1;
 		}
 
-		Vector4 operator * (Vector4 v1) {
+		Vector4 operator * (Vector4 v1)
+		{
 			Vector4 newVec =  Vector4();
 			newVec.x = v1.x * m[0][0] + v1.y * m[0][1] + v1.z * m[0][2] + v1.w * m[0][3];
 			newVec.y = v1.x * m[1][0] + v1.y * m[1][1] + v1.z * m[1][2] + v1.w * m[1][3];
@@ -471,7 +525,8 @@ namespace math {
 			return newVec;
 		}
 
-		MatrixStr operator * (MatrixStr m2) {
+		MatrixStr operator * (MatrixStr m2)
+		{
 
 			//First one's columns (of a row) times the second one's rows (of a column)
 			MatrixStr m3 = MatrixStr();
@@ -516,7 +571,8 @@ namespace math {
 			return m3;
 		}
 
-		inline MatrixStr inverseTranslation() {
+		inline MatrixStr inverseTranslation() 
+		{
 			MatrixStr rv = Identity();
 			rv.m[0][3] = -m[0][3];
 			rv.m[1][3] = -m[1][3];
@@ -524,7 +580,8 @@ namespace math {
 			return rv;
 		}
 
-		inline MatrixStr inverseScale() {
+		inline MatrixStr inverseScale() 
+		{
 
 			MatrixStr rv = Identity();
 			rv.m[0][0] = (decimal)1.0f / m[0][0];
@@ -534,7 +591,8 @@ namespace math {
 			return rv;
 		}
 		//Transpose
-		inline MatrixStr inverseRotation() {
+		inline MatrixStr inverseRotation() 
+		{
 			return MatrixStr(GetRow(0), GetRow(1), GetRow(2), GetRow(3));
 			/*//Matrix transpose
 
@@ -582,7 +640,8 @@ namespace math {
 
 	}Matrix;
 	//Collision info necessary for solver, normal points from objA to B
-	struct Manifold {
+	struct Manifold 
+	{
 		int numContactPoints;
 		decimal penetration;
 		math::Vector2 normal;
@@ -590,7 +649,8 @@ namespace math {
 		Rigidbody* rb1;
 		Rigidbody* rb2;
 
-		Manifold() {
+		Manifold() 
+		{
 			numContactPoints = 0;
 			penetration = 0.0f;
 			normal = Vector2{ 0.0f, 0.0f };

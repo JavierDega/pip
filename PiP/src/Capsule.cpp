@@ -29,6 +29,11 @@ Capsule::~Capsule()
 //Intersect test with AABB (Quad Nodes)
 bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 {
+	//Early out tests
+
+	//Equation of a line
+	//Caps line	y = mx + c
+	decimal m = Tan(m_rotation);
 	//Clamp line segment to aabb, compare sqdist to sqrRad
 	//Get Capsule's AB
 	decimal halfLength = m_length / 2;
