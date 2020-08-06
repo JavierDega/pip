@@ -29,8 +29,7 @@ Capsule::~Capsule()
 //Intersect test with AABB (Quad Nodes)
 bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 {
-	//Early out tests
-
+	//#Early out tests
 	//Equation of a line
 	//Caps line	y = mx + c
 	decimal m = Tan(m_rotation);
@@ -44,6 +43,7 @@ bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 	b.Rotate(m_rotation);
 	a += m_position;
 	b += m_position;
+	decimal c = a.y - m*a.x;
 
 	Vector2 boxPoints[4] =
 	{
@@ -53,46 +53,52 @@ bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 		Vector2(bottomLeft.x, topRight.y) //topLeft
 	};
 
-	for (int i = 0; i < 3; i++) {
-		//Generate box segment and do like Caps-Caps query
-		Vector2 c = boxPoints[i];
-		Vector2 d = boxPoints[(i < 3) ? i + 1 : 0];
+	//First, clamp both points in caps to aabb and check if theyre close enough
+	Vector2 aClamped = Vector2(Clamp(a.x, bottomLeft.x, topRight.x), Clamp(a.y, bottomLeft.y, topRight.y));
+	Vector2 bClamped = Vector2(Clamp(b.x, bottomLeft.x, topRight.x), Clamp(b.y, bottomLeft.y, topRight.y));
+	if ((aClamped - a).LengthSqr() <= m_radius * m_radius) return true;
+	if ((bClamped - b).LengthSqr() <= m_radius * m_radius) return true;
+	//Then if none are close enough check if capsule line collides with aabb axis, and then check distance against points clamped in segment and in aabb
+	//First check line is not parallel to y or x axis
+	decimal segmentXMin, segmentXMax, segmentYMin, segmentYMax;
+	if (a.x <= b.x)
+	{
+		segmentXMin = a.x;
+		segmentXMax = b.x;
+	}
+	else
+	{
+		segmentXMin = b.x;
+		segmentXMax = a.x;
+	}
+	if (a.y <= b.y)
+	{
+		segmentYMin = a.y;
+		segmentYMax = b.y;
+	}
+	else
+	{
+		segmentYMin = b.y;
+		segmentYMax = a.y;
+	}
 
-		Vector2 closestPt = ClosestPtToSegment(a, b, c);//Segment in caps, to point in box
-		Vector2 closestVec = closestPt - c;//Point to closestpt in caps segment, also normal
-		if (m_radius * m_radius - closestVec.LengthSqr() >= 0) {
-			return true;
-		}
-		closestPt = ClosestPtToSegment(a, b, d);
-		closestVec = closestPt - d;
-		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
-			//Fill manifold
-			manifold.normal = closestVec.Normalized();
-			manifold.penetration = m_radius - closestVec.Length();
-			manifold.numContactPoints = 1;
-			manifold.contactPoints[0] = d;
-			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
-		}
-		closestPt = ClosestPtToSegment(c, d, a);
-		closestVec = closestPt - a;
-		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
-			//Fill manifold
-			manifold.normal = -closestVec.Normalized();
-			manifold.penetration = m_radius - closestVec.Length();
-			manifold.numContactPoints = 1;
-			manifold.contactPoints[0] = closestPt;
-			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
-		}
-		closestPt = ClosestPtToSegment(c, d, b);
-		closestVec = closestPt - b;
-		if (m_radius * m_radius - closestVec.LengthSqr() >= biggestPen) {
-			//Fill manifold
-			manifold.normal = -closestVec.Normalized();
-			manifold.penetration = m_radius - closestVec.Length();
-			manifold.numContactPoints = 1;
-			manifold.contactPoints[0] = closestPt;
-			biggestPen = m_radius * m_radius - closestVec.LengthSqr();
-		}
+	if (m == 0) {
+		//Completely horizontal line segment
+		//Find what y points it collides with the x min and max of the aabb
+		//Clamp those to the line segment, and to the aabb, and compare
+
+		decimal y = a.y;
+		decimal x = bottomLeft.x;
+		decimal x2 = topRight.x;
+		decimal boxClampY = Clamp(y, bottomLeft.y, topRight.y);
+		Vector2 boxClamp1 = Vector2(bottomLeft.x, boxClampY);
+		Vector2 boxClamp2 = Vector2(topRight.x, boxClampY);
+
+		Vector2 segmentClamp1 = Vector2(Clamp(x, segmentXMin, segmentXMax), y);
+		Vector2 segmentClamp2 = Vector2(Clamp(x2, segmentXMin, segmentXMax), y);
+		
+		//Check distances of segment clamps against box clamps
+
 	}
 	return false;
 }
