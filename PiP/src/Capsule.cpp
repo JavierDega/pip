@@ -84,7 +84,7 @@ bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 
 	if (m == 0) {
 		//Completely horizontal line segment
-		//Find what y points it collides with the x min and max of the aabb
+		//Find points when it collides with the x min and max of the aabb
 		//Clamp those to the line segment, and to the aabb, and compare
 
 		decimal y = a.y;
@@ -98,8 +98,61 @@ bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 		Vector2 segmentClamp2 = Vector2(Clamp(x2, segmentXMin, segmentXMax), y);
 		
 		//Check distances of segment clamps against box clamps
-
+		if ((segmentClamp1 - boxClamp1).LengthSqr() <= m_radius * m_radius) return true;
+		if ((segmentClamp1 - boxClamp2).LengthSqr() <= m_radius * m_radius) return true;
+		if ((segmentClamp2 - boxClamp1).LengthSqr() <= m_radius * m_radius) return true;
+		if ((segmentClamp2 - boxClamp2).LengthSqr() <= m_radius * m_radius) return true;
 	}
+	else if (m == FLT_MAX) 
+	{
+		//Completely vertical line segment
+		//Find points when it collides with the y min and max of the aabb
+		//Clamp those to the line segment, and to the aabb, and compare
+
+		decimal x = a.x;
+		decimal y = bottomLeft.y;
+		decimal y2 = topRight.y;
+		decimal boxClampX = Clamp(x, bottomLeft.x, topRight.x);
+		Vector2 boxClamp1 = Vector2(boxClampX, bottomLeft.y);
+		Vector2 boxClamp2 = Vector2(boxClampX, topRight.y);
+
+		Vector2 segmentClamp1 = Vector2(x, Clamp(y, segmentYMin, segmentYMax));
+		Vector2 segmentClamp2 = Vector2(x, Clamp(y2, segmentYMin, segmentYMax));
+
+		//Check distances of segment clamps against box clamps
+		if ((segmentClamp1 - boxClamp1).LengthSqr() <= m_radius * m_radius) return true;
+		if ((segmentClamp1 - boxClamp2).LengthSqr() <= m_radius * m_radius) return true;
+		if ((segmentClamp2 - boxClamp1).LengthSqr() <= m_radius * m_radius) return true;
+		if ((segmentClamp2 - boxClamp2).LengthSqr() <= m_radius * m_radius) return true;
+	}
+	else
+	{
+		//Use equation of line to solve for x == xmin || xmax and || y == ymin || ymax
+		//We know it collides with all aabb axis as its not parallel to none
+		//Line with box x axis 1
+		Vector2 lineX1 = Vector2(bottomLeft.x, m * bottomLeft.x + c);
+		Vector2 lineX2 = Vector2(topRight.x, m * topRight.x + c);
+
+		Vector2 lineY1 = Vector2((bottomLeft.y - c) / m, bottomLeft.y);
+		Vector2 lineY2 = Vector2((topRight.y - c) / m, topRight.y);
+
+		Vector2 boxClamp1 = Vector2(bottomLeft.x, Clamp(lineX1.y, bottomLeft.y, topRight.y));
+		Vector2 segmentClamp1 = Vector2(Clamp(lineX1.x, segmentXMin, segmentXMax), Clamp(lineX1.y, segmentYMin, segmentYMax));
+		if ((boxClamp1 - segmentClamp1).LengthSqr() <= m_radius * m_radius) return true;
+
+		Vector2 boxClamp2 = Vector2(topRight.x, Clamp(lineX2.y, bottomLeft.x, topRight.y));
+		Vector2 segmentClamp2 = Vector2(Clamp(lineX2.x, segmentXMin, segmentXMax), Clamp(lineX2.y, segmentYMin, segmentYMax));
+		if ((boxClamp2 - segmentClamp2).LengthSqr() <= m_radius * m_radius) return true;
+
+		Vector2 boxClamp3 = Vector2(Clamp(lineY1.x, bottomLeft.x, topRight.x), bottomLeft.y);
+		Vector2 segmentClamp3 = Vector2(Clamp(lineY1.x, segmentXMin, segmentXMax), Clamp(lineY1.y, segmentYMin, segmentYMax));
+		if ((boxClamp3 - segmentClamp3).LengthSqr() <= m_radius * m_radius) return true;
+
+		Vector2 boxClamp4 = Vector2(Clamp(lineY2.x, bottomLeft.x, topRight.x), topRight.y);
+		Vector2 segmentClamp4 = Vector2(Clamp(lineY2.x, segmentXMin, segmentXMax), Clamp(lineY2.y, segmentYMin, segmentYMax));
+		if ((boxClamp4 - segmentClamp4).LengthSqr() <= m_radius * m_radius) return true;
+	}
+	//#UNIT TEST THIS STUFF
 	return false;
 }
 
