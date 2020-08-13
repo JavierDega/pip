@@ -18,7 +18,18 @@ OrientedBox::~OrientedBox()
 //Intersect AABB for Quad Nodes (Simplified SAT?)
 bool OrientedBox::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 {
-	return false;
+	Vector2 rotExtents = m_halfExtents.Rotated(m_rotation);
+	Vector2 quadCenter = topRight + (bottomLeft - topRight) / 2;
+	decimal dummyPenetration;
+	Vector2 axis = Vector2(1, 0);
+	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	axis = Vector2(0, 1);
+	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	axis = Vector2(1, 0).Rotate(m_rotation);
+	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	axis = Vector2(0, 1).Rotate(m_rotation);
+	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	return true;
 }
 
 bool OrientedBox::IntersectWith(Rigidbody* rb2, math::Manifold& manifold)
@@ -200,8 +211,8 @@ bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2
 {
 	decimal pos1Axis = pos1.Dot(axis);
 	decimal pos2Axis = pos2.Dot(axis);
-	Vector2 p[4]{ rotExtents, -rotExtents, rotExtents.Perp(), -p[2] };
-	Vector2 p2[4]{ rotExtents2, -rotExtents2, rotExtents2.Perp(), -p2[2] };
+	Vector2 p[4]{ rotExtents, -rotExtents, rotExtents.Perp(), -rotExtents.Perp() };
+	Vector2 p2[4]{ rotExtents2, -rotExtents2, rotExtents2.Perp(), -rotExtents2.Perp() };
 	decimal min = 0, max = 0;
 	decimal min2 = 0, max2 = 0;
 

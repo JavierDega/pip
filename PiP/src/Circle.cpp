@@ -22,7 +22,7 @@ bool Circle::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
 	
 	//Clamp Circle point to aabb bounds, compare sqdist to clamped point against sqRad
 	Vector2 clampedPos = Vector2(Clamp(m_position.x, bottomLeft.x, topRight.x), Clamp(m_position.y, bottomLeft.y, topRight.y));
-	return (m_radius*m_radius <= (m_position - clampedPos).LengthSqr());
+	return (m_radius*m_radius >= (m_position - clampedPos).LengthSqr());
 }
 
 bool Circle::IntersectWith(Rigidbody* rb2, Manifold& manifold)

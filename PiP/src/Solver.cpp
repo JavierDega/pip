@@ -9,7 +9,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(true),
+	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(false),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 	//unsigned int size = sizeof(OrientedBox);
@@ -124,7 +124,7 @@ void Solver::Step(decimal dt)
 		{
 			//Figure which bin rigidbody is on
 			Rigidbody* rb = rigidbodies[j];
-			if (rb->IntersectWith(leafNode->m_topRight, leafNode->m_bottomLeft)
+			if (rb->IntersectWith(leafNode->m_topRight, leafNode->m_bottomLeft))
 			{
 				leafNode->m_ownedBodies.push_back(rb);
 			}
