@@ -76,9 +76,12 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 	mockCapsule.m_rotation = 45 * DEG2RAD;
 	REQUIRE(mockCapsule.IntersectWith(topRight, bottomLeft));
 
-	//Obb test
+	//Obb test (SAT)
 	OrientedBox mockObb = OrientedBox();
 
+	REQUIRE(mockObb.IntersectWith(topRight, bottomLeft));
+	mockObb.m_position.x = -6.1f;
+	REQUIRE(!mockObb.IntersectWith(topRight, bottomLeft));
 }
 
 int main(int argc, char* argv[])

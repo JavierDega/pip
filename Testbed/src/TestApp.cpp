@@ -8,7 +8,7 @@ using namespace math;
 
 TestApp::TestApp()
 	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(true), m_displayManifolds(true), m_drawGrid(true),
-	m_inputDown(0), m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
+	m_renderLeafNodes(true), m_inputDown(0), m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
 {
 }
 
@@ -250,6 +250,36 @@ void TestApp::UpdateLoop()
 			}
 			glEnd();
 		}
+		//Render leaf nodes
+		if (m_renderLeafNodes)
+		{
+			//Similar to drawing grid
+			std::vector<QuadNode*> leafNodes;
+			m_solver.m_quadTreeRoot.GetLeafNodes(leafNodes);
+			glColor3f(1, 0, 0);
+			glLoadIdentity();
+			glTranslatef(0, 0, -1);//Slightly in front of geometry
+			glBegin(GL_LINES);
+			for (int i = 0; i < leafNodes.size(); i++)
+			{
+				QuadNode* currentLeaf = leafNodes[i];
+				Vector2 topRight = currentLeaf->m_topRight;
+				Vector2 bottomLeft = currentLeaf->m_bottomLeft;
+				glVertex3f(topRight.x, topRight.y, 0);
+				glVertex3f(bottomLeft.x, topRight.y, 0);
+
+				glVertex3f(bottomLeft.x, topRight.y, 0);
+				glVertex3f(bottomLeft.x, bottomLeft.y, 0);
+
+				glVertex3f(bottomLeft.x, bottomLeft.y, 0);
+				glVertex3f(topRight.x, bottomLeft.y, 0);
+
+				glVertex3f(topRight.x, bottomLeft.y, 0);
+				glVertex3f(topRight.x, topRight.y, 0);
+
+			}
+			glEnd();
+		}
 		DrawImgui();
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_window);
@@ -285,6 +315,7 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
 		ImGui::Checkbox("Ignore separating bodies (O)", &m_solver.m_ignoreSeparatingBodies);
 		ImGui::Checkbox("Static collision resolution (penetration) (P)", &m_solver.m_staticResolution);
+		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}

@@ -12,6 +12,7 @@ Solver::Solver()
 	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(false),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
+	m_quadTreeRoot = QuadNode(Vector2(10, 10), Vector2(-10, -10));
 	//unsigned int size = sizeof(OrientedBox);
 	m_allocator.CreatePool(50*sizeof(OrientedBox));//Each orientedbox size in uint = 80.
 }
