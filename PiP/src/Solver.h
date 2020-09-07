@@ -25,7 +25,7 @@ public:
 
 	DefaultAllocator m_allocator;
 	QuadNode m_quadTreeRoot;
-	bool m_continuousCollision, m_stepMode, m_stepOnce, m_ignoreSeparatingBodies, m_staticResolution, m_logCollisionInfo;
+	bool m_continuousCollision, m_stepMode, m_stepOnce, m_quadTreeSubdivision, m_ignoreSeparatingBodies, m_staticResolution, m_logCollisionInfo;
 	decimal m_accumulator;
 	decimal m_timestep;
 	decimal m_gravity;

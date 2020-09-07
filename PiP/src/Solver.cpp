@@ -9,7 +9,7 @@ using namespace std;
 using namespace math;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(false),
+	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(false),
 	m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 	m_quadTreeRoot = QuadNode(Vector2(10, 10), Vector2(-10, -10));
@@ -102,7 +102,6 @@ void Solver::Step(decimal dt)
 	m_currentManifolds.clear();
 	//Integration
 	std::vector<Rigidbody*> rigidbodies;
-	std::vector<QuadNode*> quadTreeLeafNodes;
 	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
 		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
@@ -117,7 +116,15 @@ void Solver::Step(decimal dt)
 	//When to subdivide Q-node? When number of body checks in one bin would surpass number of body checks in multiple bins (assuming uniform division?)
 	//+ checking each body against necessary bins (9 approx?)
 	//#TODO: Qtree step
-	m_quadTreeRoot.GetLeafNodes(quadTreeLeafNodes);
+	std::vector<QuadNode*> quadTreeLeafNodes;
+	if (m_quadTreeSubdivision)
+	{
+		m_quadTreeRoot.GetLeafNodes(quadTreeLeafNodes);
+	}
+	else
+	{
+		quadTreeLeafNodes.push_back(&m_quadTreeRoot);//Root should be only leaf node
+	}
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
 		QuadNode* leafNode = quadTreeLeafNodes[i];
@@ -154,6 +161,21 @@ void Solver::Step(decimal dt)
 		}
 	}
 
+	//Before clearing we wanna know which ones need merging/subdividing
+	if (m_quadTreeSubdivision)
+	{
+		for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+		{
+			QuadNode* leafNode = quadTreeLeafNodes[i];
+			if (leafNode) //Leafnode may be invalid if we made its parent merge / delete children on a previous call
+			{
+				if (leafNode->m_owner)
+				{
+					//Its not the root node, which cant be merged
+				}
+			}
+		}
+	}
 	//Remember to clear qnodes m_ownedBodies for next frame
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{

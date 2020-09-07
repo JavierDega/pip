@@ -3,9 +3,8 @@
 using namespace math;
 
 QuadNode::QuadNode(Vector2 topRight, Vector2 bottomLeft, bool isLeaf)
-	: m_topRight(topRight), m_bottomLeft(bottomLeft), m_isLeaf(isLeaf)
+	: m_topRight(topRight), m_bottomLeft(bottomLeft), m_isLeaf(isLeaf), m_owner(nullptr), m_children (nullptr)
 {
-	m_children = nullptr;
 }
 
 QuadNode::~QuadNode()
@@ -18,17 +17,27 @@ void QuadNode::Subdivide()
 	m_children = new QuadNode[4];
 	Vector2 midPoint = m_topRight + (m_bottomLeft - m_topRight)/2;
 	//Nodes: top left
+	m_children[0].m_owner = this;
 	m_children[0].m_topRight = Vector2(midPoint.x, m_topRight.y);
 	m_children[0].m_bottomLeft = Vector2(m_bottomLeft.x, midPoint.y);
 	//top right
+	m_children[1].m_owner = this;
 	m_children[1].m_topRight = Vector2(m_topRight.x, m_topRight.y);
 	m_children[1].m_bottomLeft = Vector2(midPoint.x, midPoint.y);
 	//bottom left
+	m_children[2].m_owner = this;
 	m_children[2].m_topRight = Vector2(midPoint.x, midPoint.y);
 	m_children[2].m_bottomLeft = Vector2(m_bottomLeft.x, m_bottomLeft.y);
 	//bottom right
+	m_children[3].m_owner = this;
 	m_children[3].m_topRight = Vector2(m_topRight.x, midPoint.y);
 	m_children[3].m_bottomLeft = Vector2(midPoint.x, m_bottomLeft.y);
+}
+
+void QuadNode::Merge()
+{
+	delete[4] m_children;
+	m_isLeaf = true;
 }
 
 unsigned int QuadNode::GetLeafNodes(std::vector<QuadNode*>& leafNodes)
@@ -45,5 +54,13 @@ unsigned int QuadNode::GetLeafNodes(std::vector<QuadNode*>& leafNodes)
 		}
 	}
 	return leafCount;
+}
+
+void QuadNode::Update()
+{
+	if (m_isLeaf)
+	{
+		//Check owned bodies are above a threshold for subdivision
+	}
 }
 
