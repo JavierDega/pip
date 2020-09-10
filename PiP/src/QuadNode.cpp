@@ -40,7 +40,7 @@ void QuadNode::TrySubdivide()
 	{
 		m_ownedBodies.clear();//Might be redundant with Solver::Step() code.
 		m_isLeaf = false;
-		m_children = new QuadNode[4];
+		m_children = new QuadNode[4]();
 		Vector2 midPoint = m_topRight + (m_bottomLeft - m_topRight) / 2;
 		//Nodes: top left
 		m_children[0].m_owner = this;

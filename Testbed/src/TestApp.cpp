@@ -83,35 +83,59 @@ void TestApp::LoadScene(unsigned int index)
 		m_solver.CreateCircle(1.0f, Vector2(-5, 6), 0, Vector2(5, 0));
 		m_solver.CreateCapsule(2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true);
 		m_solver.CreateCircle(1.0f, Vector2(5, 5), 0, Vector2(-5, 0));
+		break;
 	}
-	break;
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
 		m_solver.CreateCapsule(2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD);
 		m_solver.CreateOrientedBox(Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f);
+		break;
 	}
-	break;
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
 		m_solver.CreateCircle(1.0f, Vector2(0.1f, 5));
 		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f);
 		m_solver.CreateOrientedBox(Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f);
+		break;
 	}
-	break;
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
 		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f);
 		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f);
+		break;
 	}
-	break;
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
 		m_solver.CreateCapsule(1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f);
 		m_solver.CreateCapsule(4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
+		break;
+	}
+	case 5:
+	{
+		m_sceneName = "Scene 5: Testing QuadTree";
+		m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
+
+		//Circles
+		m_solver.CreateCircle(1.0f, Vector2(-2.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-4.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-6.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-8.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-10.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-12.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-14.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(0.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(2.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(4.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(6.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(8.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(10.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(12.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(14.f, 5));
+		break;
 	}
 	break;
 	default:
@@ -304,7 +328,7 @@ void TestApp::DrawImgui()
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
 		ImGui::Begin(m_sceneName.c_str());                          // Create a window and append into it.
-		ImGui::Text("Press F1-F5 to load scenes");
+		ImGui::Text("Press F1-F10 to load scenes");
 		ImGui::Checkbox("Step mode (R)", &m_solver.m_stepMode);
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
 		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
@@ -491,6 +515,7 @@ void TestApp::ProcessInput()
 	short f3 = glfwGetKey(m_window, GLFW_KEY_F3);
 	short f4 = glfwGetKey(m_window, GLFW_KEY_F4);
 	short f5 = glfwGetKey(m_window, GLFW_KEY_F5);
+	short f6 = glfwGetKey(m_window, GLFW_KEY_F6);
 	short r = glfwGetKey(m_window, GLFW_KEY_R);
 	short t = glfwGetKey(m_window, GLFW_KEY_T);
 	short y = glfwGetKey(m_window, GLFW_KEY_Y);
@@ -499,7 +524,7 @@ void TestApp::ProcessInput()
 	short o = glfwGetKey(m_window, GLFW_KEY_O);
 	short p = glfwGetKey(m_window, GLFW_KEY_P);
 
-	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (r << 5) | (t << 6) | (y << 7) | (u << 8) | (i << 9) | (o << 10) | (p << 11);
+	short inputDownNew = (f1 << 0) | (f2 << 1) | (f3 << 2) | (f4 << 3) | (f5 << 4) | (f6 << 5) | (r << 6) | (t << 7) | (y << 8) | (u << 9) | (i << 10) | (o << 11) | (p << 12);
 	//AND with m_inputDown to get m_inputHeld
 	m_inputHeld = m_inputDown & inputDownNew;
 	m_inputPressed = ~m_inputDown & inputDownNew;
@@ -513,6 +538,7 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_F3)LoadScene(2);
 	if (m_inputPressed & KEY_F4)LoadScene(3);
 	if (m_inputPressed & KEY_F5)LoadScene(4);
+	if (m_inputPressed & KEY_F6)LoadScene(5);
 
 	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
 	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;

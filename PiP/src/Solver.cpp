@@ -154,6 +154,38 @@ void Solver::Step(decimal dt)
 		}
 	}
 
+	//Collision response, may displace objects directly for static collision resolution
+	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
+	//Sleep check
+	for (int i = 0; i < rigidbodies.size(); i++)
+	{
+		Rigidbody* rb = rigidbodies[i];
+		if (!rb->m_isKinematic)
+		{
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON)
+			{
+				rb->m_timeInSleep += dt;
+				//If its static for two timesteps or more, put to sleep
+				if (rb->m_timeInSleep >= m_timestep * 2)
+				{
+					rb->m_isSleeping = true;
+					rb->m_velocity = Vector2();
+				}
+			}
+			else
+			{
+				if (rb->m_isSleeping)
+				{
+					rb->m_isSleeping = false;
+				}
+				if (rb->m_timeInSleep > 0)
+				{
+					rb->m_timeInSleep = 0;
+				}
+			}
+		}
+	}
+
 	//Before clearing their ownedBodies we wanna know which qnodes need merging/subdividing
 	if (m_quadTreeSubdivision)
 	{
@@ -181,32 +213,6 @@ void Solver::Step(decimal dt)
 		{
 			QuadNode* leafParent = quadTreeLeafParentNodes[i];
 			leafParent->TryMerge();
-		}
-	}
-
-	//Collision response, may displace objects directly for static collision resolution
-	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
-	//Sleep check
-	for (int i = 0; i < rigidbodies.size(); i++) 
-	{
-		Rigidbody* rb = rigidbodies[i];
-		if (!rb->m_isKinematic) {
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON) {
-				rb->m_timeInSleep += dt;
-				//If its static for two timesteps or more, put to sleep
-				if (rb->m_timeInSleep >= m_timestep * 2) {
-					rb->m_isSleeping = true;
-					rb->m_velocity = Vector2();
-				}
-			}
-			else {
-				if (rb->m_isSleeping) {
-					rb->m_isSleeping = false;
-				}
-				if (rb->m_timeInSleep > 0) {
-					rb->m_timeInSleep = 0;
-				}
-			}
 		}
 	}
 }
@@ -254,7 +260,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		rb2->m_position -= pen * n * (1 - dispFactor);
 	}
 	if (m_ignoreSeparatingBodies) {
-		if (vbaDotN > 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
+		if (vbaDotN >= 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
 	}
 	assert(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
