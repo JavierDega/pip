@@ -99,7 +99,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	}
 	else return false;
 
-	//#TODO: Contact retrieval
+	//#Contact retrieval
 	//We may need to know which face the axis comes from, as well as the side planes, so that we can build a plane and clip the incident face against it
 	Vector2 planeNormals[4];
 	decimal planeDists[4];

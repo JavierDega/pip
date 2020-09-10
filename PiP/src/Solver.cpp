@@ -49,7 +49,7 @@ void Solver::Update(decimal dt)
 
 void Solver::ContinuousStep(decimal dt) 
 {
-	//#TODO: Move code onto pool iterator
+	//#Move code onto pool iterator
 	//We need to have up to date velocities to perform sweeps
 	//1: Perform sweeps, storing collision deltas
 	//2: Only acknowledge first collision time
@@ -98,8 +98,6 @@ void Solver::ContinuousStep(decimal dt)
 
 void Solver::Step(decimal dt)
 {
-	//Upwards collision check
-	m_currentManifolds.clear();
 	//Integration
 	std::vector<Rigidbody*> rigidbodies;
 	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
@@ -115,19 +113,13 @@ void Solver::Step(decimal dt)
 	//previous frame, we know to only check against Q-nodes adjacent to it, up to a max of 9.
 	//When to subdivide Q-node? When number of body checks in one bin would surpass number of body checks in multiple bins (assuming uniform division?)
 	//+ checking each body against necessary bins (9 approx?)
-	//#TODO: Qtree step
 	std::vector<QuadNode*> quadTreeLeafNodes;
-	if (m_quadTreeSubdivision)
-	{
-		m_quadTreeRoot.GetLeafNodes(quadTreeLeafNodes);
-	}
-	else
-	{
-		quadTreeLeafNodes.push_back(&m_quadTreeRoot);//Root should be only leaf node
-	}
+	m_quadTreeRoot.GetLeafNodes(quadTreeLeafNodes);
+
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
 		QuadNode* leafNode = quadTreeLeafNodes[i];
+		leafNode->m_ownedBodies.clear();
 		for (int j = 0; j < rigidbodies.size(); j++)
 		{
 			//Figure which bin rigidbody is on
@@ -138,8 +130,9 @@ void Solver::Step(decimal dt)
 			}
 		}
 	}
-	
-	//#TODO You might test twice for bodies that are both part of two QuadNodes at the same time, this might be why m_ignoreSeparatingBodies should be true
+
+	m_currentManifolds.clear();
+	//You might test twice for bodies that are both part of two QuadNodes at the same time, which is why m_ignoreSeparatingBodies should be true
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
 		QuadNode* leafNode = quadTreeLeafNodes[i];
@@ -161,25 +154,34 @@ void Solver::Step(decimal dt)
 		}
 	}
 
-	//Before clearing we wanna know which ones need merging/subdividing
+	//Before clearing their ownedBodies we wanna know which qnodes need merging/subdividing
 	if (m_quadTreeSubdivision)
 	{
+		std::vector<QuadNode*> quadTreeLeafParentNodes;
 		for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 		{
 			QuadNode* leafNode = quadTreeLeafNodes[i];
-			if (leafNode) //Leafnode may be invalid if we made its parent merge / delete children on a previous call
+			QuadNode* leafNodeParent = leafNode->m_owner;
+			if (leafNodeParent)//If its the root node it will have no parent
 			{
-				if (leafNode->m_owner)
+				if (std::find(quadTreeLeafParentNodes.begin(), quadTreeLeafParentNodes.end(), leafNodeParent) == quadTreeLeafParentNodes.end())
 				{
-					//Its not the root node, which cant be merged
+					//Its not contained already in the vector, add it
+					quadTreeLeafParentNodes.push_back(leafNodeParent);
 				}
 			}
 		}
-	}
-	//Remember to clear qnodes m_ownedBodies for next frame
-	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
-	{
-		quadTreeLeafNodes[i]->m_ownedBodies.clear();
+		for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+		{
+			QuadNode* leafNode = quadTreeLeafNodes[i];
+			leafNode->TrySubdivide();
+		}
+
+		for (int i = 0; i < quadTreeLeafParentNodes.size(); i++)
+		{
+			QuadNode* leafParent = quadTreeLeafParentNodes[i];
+			leafParent->TryMerge();
+		}
 	}
 
 	//Collision response, may displace objects directly for static collision resolution
@@ -228,7 +230,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal resultAngVelB = rb2->m_angularVelocity;
 	decimal e = Sqrt(rb1->m_e * rb2->m_e); //Coefficient of restitution
 	Vector2 avgContactPoint = Vector2();
-	//#TODO: Not final
+	//#Not final may be a better way of dealing with multiple contact points
 	for (int i = 0; i < manifold.numContactPoints; i++) 
 	{
 		avgContactPoint += manifold.contactPoints[i];
@@ -242,7 +244,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Velocity at contact point seems not to change even with rotating bodies
 	Vector2 va = rb1->m_velocity + rb1->m_angularVelocity * raP;
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
-	Vector2 vba = va - vb;//#There might be a problem with this collision response approach for objects that dont directly strike each other
+	Vector2 vba = va - vb;
 	decimal vbaDotN = vba.Dot(n);
 	if (m_staticResolution) {
 		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal

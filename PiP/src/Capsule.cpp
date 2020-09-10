@@ -253,7 +253,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	//Rotate to get line-AABB query
 	//Rotate by cap's rotation and - rotation of the Obb to get it in the AABB's reference frame
 
-	//#TODO: Still need to deal with multiple contact points in this case, just like Caps-caps, caps may be laying on a box side, or the opposite
+	//#Still need to deal with multiple contact points in this case, just like Caps-caps, caps may be laying on a box side, or the opposite
 
 	//Get Capsule's AB
 	decimal halfLength = m_length / 2;
