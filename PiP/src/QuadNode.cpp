@@ -38,23 +38,27 @@ void QuadNode::TrySubdivide()
 	//Measure owned bodies
 	if (m_ownedBodies.size() >= QNODE_SUBDIVIDE_THRESHOLD) 
 	{
-		m_ownedBodies.clear();//Might be redundant with Solver::Step() code.
+		if (!m_ownedBodies.empty()) m_ownedBodies.clear();
 		m_isLeaf = false;
-		m_children = new QuadNode[4]();
+		m_children = new QuadNode[4];
 		Vector2 midPoint = m_topRight + (m_bottomLeft - m_topRight) / 2;
 		//Nodes: top left
+		m_children[0] = QuadNode();
 		m_children[0].m_owner = this;
 		m_children[0].m_topRight = Vector2(midPoint.x, m_topRight.y);
 		m_children[0].m_bottomLeft = Vector2(m_bottomLeft.x, midPoint.y);
 		//top right
+		m_children[1] = QuadNode();
 		m_children[1].m_owner = this;
 		m_children[1].m_topRight = Vector2(m_topRight.x, m_topRight.y);
 		m_children[1].m_bottomLeft = Vector2(midPoint.x, midPoint.y);
 		//bottom left
+		m_children[2] = QuadNode();
 		m_children[2].m_owner = this;
 		m_children[2].m_topRight = Vector2(midPoint.x, midPoint.y);
 		m_children[2].m_bottomLeft = Vector2(m_bottomLeft.x, m_bottomLeft.y);
 		//bottom right
+		m_children[3] = QuadNode();
 		m_children[3].m_owner = this;
 		m_children[3].m_topRight = Vector2(m_topRight.x, midPoint.y);
 		m_children[3].m_bottomLeft = Vector2(midPoint.x, m_bottomLeft.y);

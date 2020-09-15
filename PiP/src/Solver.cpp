@@ -119,7 +119,7 @@ void Solver::Step(decimal dt)
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
 		QuadNode* leafNode = quadTreeLeafNodes[i];
-		leafNode->m_ownedBodies.clear();
+		if (!leafNode->m_ownedBodies.empty()) leafNode->m_ownedBodies.clear();
 		for (int j = 0; j < rigidbodies.size(); j++)
 		{
 			//Figure which bin rigidbody is on
