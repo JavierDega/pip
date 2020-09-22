@@ -5,8 +5,12 @@
 #include <assert.h>
 #include <string.h>
 
-DefaultAllocator::DefaultAllocator()
+DefaultAllocator::DefaultAllocator(size_t poolSize)
 {
+	if (poolSize > 0)
+	{
+		CreatePool(poolSize);
+	}
 }
 
 

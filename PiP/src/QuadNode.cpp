@@ -9,6 +9,7 @@ using namespace math;
 QuadNode::QuadNode(Vector2 topRight, Vector2 bottomLeft, bool isLeaf)
 	: m_topRight(topRight), m_bottomLeft(bottomLeft), m_isLeaf(isLeaf), m_owner(nullptr), m_children (nullptr)
 {
+	bool debugBreak = false;
 }
 
 QuadNode::~QuadNode()
@@ -25,8 +26,8 @@ unsigned int QuadNode::GetLeafNodes(std::vector<QuadNode*>& leafNodes)
 	}
 	else {
 		for (int i = 0; i < 4; i++) {
-			QuadNode currentQNode = m_children[i];
-			leafCount += currentQNode.GetLeafNodes(leafNodes);
+			QuadNode* currentQNode = m_children + i;
+			leafCount += currentQNode->GetLeafNodes(leafNodes);
 		}
 	}
 	return leafCount;
@@ -42,47 +43,48 @@ void QuadNode::TrySubdivide()
 		m_isLeaf = false;
 		m_children = new QuadNode[4];
 		Vector2 midPoint = m_topRight + (m_bottomLeft - m_topRight) / 2;
-		//Nodes: top left
-		m_children[0] = QuadNode();
+		//Nodes: top left);
 		m_children[0].m_owner = this;
 		m_children[0].m_topRight = Vector2(midPoint.x, m_topRight.y);
 		m_children[0].m_bottomLeft = Vector2(m_bottomLeft.x, midPoint.y);
 		//top right
-		m_children[1] = QuadNode();
 		m_children[1].m_owner = this;
 		m_children[1].m_topRight = Vector2(m_topRight.x, m_topRight.y);
 		m_children[1].m_bottomLeft = Vector2(midPoint.x, midPoint.y);
 		//bottom left
-		m_children[2] = QuadNode();
 		m_children[2].m_owner = this;
 		m_children[2].m_topRight = Vector2(midPoint.x, midPoint.y);
 		m_children[2].m_bottomLeft = Vector2(m_bottomLeft.x, m_bottomLeft.y);
 		//bottom right
-		m_children[3] = QuadNode();
 		m_children[3].m_owner = this;
 		m_children[3].m_topRight = Vector2(m_topRight.x, midPoint.y);
 		m_children[3].m_bottomLeft = Vector2(midPoint.x, m_bottomLeft.y);
 	}
 }
-
+#pragma optimize ("", off)
 void QuadNode::TryMerge()
 {
-	assert(!m_isLeaf && m_children);//Assert were not a leaf node, return if our children just subdivided and thus are not leaf anymore, as they probably fulfill the merge threshold
+	//Assert were not a leaf node, return if our children just subdivided and thus are not leaf anymore, as they probably fulfill the merge threshold
+	assert(!m_isLeaf);
+	assert(m_children);
 	
 	if (!m_children[0].m_isLeaf) return;
 
 	//Count children bodies see if they add up to threshold
 	unsigned int childrenBodyTotal = 0;
-	for (int i = 0; i < 4; i++)
+	std::vector<QuadNode*> leafNodes;
+	GetLeafNodes(leafNodes);
+	for (int i = 0; i <leafNodes.size(); i++)
 	{
-		QuadNode childNode = m_children[i];
-		childrenBodyTotal += childNode.m_ownedBodies.size();
+		QuadNode* childLeaf = leafNodes[i];
+		childrenBodyTotal += childLeaf->m_ownedBodies.size();
 	}
 	if (childrenBodyTotal <= QNODE_MERGE_THRESHOLD)
 	{
-		delete[4] m_children;
+		delete[4] m_children;//Should delete recursively
+		m_children = nullptr;
 		m_isLeaf = true;
 	}
 }
-
+#pragma optimize ("", on)
 

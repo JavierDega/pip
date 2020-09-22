@@ -127,6 +127,13 @@ void TestApp::LoadScene(unsigned int index)
 		m_solver.CreateCircle(1.0f, Vector2(-10.f, 5));
 		m_solver.CreateCircle(1.0f, Vector2(-12.f, 5));
 		m_solver.CreateCircle(1.0f, Vector2(-14.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-2.f, 7));
+		m_solver.CreateCircle(1.0f, Vector2(-4.f, 7));
+		m_solver.CreateCircle(1.0f, Vector2(-6.f, 7));
+		m_solver.CreateCircle(1.0f, Vector2(-8.f, 7));
+		m_solver.CreateCircle(1.0f, Vector2(-10.f, 7));
+		m_solver.CreateCircle(1.0f, Vector2(-12.f, 7));
+		m_solver.CreateCircle(1.0f, Vector2(-14.f, 7));
 		m_solver.CreateCircle(1.0f, Vector2(0.f, 5));
 		m_solver.CreateCircle(1.0f, Vector2(2.f, 5));
 		m_solver.CreateCircle(1.0f, Vector2(4.f, 5));
@@ -337,7 +344,7 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
-		ImGui::Checkbox("Ignore separating bodies (O)", &m_solver.m_ignoreSeparatingBodies);
+		ImGui::Text("Ignore separating bodies: Always true");
 		ImGui::Checkbox("Static collision resolution (penetration) (P)", &m_solver.m_staticResolution);
 		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

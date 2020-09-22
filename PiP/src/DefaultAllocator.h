@@ -6,7 +6,7 @@
 class DefaultAllocator
 {
 public:
-	DefaultAllocator();
+	DefaultAllocator(size_t poolSize = 0);
 	~DefaultAllocator();
 
 	void CreatePool(size_t size);
