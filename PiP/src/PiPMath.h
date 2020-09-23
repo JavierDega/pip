@@ -5,7 +5,7 @@
 #include <iostream>
 #include "fp_math.h"
 
-#define USE_FIXEDPOINT 0
+#define USE_FIXEDPOINT 1
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
 #define RAD2DEG 180/(PI)
@@ -248,10 +248,15 @@ namespace math
 
 	inline std::ostream& operator << (std::ostream& out, const Vector2& v)
 	{
-		out << "x(" << v.x << ")" << " y(" << v.y << ")";
+		out << "x(" << (float)v.x << ")" << " y(" << (float)v.y << ")";
 		return out;
 	}
 	
+	inline std::ostream& operator << (std::ostream& out, const decimal& v)
+	{
+		out << (float)v;
+		return out;
+	}
 
 	/*std::istream& operator >> (std::istream& in, Vector2& v)
 	{

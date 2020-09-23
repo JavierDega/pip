@@ -77,7 +77,7 @@ void QuadNode::TryMerge()
 	for (int i = 0; i <leafNodes.size(); i++)
 	{
 		QuadNode* childLeaf = leafNodes[i];
-		childrenBodyTotal += childLeaf->m_ownedBodies.size();
+		childrenBodyTotal += (unsigned int)childLeaf->m_ownedBodies.size();
 	}
 	if (childrenBodyTotal <= QNODE_MERGE_THRESHOLD)
 	{

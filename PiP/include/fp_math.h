@@ -172,10 +172,7 @@ namespace fp64 {
 		// Arithmetic operators
 		inline friend Fp64 operator+(Fp64 Lhs, Fp64 Rhs);
 
-		inline Fp64 operator-(Fp64 Rhs) const
-		{
-			return Fp64(fpc::fp64_sub(m_Internal, Rhs.m_Internal));
-		}
+		inline friend Fp64 operator-(Fp64 Lhs, Fp64 Rhs);
 
 		inline Fp64 operator-() const
 		{
@@ -313,6 +310,12 @@ namespace fp64 {
 	{
 		return Fp64(fpc::fp64_add(Lhs.m_Internal, Rhs.m_Internal));
 	}
+
+	inline Fp64 operator-(Fp64 Lhs, Fp64 Rhs)
+	{
+		return Fp64(fpc::fp64_sub(Lhs.m_Internal, Rhs.m_Internal));
+	}
+
 	inline Fp64 operator/(Fp64 Lhs, Fp64 Rhs)
 	{
 		return Fp64(fpc::fp64_div(Lhs.m_Internal, Rhs.m_Internal));

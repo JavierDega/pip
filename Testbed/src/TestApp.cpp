@@ -219,13 +219,13 @@ void TestApp::UpdateLoop()
 				glBegin(GL_TRIANGLES);
 				//Rectangle made up of two triangles
 				Vector2 halfExtents = obb->m_halfExtents;
-				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
-				glVertex3f(halfExtents.x, -halfExtents.y, 0);
-				glVertex3f(halfExtents.x, halfExtents.y, 0);
+				glVertex3f(-(float)halfExtents.x, -(float)halfExtents.y, 0);
+				glVertex3f((float)halfExtents.x, -(float)halfExtents.y, 0);
+				glVertex3f((float)halfExtents.x, (float)halfExtents.y, 0);
 				//Upper tri
-				glVertex3f(-halfExtents.x, -halfExtents.y, 0);
-				glVertex3f(halfExtents.x, halfExtents.y, 0);
-				glVertex3f(-halfExtents.x, halfExtents.y, 0);
+				glVertex3f(-(float)halfExtents.x, -(float)halfExtents.y, 0);
+				glVertex3f((float)halfExtents.x, (float)halfExtents.y, 0);
+				glVertex3f(-(float)halfExtents.x, (float)halfExtents.y, 0);
 			}
 			glEnd();
 		}
@@ -241,13 +241,13 @@ void TestApp::UpdateLoop()
 					Vector2 normalRotRight = manifold.normal.Rotated(-15 * DEG2RAD)*0.9f;
 					glLoadIdentity();
 					//Draw arrow of normal
-					glTranslatef(currentPoint.x, currentPoint.y, -1);
+					glTranslatef((float)currentPoint.x, (float)currentPoint.y, -1);
 					glBegin(GL_LINE_STRIP);
 					glVertex3f(0, 0, 0);
-					glVertex3f(manifold.normal.x, manifold.normal.y, 0);
-					glVertex3f(normalRotLeft.x, normalRotLeft.y, 0);
-					glVertex3f(normalRotRight.x, normalRotRight.y, 0);
-					glVertex3f(manifold.normal.x, manifold.normal.y, 0);
+					glVertex3f((float)manifold.normal.x, (float)manifold.normal.y, 0);
+					glVertex3f((float)normalRotLeft.x, (float)normalRotLeft.y, 0);
+					glVertex3f((float)normalRotRight.x, (float)normalRotRight.y, 0);
+					glVertex3f((float)manifold.normal.x, (float)manifold.normal.y, 0);
 					glEnd();
 				}
 			}
@@ -296,17 +296,17 @@ void TestApp::UpdateLoop()
 				QuadNode* currentLeaf = leafNodes[i];
 				Vector2 topRight = currentLeaf->m_topRight;
 				Vector2 bottomLeft = currentLeaf->m_bottomLeft;
-				glVertex3f(topRight.x, topRight.y, 0);
-				glVertex3f(bottomLeft.x, topRight.y, 0);
+				glVertex3f((float)topRight.x, (float)topRight.y, 0);
+				glVertex3f((float)bottomLeft.x, (float)topRight.y, 0);
 
-				glVertex3f(bottomLeft.x, topRight.y, 0);
-				glVertex3f(bottomLeft.x, bottomLeft.y, 0);
+				glVertex3f((float)bottomLeft.x, (float)topRight.y, 0);
+				glVertex3f((float)bottomLeft.x, (float)bottomLeft.y, 0);
 
-				glVertex3f(bottomLeft.x, bottomLeft.y, 0);
-				glVertex3f(topRight.x, bottomLeft.y, 0);
+				glVertex3f((float)bottomLeft.x, (float)bottomLeft.y, 0);
+				glVertex3f((float)topRight.x, (float)bottomLeft.y, 0);
 
-				glVertex3f(topRight.x, bottomLeft.y, 0);
-				glVertex3f(topRight.x, topRight.y, 0);
+				glVertex3f((float)topRight.x, (float)bottomLeft.y, 0);
+				glVertex3f((float)topRight.x, (float)topRight.y, 0);
 
 			}
 			glEnd();
@@ -338,14 +338,14 @@ void TestApp::DrawImgui()
 		ImGui::Text("Press F1-F10 to load scenes");
 		ImGui::Checkbox("Step mode (R)", &m_solver.m_stepMode);
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
-		ImGui::Checkbox("Continuous Collision", &m_solver.m_continuousCollision);
+		ImGui::Text("Continuous Collision : False");
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
-		ImGui::Text("Ignore separating bodies: Always true");
-		ImGui::Checkbox("Static collision resolution (penetration) (P)", &m_solver.m_staticResolution);
+		ImGui::Text("Ignore separating bodies: True");
+		ImGui::Text("Static collision resolution: True");
 		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
@@ -366,15 +366,15 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		char* objDesc = new char[100];
 		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 			objShape = "Circle";
-			snprintf(objDesc, 100, "Radius(%f)", circle->m_radius);
+			snprintf(objDesc, 100, "Radius(%f)", (double)circle->m_radius);
 		}
 		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
 			objShape = "Capsule";
-			snprintf(objDesc, 100, "Radius(%f), Length(%f)", capsule->m_radius, capsule->m_length);
+			snprintf(objDesc, 100, "Radius(%f), Length(%f)", (double)capsule->m_radius, (double)capsule->m_length);
 		}
 		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(rb)) {
 			objShape = "OrientedBox";
-			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", orientedBox->m_halfExtents.x, orientedBox->m_halfExtents.y);//Worth revising this
+			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", (double)orientedBox->m_halfExtents.x, (double)orientedBox->m_halfExtents.y);//Worth revising this
 		}
 		//Turn to char*
 		char* strId = new char[10];
@@ -389,7 +389,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Rotation");
 			ImGui::NextColumn();
 			char rotation[50];
-			snprintf(rotation, 50, "Rad(%f), Deg(%f)", rb->m_rotation, rb->m_rotation * RAD2DEG);
+			snprintf(rotation, 50, "Rad(%f), Deg(%f)", (double)rb->m_rotation, (double)rb->m_rotation * RAD2DEG);
 			ImGui::Text(rotation);
 			ImGui::NextColumn();
 
@@ -419,7 +419,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Inertia");
 			ImGui::NextColumn();
 			char inertia[50];
-			snprintf(inertia, 50, "%f", rb->m_inertia);
+			snprintf(inertia, 50, "%f", (double)rb->m_inertia);
 			ImGui::Text(inertia);
 			ImGui::NextColumn();
 
@@ -552,6 +552,6 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & KEY_Y)m_showRigidbodyEditor ^= 1;
 	if (m_inputPressed & KEY_U)m_displayManifolds ^= 1;
 	if (m_inputPressed & KEY_I)m_drawGrid ^= 1;
-	if (m_inputPressed & KEY_O)m_solver.m_ignoreSeparatingBodies ^= 1;
-	if (m_inputPressed & KEY_P)m_solver.m_staticResolution ^= 1;
+	//if (m_inputPressed & KEY_O)m_solver.m_ignoreSeparatingBodies ^= 1;
+	//if (m_inputPressed & KEY_P)m_solver.m_staticResolution ^= 1;
 }
