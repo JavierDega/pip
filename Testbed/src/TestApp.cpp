@@ -379,7 +379,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		//Turn to char*
 		char* strId = new char[10];
 		snprintf(strId, 10, "Rb%i", i);//Worth revising this
-		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u Pos: x(%f), y(%f)", objShape.c_str(), i, rb->m_position.x, rb->m_position.y);
+		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u Pos: x(%f), y(%f)", objShape.c_str(), i, (double)rb->m_position.x, (double)rb->m_position.y);
 		ImGui::NextColumn();
 		ImGui::Text(objDesc);
 		ImGui::NextColumn();
@@ -399,7 +399,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::DragInt("VelX (Scaled)", (int*)rb->m_velocity.x.InternalRepresentationP());//Also show text with real number
 			ImGui::DragInt("VelY (Scaled)", (int*)rb->m_velocity.y.InternalRepresentationP());//Also show text with real number
 			char realVel[50];
-			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (float)rb->m_velocity.x, (float)rb->m_velocity.y);
+			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (double)rb->m_velocity.x, (double)rb->m_velocity.y);
 			ImGui::Text(realVel);
 #else
 			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f);//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
@@ -412,7 +412,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 #if USE_FIXEDPOINT
 			ImGui::DragInt("Rot (Rad/S) (Scaled)", (int*)rb->m_angularVelocity.InternalRepresentationP());
 			char realRot[50];
-			snprintf(realRot, 50, "Rot (Real) (%f)", (float)rb->m_angularVelocity);
+			snprintf(realRot, 50, "Rot (Real) (%f)", (double)rb->m_angularVelocity);
 			ImGui::Text(realRot);
 #else
 			ImGui::DragFloat("Rot (Rad/S)", &rb->m_angularVelocity, 0.1f);
@@ -425,7 +425,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::DragInt("AccelX (Scaled)", (int*)rb->m_acceleration.x.InternalRepresentationP());
 			ImGui::DragInt("AccelY (Scaled)", (int*)rb->m_acceleration.y.InternalRepresentationP());
 			char realAccel[50];
-			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (float)rb->m_acceleration.x, (float)rb->m_acceleration.y);
+			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (double)rb->m_acceleration.x, (double)rb->m_acceleration.y);
 			ImGui::Text(realAccel);
 #else
 
@@ -506,28 +506,28 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		if (nodeOpen) {
 			ImGui::Text("%s, position:", obj1.c_str());
 			ImGui::NextColumn();
-			ImGui::Text("X(%f), Y(%f)", curManifold.rb1->m_position.x, curManifold.rb1->m_position.y);
+			ImGui::Text("X(%f), Y(%f)", (double)curManifold.rb1->m_position.x, (double)curManifold.rb1->m_position.y);
 			ImGui::NextColumn();
 
 			ImGui::Text("%s, position:", obj2.c_str());
 			ImGui::NextColumn();
-			ImGui::Text("X(%f), Y(%f)", curManifold.rb2->m_position.x, curManifold.rb2->m_position.y);
+			ImGui::Text("X(%f), Y(%f)", (double)curManifold.rb2->m_position.x, (double)curManifold.rb2->m_position.y);
 			ImGui::NextColumn();
 
 			ImGui::Text("Penetration:");
 			ImGui::NextColumn();
-			ImGui::Text("%f", curManifold.penetration);
+			ImGui::Text("%f", (double)curManifold.penetration);
 			ImGui::NextColumn();
 
 			ImGui::Text("Normal:");
 			ImGui::NextColumn();
-			ImGui::Text("X(%f), Y(%f)", curManifold.normal.x, curManifold.normal.y);
+			ImGui::Text("X(%f), Y(%f)", (double)curManifold.normal.x, (double)curManifold.normal.y);
 			ImGui::NextColumn();
 
 			for (int i = 0; i < curManifold.numContactPoints; i++) {
 				ImGui::Text("ContactPoint_%i", i);
 				ImGui::NextColumn();
-				ImGui::Text("X(%f), Y(%f)", curManifold.contactPoints[i].x, curManifold.contactPoints[i].y);
+				ImGui::Text("X(%f), Y(%f)", (double)curManifold.contactPoints[i].x, (double)curManifold.contactPoints[i].y);
 				ImGui::NextColumn();
 			}
 
