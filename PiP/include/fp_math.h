@@ -4,12 +4,15 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-namespace fp64 {
+namespace fp64
+{
 	extern "C" {
-		namespace fpc {
+		namespace fpc
+		{
 #endif // __cplusplus
 
-			typedef struct Fp64 {
+			typedef struct Fp64
+			{
 				int64_t internal;
 			} Fp64;
 
@@ -64,26 +67,31 @@ namespace fp64 {
 	 * may change in future versions.
 	 */
 
-	class Fp64 {
+	class Fp64
+	{
 	private:
 		fpc::Fp64 m_Internal;
 	public:
 		// 'Constructors':
 		inline Fp64(fpc::Fp64 Internal) : m_Internal(Internal) {};
 
-		inline Fp64() {
+		inline Fp64()
+		{
 			m_Internal = fpc::Fp64{ 0 };
 		}
 
-		inline Fp64(float f) {
+		inline Fp64(float f)
+		{
 			*this = FromFloat(f);
 		}
 
-		inline Fp64(int i) {
+		inline Fp64(int i)
+		{
 			*this = FromInt32(i);
 		}
 
-		inline Fp64(double d) {
+		inline Fp64(double d)
+		{
 			*this = FromDouble(d);
 		}
 
@@ -228,6 +236,10 @@ namespace fp64 {
 			return m_Internal.internal == Rhs.m_Internal.internal;
 		}
 
+		inline bool EqualsEps(const Fp64& Rhs, const Fp64& epsilon) const
+		{
+			return Abs(*this - Rhs) < epsilon;
+		}
 		inline bool operator!=(const Fp64& Rhs) const
 		{
 			return !(*this == Rhs);
@@ -284,6 +296,11 @@ namespace fp64 {
 			return Fp64(fpc::fp64_cos(F.m_Internal));
 		}
 
+		inline static Fp64 Abs(Fp64 F)
+		{
+			return (F >= 0) ? F : -F;
+		}
+
 		inline Fp64 Half() const
 		{
 			return Fp64(fpc::fp64_half(m_Internal));
@@ -303,6 +320,11 @@ namespace fp64 {
 		inline int64_t InternalRepresentation() const
 		{
 			return m_Internal.internal;
+		}
+
+		inline int64_t* InternalRepresentationP()
+		{
+			return &m_Internal.internal;
 		}
 	};
 	//Friend funcs

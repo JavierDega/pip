@@ -25,7 +25,7 @@ namespace math
 	inline decimal Abs(decimal x) 
 	{
 #if USE_FIXEDPOINT
-		return (x >= 0) ? x : -x;
+		return fp64::Fp64::Abs(x);
 #else 
 		return abs(x);
 #endif
@@ -175,6 +175,10 @@ namespace math
 			return x == Rhs.x && y == Rhs.y;
 		}
 
+		inline bool EqualsEps(const Vector2& Rhs, decimal epsilon) const
+		{
+			return (Abs(x - Rhs.x) + Abs(y - Rhs.y)) < epsilon;
+		}
 		inline bool operator!=(const Vector2& Rhs) const
 		{
 			return !(*this == Rhs);
@@ -252,11 +256,14 @@ namespace math
 		return out;
 	}
 	
+#if USE_FIXEDPOINT
 	inline std::ostream& operator << (std::ostream& out, const decimal& v)
 	{
 		out << (float)v;
 		return out;
 	}
+#else
+#endif
 
 	/*std::istream& operator >> (std::istream& in, Vector2& v)
 	{

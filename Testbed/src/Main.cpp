@@ -6,11 +6,19 @@
 #include "OrientedBox.h"
 using namespace math;
 using namespace std;
+#define FP_EPSILON_TEMP 0.00001
 
 //Unit Tests
 TEST_CASE("Base math queries") {
-	REQUIRE( ClosestPtToSegment(Vector2(-1, 0), Vector2(1, 0), Vector2(0, 1)) == Vector2(0, 0) );
-	REQUIRE( DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2) );
+	Vector2 segment1 = Vector2(-1, 0);
+	Vector2 segment2 = Vector2(1, 0);
+	Vector2 p = Vector2(0, 1);
+	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps( Vector2(0, 0), FP_EPSILON_TEMP));
+#if USE_FIXEDPOINT
+	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps( Sqrt(2), FP_EPSILON_TEMP));
+#else
+	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2));
+#endif
 }
 
 TEST_CASE("Collision response behavior") {
@@ -54,11 +62,12 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 	//#Test non intersection?
 	//Might be worth to test when QuadNode is much smaller than collider, even though its not designed to happen?
 	//Sphere vs QuadNode
-	Circle mockCircle = Circle();
+	Circle mockCircle = Circle(1.f, Vector2(0, 0));
 	Vector2 topRight = Vector2(5, 5);
 	Vector2 bottomLeft = Vector2(-5, -5);
 	REQUIRE(mockCircle.IntersectWith(topRight, bottomLeft));
 	mockCircle.m_position = Vector2(5 + Sqrt(0.5), 5 + Sqrt(0.5));
+	mockCircle.m_position -= Vector2(FP_EPSILON_TEMP, FP_EPSILON_TEMP);
 	REQUIRE(mockCircle.IntersectWith(topRight, bottomLeft));
 	
 	//All positions for capsule vs QuadNode

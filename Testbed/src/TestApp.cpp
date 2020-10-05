@@ -395,31 +395,56 @@ void TestApp::ImGuiShowRigidbodyEditor()
 
 			ImGui::Text("Velocity");
 			ImGui::NextColumn();
+#if USE_FIXEDPOINT
+			ImGui::DragInt("VelX (Scaled)", (int*)rb->m_velocity.x.InternalRepresentationP());//Also show text with real number
+			ImGui::DragInt("VelY (Scaled)", (int*)rb->m_velocity.y.InternalRepresentationP());//Also show text with real number
+			char realVel[50];
+			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (float)rb->m_velocity.x, (float)rb->m_velocity.y);
+			ImGui::Text(realVel);
+#else
 			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f);//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
 			ImGui::DragFloat("VelY", &rb->m_velocity.y, 1.0f);
+#endif
 			ImGui::NextColumn();
 
 			ImGui::Text("AngVel");
 			ImGui::NextColumn();
+#if USE_FIXEDPOINT
+			ImGui::DragInt("Rot (Rad/S) (Scaled)", (int*)rb->m_angularVelocity.InternalRepresentationP());
+			char realRot[50];
+			snprintf(realRot, 50, "Rot (Real) (%f)", (float)rb->m_angularVelocity);
+			ImGui::Text(realRot);
+#else
 			ImGui::DragFloat("Rot (Rad/S)", &rb->m_angularVelocity, 0.1f);
+#endif
 			ImGui::NextColumn();
 
 			ImGui::Text("Acceleration");
 			ImGui::NextColumn();
+#if USE_FIXEDPOINT
+			ImGui::DragInt("AccelX (Scaled)", (int*)rb->m_acceleration.x.InternalRepresentationP());
+			ImGui::DragInt("AccelY (Scaled)", (int*)rb->m_acceleration.y.InternalRepresentationP());
+			char realAccel[50];
+			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (float)rb->m_acceleration.x, (float)rb->m_acceleration.y);
+			ImGui::Text(realAccel);
+#else
+
 			ImGui::DragFloat("AccelX", &rb->m_acceleration.x, 1.0f);
 			ImGui::DragFloat("AccelY", &rb->m_acceleration.y, 1.0f);
+#endif
 			ImGui::NextColumn();
-
 			ImGui::Text("Mass");
 			ImGui::NextColumn();
-			ImGui::InputFloat("Mass", &rb->m_mass, 0.1f);
+			char mass[50];
+			snprintf(mass, 50, "%f", (float)rb->m_mass);
+			ImGui::Text(mass);
 			ImGui::NextColumn();
 
 
 			ImGui::Text("Inertia");
 			ImGui::NextColumn();
 			char inertia[50];
-			snprintf(inertia, 50, "%f", (double)rb->m_inertia);
+			snprintf(inertia, 50, "%f", (float)rb->m_inertia);
 			ImGui::Text(inertia);
 			ImGui::NextColumn();
 
