@@ -161,9 +161,10 @@ void Solver::Step(decimal dt)
 		{
 			if ((rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON)
 			{
+				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 				rb->m_timeInSleep += dt;
 				//If its static for two timesteps or more, put to sleep
-				if (rb->m_timeInSleep >= m_timestep * 2)
+				if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 2)
 				{
 					rb->m_isSleeping = true;
 					rb->m_velocity = Vector2();

@@ -35,7 +35,7 @@ void DefaultAllocator::DestroyPool()
 
 void* DefaultAllocator::AllocateBody(size_t length)
 {
-	//asks for a linear slot of that size from the pool and return void *
+	//Asks for a linear slot of that size from the pool and return void *
 	assert(length <= AvailableInPool());
 	char* ret = m_pool.next;
 	m_pool.next += length;
@@ -44,7 +44,7 @@ void* DefaultAllocator::AllocateBody(size_t length)
 
 void DefaultAllocator::DestroyAllBodies()
 {
-	memset(m_pool.start, 0, m_pool.end - m_pool.start);//Profile memleak
+	memset(m_pool.start, 0, m_pool.end - m_pool.start);//#Profile memleak
 	m_pool.next = m_pool.start;
 }
 

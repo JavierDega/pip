@@ -75,6 +75,7 @@ void TestApp::LoadScene(unsigned int index)
 {
 	//Deallocate m_allocator pool
 	m_solver.m_allocator.DestroyAllBodies();
+	if (!m_solver.m_currentManifolds.empty()) m_solver.m_currentManifolds.clear();
 	switch (index) {
 	case 0:
 	{
@@ -396,8 +397,6 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Velocity");
 			ImGui::NextColumn();
 #if USE_FIXEDPOINT
-			ImGui::DragInt("VelX (Scaled)", (int*)rb->m_velocity.x.InternalRepresentationP());//Also show text with real number
-			ImGui::DragInt("VelY (Scaled)", (int*)rb->m_velocity.y.InternalRepresentationP());//Also show text with real number
 			char realVel[50];
 			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (double)rb->m_velocity.x, (double)rb->m_velocity.y);
 			ImGui::Text(realVel);
@@ -410,7 +409,6 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("AngVel");
 			ImGui::NextColumn();
 #if USE_FIXEDPOINT
-			ImGui::DragInt("Rot (Rad/S) (Scaled)", (int*)rb->m_angularVelocity.InternalRepresentationP());
 			char realRot[50];
 			snprintf(realRot, 50, "Rot (Real) (%f)", (double)rb->m_angularVelocity);
 			ImGui::Text(realRot);
@@ -422,8 +420,6 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Acceleration");
 			ImGui::NextColumn();
 #if USE_FIXEDPOINT
-			ImGui::DragInt("AccelX (Scaled)", (int*)rb->m_acceleration.x.InternalRepresentationP());
-			ImGui::DragInt("AccelY (Scaled)", (int*)rb->m_acceleration.y.InternalRepresentationP());
 			char realAccel[50];
 			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (double)rb->m_acceleration.x, (double)rb->m_acceleration.y);
 			ImGui::Text(realAccel);

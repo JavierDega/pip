@@ -317,11 +317,13 @@ bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 		}
 	}
 	if (manifold.numContactPoints) {
+		std::cout << "normal: " << manifold.normal << " penetration: " << manifold.penetration << std::endl;
+		std::cout << "contact point: " << manifold.contactPoints[0] << std::endl;
 		manifold.rb1 = this;
 		manifold.rb2 = rb2;
 		return true;
 	}
-	else return false;
+	return false;
 }
 
 decimal Capsule::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)

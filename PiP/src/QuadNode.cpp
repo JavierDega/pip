@@ -61,7 +61,7 @@ void QuadNode::TrySubdivide()
 		m_children[3].m_bottomLeft = Vector2(midPoint.x, m_bottomLeft.y);
 	}
 }
-#pragma optimize ("", off)
+
 void QuadNode::TryMerge()
 {
 	//Assert were not a leaf node, return if our children just subdivided and thus are not leaf anymore, as they probably fulfill the merge threshold
@@ -86,5 +86,5 @@ void QuadNode::TryMerge()
 		m_isLeaf = true;
 	}
 }
-#pragma optimize ("", on)
+
 
