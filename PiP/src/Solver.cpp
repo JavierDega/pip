@@ -159,7 +159,8 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() < FLT_EPSILON)
+			//cout << rb->m_position << rb->m_prevPos << (rb->m_position - rb->m_prevPos).LengthSqr() << endl;
+			if ((rb->m_position - rb->m_prevPos).Length() < FLT_EPSILON)
 			{
 				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 				rb->m_timeInSleep += dt;
