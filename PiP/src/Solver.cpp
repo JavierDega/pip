@@ -10,7 +10,7 @@ using namespace math;
 
 Solver::Solver()
 	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(false),
-		m_allocator(50 * sizeof(OrientedBox)), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
+		m_frictionModel(true), m_allocator(50 * sizeof(OrientedBox)), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f)
 {
 }
 
@@ -99,11 +99,12 @@ void Solver::Step(decimal dt)
 	std::vector<Rigidbody*> rigidbodies;
 	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
-		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
+		rb->m_acceleration += Vector2(0, -m_gravity / rb->m_mass);
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) rb->m_velocity += rb->m_acceleration * dt;
 		rb->m_prevPos = rb->m_position;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
+		rb->m_acceleration = Vector2();
 	}
 
 	//Q-tree: Assume space time coherence. Space: Objects cannot have a velocity bigger than the extent of a Q-node. Time: If we know what Q-node we were on
@@ -267,12 +268,19 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal impulse = num / denom;
 
 	assert(impulse > 0);
-	//impulse = Abs(impulse);
 	resultVelA += impulse * n * invMassA;
 	resultAngVelA += raP.Dot(impulse * n) * invIA;
 	resultVelB -= impulse * n * invMassB;
 	resultAngVelB -= rbP.Dot(impulse * n) * invIB;
 
+	//Static and kinetic friction model: Generate a force at the contact point of magnitude m_frictionCoefficient = 0.03f or double if object is sleeping
+	//times the component of the force applied to objects along their collision normal. Will have to deduce applied forces from impulse response model.
+	//If friction is bigger than this force, scale friction back to match
+
+	if (m_frictionModel)
+	{
+
+	}
 	if (m_logCollisionInfo) {
 		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
 			<< "Normal: " << n << endl

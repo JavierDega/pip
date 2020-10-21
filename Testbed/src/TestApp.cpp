@@ -342,6 +342,7 @@ void TestApp::DrawImgui()
 		ImGui::Text("Continuous Collision : False");
 		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
+		ImGui::Checkbox("Static & Kinetic friction", &m_solver.m_frictionModel);
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
