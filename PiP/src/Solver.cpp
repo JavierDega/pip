@@ -276,10 +276,19 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Static and kinetic friction model: Generate a force at the contact point of magnitude m_frictionCoefficient = 0.03f or double if object is sleeping
 	//times the component of the force applied to objects along their collision normal. Will have to deduce applied forces from impulse response model.
 	//If friction is bigger than this force, scale friction back to match
-
+	//https://en.wikipedia.org/wiki/Collision_response#:~:text=Impulse%2Dbased%20friction%20model,-Coulomb%20friction%20model&text=The%20Coulomb%20friction%20model%20effectively,the%20static%20configuration%20is%20maintained.
+	//Coulomb impulse based friction model
 	if (m_frictionModel)
 	{
-
+		//#3D formula
+		//jr = magnitude of impulse acting along normal n
+		//t = tangent vector, orthogonal to n
+		//jf = frictional impulse, which can be static js or kinetic jk
+		//us = coefficient of static friction
+		//uk = coefficient of kinetic friction
+		//js = us*jr
+		//jk = uk*jr
+		//jf = -jk*t o -m(vba.Dot(t))*t
 	}
 	if (m_logCollisionInfo) {
 		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
