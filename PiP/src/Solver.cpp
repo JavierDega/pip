@@ -265,31 +265,53 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	assert(vbaDotN < 0);
 	decimal num = -(1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
-	decimal impulse = num / denom;
-
-	assert(impulse > 0);
-	resultVelA += impulse * n * invMassA;
-	resultAngVelA += raP.Dot(impulse * n) * invIA;
-	resultVelB -= impulse * n * invMassB;
-	resultAngVelB -= rbP.Dot(impulse * n) * invIB;
+	decimal impulseReactionary = num / denom;
+	decimal impulseFrictional;
+	decimal impulseFinal;
+	assert(impulseReactionary > 0);
 
 	//Static and kinetic friction model: Generate a force at the contact point of magnitude m_frictionCoefficient = 0.03f or double if object is sleeping
-	//times the component of the force applied to objects along their collision normal. Will have to deduce applied forces from impulse response model.
 	//If friction is bigger than this force, scale friction back to match
 	//https://en.wikipedia.org/wiki/Collision_response#:~:text=Impulse%2Dbased%20friction%20model,-Coulomb%20friction%20model&text=The%20Coulomb%20friction%20model%20effectively,the%20static%20configuration%20is%20maintained.
 	//Coulomb impulse based friction model
 	if (m_frictionModel)
 	{
-		//#3D formula
-		//jr = magnitude of impulse acting along normal n
-		//t = tangent vector, orthogonal to n
-		//jf = frictional impulse, which can be static js or kinetic jk
-		//us = coefficient of static friction
-		//uk = coefficient of kinetic friction
-		//js = us*jr
-		//jk = uk*jr
-		//jf = -jk*t o -m(vba.Dot(t))*t
+		/// <summary>
+		///#3D formula
+		///jr = magnitude of impulse acting along normal n
+		///t = tangent vector, orthogonal to n
+		///jf = frictional impulse, which can be static js or kinetic jk
+		///us = coefficient of static friction
+		///uk = coefficient of kinetic friction
+		///js = us*jr
+		///jk = uk*jr
+		///jf = -jk*t o -m(vba.Dot(t))*t  
+		/// <param name="manifold"></param>
+
+		
+		/// <summary>
+		/// #2D:
+		/// jr = impulse
+		/// jf = frictionalImpulse, static (js) or kinetic (jk)
+		/// us = coefficient of static friction
+		/// uk = coefficient of kinetic friction
+		///  
+		/// </summary>
+		/// <param name="manifold"></param>
+		decimal staticFrictionCoefficient = 0.25f;
+		decimal kineticFrictionCoefficient = 0.1f;
+		Vector2 t = (vba - n * vbaDotN).Normalized();
+		impulseFrictional = impulseReactionary * kineticFrictionCoefficient;
+		resultVelA += impulseFrictional * t * invMassA;
+		resultAngVelA += raP.Dot(impulseFrictional * t) * invIA;
+		resultVelB -= impulseFrictional * t * invMassB;
+		resultAngVelB -= rbP.Dot(impulseFrictional * t) * invIB;
 	}
+	resultVelA += impulseReactionary * n * invMassA;
+	resultAngVelA += raP.Dot(impulseReactionary * n) * invIA;
+	resultVelB -= impulseReactionary * n * invMassB;
+	resultAngVelB -= rbP.Dot(impulseReactionary * n) * invIB;
+
 	if (m_logCollisionInfo) {
 		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
 			<< "Normal: " << n << endl
@@ -298,7 +320,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 			<< "rb1 velocity: " << rb1->m_velocity << " velocity at contact point: " << va << endl
 			<< "rb2 velocity: " << rb2->m_velocity << " velocity at contact point: " << vb << endl
 			<< "relative velocity vba: " << vba << "combined coefficient of restituion (e): " << e << endl
-			<< "impulse = " << num << " / " << denom << " = " << impulse << endl
+			<< "impulseReactionary = " << num << " / " << denom << " = " << impulseReactionary << endl
 			<< "Result: velA: x(" << resultVelA << " velB = " << resultVelB << endl
 			<< "angVelA = " << resultAngVelA << " angVelB = " << resultAngVelB << endl;
 	}
