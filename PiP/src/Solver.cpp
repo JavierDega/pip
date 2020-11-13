@@ -266,8 +266,6 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal num = -(1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulseReactionary = num / denom;
-	decimal impulseFrictional;
-	decimal impulseFinal;
 	assert(impulseReactionary > 0);
 
 	//Static and kinetic friction model: Generate a force at the contact point of magnitude m_frictionCoefficient = 0.03f or double if object is sleeping
@@ -298,14 +296,19 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		///  
 		/// </summary>
 		/// <param name="manifold"></param>
-		decimal staticFrictionCoefficient = 0.25f;
-		decimal kineticFrictionCoefficient = 0.1f;
-		Vector2 t = (vba - n * vbaDotN).Normalized();
-		impulseFrictional = impulseReactionary * kineticFrictionCoefficient;
-		resultVelA += impulseFrictional * t * invMassA;
-		resultAngVelA += raP.Dot(impulseFrictional * t) * invIA;
-		resultVelB -= impulseFrictional * t * invMassB;
-		resultAngVelB -= rbP.Dot(impulseFrictional * t) * invIB;
+		decimal sFrictionCoefficient = 0.1f;
+		decimal kFrictionCoefficient = 0.05f;
+
+		Vector2 t = (vba - n * vbaDotN);
+		if (t.EqualsEps(Vector2(0, 0), FLT_EPSILON)) t = Vector2(0, 0);
+		else t.Normalize();
+
+		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping) ? sFrictionCoefficient : kFrictionCoefficient;
+		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping) ? sFrictionCoefficient : kFrictionCoefficient;
+		resultVelA += impulseFrictional1 * t * invMassA;
+		resultAngVelA += raP.Dot(impulseFrictional1 * t) * invIA;
+		resultVelB -= impulseFrictional2 * t * invMassB;
+		resultAngVelB -= rbP.Dot(impulseFrictional2 * t) * invIB;
 	}
 	resultVelA += impulseReactionary * n * invMassA;
 	resultAngVelA += raP.Dot(impulseReactionary * n) * invIA;
