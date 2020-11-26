@@ -300,15 +300,22 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		decimal kFrictionCoefficient = 0.05f;
 
 		Vector2 t = (vba - n * vbaDotN);
-		if (t.EqualsEps(Vector2(0, 0), FLT_EPSILON)) t = Vector2(0, 0);
-		else t.Normalize();
+		if (t.EqualsEps(Vector2(0, 0), FLT_EPSILON))
+		{
+			t = Vector2(0, 0);
+		}
+		else
+		{
+			t.Normalize();
+		}
+		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
 
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping) ? sFrictionCoefficient : kFrictionCoefficient;
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping) ? sFrictionCoefficient : kFrictionCoefficient;
-		resultVelA += impulseFrictional1 * t * invMassA;
-		resultAngVelA += raP.Dot(impulseFrictional1 * t) * invIA;
-		resultVelB -= impulseFrictional2 * t * invMassB;
-		resultAngVelB -= rbP.Dot(impulseFrictional2 * t) * invIB;
+		resultVelA -= impulseFrictional1 * t * invMassA;
+		resultAngVelA -= raP.Dot(impulseFrictional1 * t) * invIA;
+		resultVelB += impulseFrictional2 * t * invMassB;
+		resultAngVelB += rbP.Dot(impulseFrictional2 * t) * invIB;
 	}
 	resultVelA += impulseReactionary * n * invMassA;
 	resultAngVelA += raP.Dot(impulseReactionary * n) * invIA;
