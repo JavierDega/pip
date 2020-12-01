@@ -153,7 +153,7 @@ void Solver::Step(decimal dt)
 	}
 
 	//Collision response, may displace objects directly for static collision resolution
-	for (Manifold manifold : m_currentManifolds) ComputeResponse(manifold);
+	for (const Manifold& manifold : m_currentManifolds) ComputeResponse(manifold);
 	//Sleep check
 	for (int i = 0; i < rigidbodies.size(); i++)
 	{
@@ -267,6 +267,10 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulseReactionary = num / denom;
 	assert(impulseReactionary > 0);
+	resultVelA += impulseReactionary * n * invMassA;
+	resultAngVelA += raP.Dot(impulseReactionary * n) * invIA;
+	resultVelB -= impulseReactionary * n * invMassB;
+	resultAngVelB -= rbP.Dot(impulseReactionary * n) * invIB;
 
 	//Static and kinetic friction model: Generate a force at the contact point of magnitude m_frictionCoefficient = 0.03f or double if object is sleeping
 	//If friction is bigger than this force, scale friction back to match
@@ -285,8 +289,6 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		///jk = uk*jr
 		///jf = -jk*t o -m(vba.Dot(t))*t  
 		/// <param name="manifold"></param>
-
-		
 		/// <summary>
 		/// #2D:
 		/// jr = impulse
@@ -296,9 +298,13 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		///  
 		/// </summary>
 		/// <param name="manifold"></param>
+
+		va = resultVelA + resultAngVelA * raP;
+		vb = resultVelB + resultAngVelB * rbP;
+		vba = va - vb;
+		vbaDotN = vba.Dot(n);
 		decimal sFrictionCoefficient = 0.1f;
 		decimal kFrictionCoefficient = 0.05f;
-
 		Vector2 t = (vba - n * vbaDotN);
 		if (t.EqualsEps(Vector2(0, 0), FLT_EPSILON))
 		{
@@ -310,17 +316,13 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		}
 		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
 
-		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping) ? sFrictionCoefficient : kFrictionCoefficient;
-		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping) ? sFrictionCoefficient : kFrictionCoefficient;
+		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
+		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		resultVelA -= impulseFrictional1 * t * invMassA;
 		resultAngVelA -= raP.Dot(impulseFrictional1 * t) * invIA;
 		resultVelB += impulseFrictional2 * t * invMassB;
 		resultAngVelB += rbP.Dot(impulseFrictional2 * t) * invIB;
 	}
-	resultVelA += impulseReactionary * n * invMassA;
-	resultAngVelA += raP.Dot(impulseReactionary * n) * invIA;
-	resultVelB -= impulseReactionary * n * invMassB;
-	resultAngVelB -= rbP.Dot(impulseReactionary * n) * invIB;
 
 	if (m_logCollisionInfo) {
 		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
