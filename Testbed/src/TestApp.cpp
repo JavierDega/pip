@@ -121,28 +121,8 @@ void TestApp::LoadScene(unsigned int index)
 		m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
 
 		//Circles
-		m_solver.CreateCircle(1.0f, Vector2(-2.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-4.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-6.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-8.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-10.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-12.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-14.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(-2.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(-4.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(-6.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(-8.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(-10.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(-12.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(-14.f, 7));
-		m_solver.CreateCircle(1.0f, Vector2(0.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(2.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(4.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(6.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(8.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(10.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(12.f, 5));
-		m_solver.CreateCircle(1.0f, Vector2(14.f, 5));
+		m_solver.CreateCircle(1.0f, Vector2(-2.f, -4));
+		m_solver.CreateCircle(1.0f, Vector2(-2.f, -6));
 		break;
 	}
 	break;

@@ -299,8 +299,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		/// </summary>
 		/// <param name="manifold"></param>
 
-		va = resultVelA + resultAngVelA * raP;
-		vb = resultVelB + resultAngVelB * rbP;
+		va = resultVelA;// +resultAngVelA * raP;
+		vb = resultVelB;// +resultAngVelB * rbP;
 		vba = va - vb;
 		vbaDotN = vba.Dot(n);
 		decimal sFrictionCoefficient = 0.1f;
@@ -314,7 +314,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		{
 			t.Normalize();
 		}
-		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
+		cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
 
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
