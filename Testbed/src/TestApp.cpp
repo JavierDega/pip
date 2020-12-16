@@ -121,8 +121,7 @@ void TestApp::LoadScene(unsigned int index)
 		m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
 
 		//Circles
-		m_solver.CreateCircle(1.0f, Vector2(-2.f, -4));
-		m_solver.CreateCircle(1.0f, Vector2(-2.f, -6));
+		m_solver.CreateCircle(1.0f, Vector2(-2.f, -4), 0.0f, Vector2(0.5f, 0));
 		break;
 	}
 	break;

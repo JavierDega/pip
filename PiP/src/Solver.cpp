@@ -299,10 +299,10 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		/// </summary>
 		/// <param name="manifold"></param>
 
-		va = resultVelA;// +resultAngVelA * raP;
-		vb = resultVelB;// +resultAngVelB * rbP;
-		vba = va - vb;
-		vbaDotN = vba.Dot(n);
+		//va = resultVelA + resultAngVelA * raP;
+		//vb = resultVelB + resultAngVelB * rbP;
+		//vba = va - vb;
+		//vbaDotN = vba.Dot(n);
 		decimal sFrictionCoefficient = 0.1f;
 		decimal kFrictionCoefficient = 0.05f;
 		Vector2 t = (vba - n * vbaDotN);
