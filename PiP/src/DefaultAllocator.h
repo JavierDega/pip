@@ -3,6 +3,33 @@
 
 #include "Rigidbody.h"
 
+struct Handle
+{
+    size_t idx;
+    uint64_t generation;
+};
+
+struct Idx
+{
+    Idx(bool active, size_t idx, uint64_t generation)
+    {
+        this->active = active;
+        this->idx = idx;
+        this->generation = generation;
+    }
+
+    bool active;
+    size_t idx;
+    uint64_t generation;
+};
+
+template <typename T>
+struct PoolObject
+{
+    size_t mapping_idx;
+    T data;
+};
+
 class DefaultAllocator
 {
 public:
@@ -11,7 +38,7 @@ public:
 
 	void CreatePool(size_t size);
 	void DestroyPool();//Profile whether free deallocates whole pool
-	void * AllocateBody(size_t length);
+	void * AllocateBody(size_t length, Handle& handle);
 	void DestroyAllBodies();//Won't call destructors
 	size_t AvailableInPool();
 	Rigidbody* GetNextBody(Rigidbody* prev);
@@ -24,6 +51,7 @@ public:
 	} Pool;
 
 	Pool m_pool;
+    std::vector<Idx> m_mapping;
 };
 /*
 struct Handle

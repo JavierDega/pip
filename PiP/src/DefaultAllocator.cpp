@@ -33,10 +33,11 @@ void DefaultAllocator::DestroyPool()
 	m_pool.end = nullptr;
 }
 
-void* DefaultAllocator::AllocateBody(size_t length)
+void* DefaultAllocator::AllocateBody(size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
 	assert(length <= AvailableInPool());
+	m_mapping.push_back()
 	char* ret = m_pool.next;
 	m_pool.next += length;
 	return (void*)ret;
