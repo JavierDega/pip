@@ -5,7 +5,8 @@ set(PIP_HEADER_FILES
 	Capsule.h
 	OrientedBox.h
 	Solver.h
-	StackAllocator.h)
+	DefaultAllocator.h
+	Quadnode.h)
 	
 set(PIP_SOURCE_FILES
 	Rigidbody.cpp
@@ -13,6 +14,7 @@ set(PIP_SOURCE_FILES
 	Capsule.cpp
 	OrientedBox.cpp
 	Solver.cpp
-	StackAllocator.cpp)
+	DefaultAllocator.cpp
+	Quadnode.cpp)
 
 add_library(PiP ${PIP_HEADER_FILES} ${PIP_SOURCE_FILES})
