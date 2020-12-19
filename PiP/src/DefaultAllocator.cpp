@@ -6,6 +6,7 @@
 #include <string.h>
 
 DefaultAllocator::DefaultAllocator(size_t poolSize)
+	: m_bodyCount(0)
 {
 	if (poolSize > 0)
 	{
@@ -37,9 +38,29 @@ void* DefaultAllocator::AllocateBody(size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
 	assert(length <= AvailableInPool());
-	m_mapping.push_back()
+	// Try to recycle a gap in the mapping list
+	for (size_t i = 0; i < m_mapping.size(); i++)
+	{
+		if (!m_mapping[i].active)
+		{
+			m_mapping[i].active = true;
+			m_mapping[i].generation++;
+			m_mapping[i].poolIdx = m_bodyCount;
+			
+			handle.mappingIdx = i;
+			handle.generation = m_mapping[i].generation;
+		}
+	}
+	// Otherwise use a new mapping idx
+	handle.mappingIdx = m_mapping.size();
+	handle.generation = 0;
+
+	Idx mapIdx = Idx(true, m_bodyCount, 0);
+	m_mapping.push_back(mapIdx);
+	//Allocate memory and move pool pointer
 	char* ret = m_pool.next;
 	m_pool.next += length;
+	m_bodyCount++;
 	return (void*)ret;
 }
 
@@ -47,6 +68,8 @@ void DefaultAllocator::DestroyAllBodies()
 {
 	memset(m_pool.start, 0, m_pool.end - m_pool.start);//#Profile memleak
 	m_pool.next = m_pool.start;
+	m_bodyCount = 0;
+	m_mapping.clear();
 }
 
 size_t DefaultAllocator::AvailableInPool()

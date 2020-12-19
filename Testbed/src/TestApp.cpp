@@ -134,7 +134,7 @@ void TestApp::UpdateLoop()
 {
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(m_window))
-	{	
+	{
 		// Poll and handle events (inputs, window resize, etc.)
 		// You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
 		// - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.

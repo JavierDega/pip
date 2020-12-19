@@ -344,22 +344,25 @@ void Solver::ComputeResponse(const Manifold& manifold)
 }
 
 //Go through custom allocator
-Circle* Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Handle Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
 	// Create the collision body, presumably a pool has been created beforehand
-	Circle* circle = new (m_allocator.AllocateBody(sizeof(Circle))) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
-	return circle;
+	Handle circleHandle;
+	Circle* circle = new (m_allocator.AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	return circleHandle;
 }
 
-Capsule* Solver::CreateCapsule(decimal length, decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Handle Solver::CreateCapsule(decimal length, decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
-	Capsule* capsule = new (m_allocator.AllocateBody(sizeof(Capsule))) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
-	return capsule;
+	Handle capsuleHandle;
+	Capsule* capsule = new (m_allocator.AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	return capsuleHandle;
 }
 
-OrientedBox* Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Handle Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
-	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox))) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
-	return obb;
+	Handle obbHandle;
+	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
+	return obbHandle;
 }
 

@@ -5,7 +5,12 @@
 
 struct Handle
 {
-    size_t idx;
+    Handle(size_t idx = 0, uint64_t generation = 0)
+    {
+        this->mappingIdx = idx;
+        this->generation = generation;
+    }
+    size_t mappingIdx;
     uint64_t generation;
 };
 
@@ -14,20 +19,13 @@ struct Idx
     Idx(bool active, size_t idx, uint64_t generation)
     {
         this->active = active;
-        this->idx = idx;
+        this->poolIdx = idx;
         this->generation = generation;
     }
 
     bool active;
-    size_t idx;
+    size_t poolIdx;
     uint64_t generation;
-};
-
-template <typename T>
-struct PoolObject
-{
-    size_t mapping_idx;
-    T data;
 };
 
 class DefaultAllocator
@@ -52,27 +50,9 @@ public:
 
 	Pool m_pool;
     std::vector<Idx> m_mapping;
+    unsigned int m_bodyCount;
 };
 /*
-struct Handle
-{
-    size_t idx;
-    uint64_t generation;
-};
-
-struct Idx
-{
-    bool active;
-    size_t idx;
-    uint64_t generation;
-};
-
-template <typename T>
-struct Object
-{
-    size_t mapping_idx;
-    T data;
-};
 
 template <typename T>
 struct Entities
