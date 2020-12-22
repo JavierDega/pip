@@ -19,6 +19,7 @@ DefaultAllocator::~DefaultAllocator()
 {
 	DestroyPool();
 }
+
 void DefaultAllocator::CreatePool(size_t size)
 {
 	m_pool.start = (char*)(malloc(size));
@@ -28,6 +29,7 @@ void DefaultAllocator::CreatePool(size_t size)
 
 void DefaultAllocator::DestroyPool()
 {
+	DestroyAllBodies();
 	free(m_pool.start);
 	m_pool.start = nullptr;
 	m_pool.next = nullptr;
@@ -93,4 +95,41 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 	}
 	if (charPNext == m_pool.next) return nullptr;
 	return (Rigidbody*)charPNext;
+}
+
+Rigidbody* DefaultAllocator::GetBody(Handle handle)
+{
+	if (!IsHandleValid(handle)) return nullptr;
+	Idx i = m_mapping[handle.mappingIdx];
+	return GetBodyAt(i.poolIdx);
+}
+
+Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
+{
+	//#Do downcasting or embed body type enum in Rigidbody class for efficiency
+	return nullptr;
+}
+
+void DefaultAllocator::DestroyBody(Handle handle)
+{
+	/*if (!is_valid(handle))
+		return;
+
+	size_t obj_idx = mapping[handle.idx].idx;
+	Object<T>& last_obj = objects.back();
+
+	// Point last object's mapping idx to point at the object that will be destroyed
+	mapping[last_obj.mapping_idx].idx = obj_idx;
+
+	// Swap the last object with the object to be destroyed, then pop the vec
+	objects[obj_idx] = last_obj;
+	objects.pop_back();
+
+	// Set the mapping to be inactive for the object that was destroyed
+	mapping[handle.idx].active = false;*/
+}
+
+bool DefaultAllocator::IsHandleValid(Handle handle)
+{
+	return handle.mappingIdx < m_mapping.size() && m_mapping[handle.mappingIdx].active&& handle.generation == m_mapping[handle.mappingIdx].generation;
 }
