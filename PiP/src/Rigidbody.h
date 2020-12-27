@@ -5,6 +5,13 @@ class Circle;
 class Capsule;
 class OrientedBox;
 
+enum BodyType
+{
+	Circle,
+	Capsule,
+	Obb
+};
+
 class Rigidbody
 {
 public:
@@ -23,6 +30,7 @@ public:
 	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) = 0;
 	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold) = 0;
 
+	BodyType m_bodyType;
 	math::Vector2 m_position;
 	math::Vector2 m_prevPos;
 	decimal m_rotation;//In radians

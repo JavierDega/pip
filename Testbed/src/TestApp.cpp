@@ -35,7 +35,7 @@ int TestApp::Init()
 	glfwMakeContextCurrent(m_window);
 	//glfwSwapInterval(1); // Enable vsync
 	if (glewInit() != GLEW_OK)
-		std::cout << "Error!" << std::endl;
+		std::cout << "Error! glewInit() != GLEW_OK" << std::endl;
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
 	//Imgui Setup

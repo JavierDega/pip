@@ -24,6 +24,7 @@ enum Keys {
 	KEY_O = (1 << 11),
 	KEY_P = (1 << 12)
 };
+
 class TestApp
 {
 public:

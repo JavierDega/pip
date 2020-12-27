@@ -160,7 +160,6 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			//cout << rb->m_position << rb->m_prevPos << (rb->m_position - rb->m_prevPos).LengthSqr() << endl;
 			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= FLT_EPSILON * FLT_EPSILON)
 			{
 				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
@@ -314,7 +313,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		{
 			t.Normalize();
 		}
-		cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
+		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
 
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);

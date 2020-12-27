@@ -14,20 +14,6 @@ struct Handle
     uint64_t generation;
 };
 
-struct Idx
-{
-    Idx(bool active, size_t idx, uint64_t generation)
-    {
-        this->active = active;
-        this->poolIdx = idx;
-        this->generation = generation;
-    }
-
-    bool active;
-    size_t poolIdx;
-    uint64_t generation;
-};
-
 class DefaultAllocator
 {
 public:
@@ -45,12 +31,32 @@ public:
     void DestroyBody(Handle handle);
     bool IsHandleValid(Handle handle);
 
-	typedef struct PoolStr
-	{
-		char* start;
-		char* next;//Where to allocate next
-		char* end;
-	} Pool;
+    struct Idx
+    {
+        Idx(bool active, size_t idx, uint64_t generation)
+        {
+            this->active = active;
+            this->poolIdx = idx;
+            this->generation = generation;
+        }
+
+        bool active;
+        size_t poolIdx;
+        uint64_t generation;
+    };
+
+    struct Pool
+    {
+        Pool()
+        {
+            start = nullptr;
+            next = nullptr;
+            end = nullptr;
+        }
+        char* start;
+        char* next;//Where to allocate next
+        char* end;
+    };
 
 	Pool m_pool;
     std::vector<Idx> m_mapping;

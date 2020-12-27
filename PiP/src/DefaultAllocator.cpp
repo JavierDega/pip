@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <string.h>
 
+using namespace std;
+
 DefaultAllocator::DefaultAllocator(size_t poolSize)
 	: m_bodyCount(0)
 {
@@ -83,15 +85,26 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 {
 	assert(AvailableInPool() > sizeof(Rigidbody));
 	char* charP = (char*)prev;
-	char* charPNext;
-	if (Circle* circle = dynamic_cast<Circle*>(prev)) {
-		charPNext = charP + sizeof(Circle);
-	}
-	else if (Capsule* capsule = dynamic_cast<Capsule*>(prev)) {
-		charPNext = charP + sizeof(Capsule);
-	}
-	else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(prev)) {
-		charPNext = charP + sizeof(OrientedBox);
+	char* charPNext = charP;
+	switch (prev->m_bodyType)
+	{
+		case BodyType::Circle:
+		{
+			charPNext += sizeof(Circle);
+			break;
+		}
+		case BodyType::Capsule:
+		{
+			charPNext += sizeof(Capsule);
+			break;
+		}
+		case BodyType::Obb:
+		{
+			charPNext += sizeof(Obb);
+			break;
+		}
+		default:
+			break;
 	}
 	if (charPNext == m_pool.next) return nullptr;
 	return (Rigidbody*)charPNext;
@@ -107,7 +120,18 @@ Rigidbody* DefaultAllocator::GetBody(Handle handle)
 Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 {
 	//#Do downcasting or embed body type enum in Rigidbody class for efficiency
-	return nullptr;
+	size_t curIdx = 0;
+	Rigidbody* rb = (Rigidbody*)m_pool.start;
+	for (size_t curIdx = 0; curIdx < i; curIdx++)
+	{
+		if (rb == nullptr)
+		{
+			cout << "PiP Error: Trying to get body index bigger than poolSize" << endl;
+			return nullptr;
+		}
+		rb = GetNextBody(rb);
+	}
+	return rb;
 }
 
 void DefaultAllocator::DestroyBody(Handle handle)
@@ -131,5 +155,5 @@ void DefaultAllocator::DestroyBody(Handle handle)
 
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
-	return handle.mappingIdx < m_mapping.size() && m_mapping[handle.mappingIdx].active&& handle.generation == m_mapping[handle.mappingIdx].generation;
+	return handle.mappingIdx < m_mapping.size() && m_mapping[handle.mappingIdx].active && handle.generation == m_mapping[handle.mappingIdx].generation;
 }

@@ -265,15 +265,6 @@ namespace math
 #else
 #endif
 
-	/*std::istream& operator >> (std::istream& in, Vector2& v)
-	{
-		std::cout << "Enter X";
-		in >> v.x;
-		std::cout << "Enter Y";
-		in >> v.y;
-		return in;
-	}*/
-
 	//Return point in segment ab closest to point p
 	inline Vector2 ClosestPtToSegment(Vector2 a, Vector2 b, Vector2 p)
 	{
