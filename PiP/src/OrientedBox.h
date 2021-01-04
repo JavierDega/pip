@@ -2,7 +2,7 @@
 #include "Rigidbody.h"
 
 //May get more complex in the future? All we need for now, just to know which object to clip against which
-enum SatCollision {
+enum class SatCollision {
 	OBJ1,
 	OBJ2
 };

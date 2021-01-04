@@ -8,7 +8,6 @@
 using namespace std;
 
 DefaultAllocator::DefaultAllocator(size_t poolSize)
-	: m_bodyCount(0)
 {
 	if (poolSize > 0)
 	{
@@ -38,33 +37,61 @@ void DefaultAllocator::DestroyPool()
 	m_pool.end = nullptr;
 }
 
-void* DefaultAllocator::AllocateBody(size_t length, Handle& handle)
+void* DefaultAllocator::AllocateBody( BodyType bodyType, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
-	assert(length <= AvailableInPool());
-	// Try to recycle a gap in the mapping list
-	for (size_t i = 0; i < m_mapping.size(); i++)
+	size_t bodyLength;
+	switch (bodyType)
 	{
-		if (!m_mapping[i].active)
+		case BodyType::E_Circle:
 		{
-			m_mapping[i].active = true;
-			m_mapping[i].generation++;
-			m_mapping[i].poolIdx = m_bodyCount;
+			bodyLength = sizeof(Circle);
+			break;
+		}
+		case BodyType::E_Capsule:
+		{
+			bodyLength = sizeof(Capsule);
+			break;
+		}
+		case BodyType::E_Obb:
+		{
+			bodyLength = sizeof(OrientedBox);
+			break;
+		}
+		default:
+			break;
+	}
+
+	assert( bodyLength <= AvailableInPool());
+
+	size_t objIdx = m_poolMappings.size();
+	// Try to recycle a gap in the mapping list
+	for (size_t i = 0; i < m_mappings.size(); i++)
+	{
+		if (!m_mappings[i].active)
+		{
+			m_poolMappings.push_back(PoolIdx(bodyType, i));
+			
+			m_mappings[i].active = true;
+			m_mappings[i].generation++;
+			m_mappings[i].poolIdx = objIdx;
 			
 			handle.mappingIdx = i;
-			handle.generation = m_mapping[i].generation;
+			handle.generation = m_mappings[i].generation;
 		}
 	}
 	// Otherwise use a new mapping idx
-	handle.mappingIdx = m_mapping.size();
+	m_poolMappings.push_back(PoolIdx(bodyType, m_mappings.size()));
+	
+	handle.mappingIdx = m_mappings.size();
 	handle.generation = 0;
 
-	Idx mapIdx = Idx(true, m_bodyCount, 0);
-	m_mapping.push_back(mapIdx);
+	MappingIdx mapIdx = MappingIdx(true, objIdx, 0);
+	m_mappings.push_back(mapIdx);
+	
 	//Allocate memory and move pool pointer
 	char* ret = m_pool.next;
-	m_pool.next += length;
-	m_bodyCount++;
+	m_pool.next += bodyLength;
 	return (void*)ret;
 }
 
@@ -72,10 +99,10 @@ void DefaultAllocator::DestroyAllBodies()
 {
 	memset(m_pool.start, 0, m_pool.end - m_pool.start);//#Profile memleak
 	m_pool.next = m_pool.start;
-	m_bodyCount = 0;
-	m_mapping.clear();
+	m_mappings.clear();
+	m_poolMappings.clear();
 }
-
+//Bytes available
 size_t DefaultAllocator::AvailableInPool()
 {
 	return m_pool.end - m_pool.next;
@@ -88,19 +115,19 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 	char* charPNext = charP;
 	switch (prev->m_bodyType)
 	{
-		case BodyType::Circle:
+		case BodyType::E_Circle:
 		{
 			charPNext += sizeof(Circle);
 			break;
 		}
-		case BodyType::Capsule:
+		case BodyType::E_Capsule:
 		{
 			charPNext += sizeof(Capsule);
 			break;
 		}
-		case BodyType::Obb:
+		case BodyType::E_Obb:
 		{
-			charPNext += sizeof(Obb);
+			charPNext += sizeof(OrientedBox);
 			break;
 		}
 		default:
@@ -113,13 +140,15 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 Rigidbody* DefaultAllocator::GetBody(Handle handle)
 {
 	if (!IsHandleValid(handle)) return nullptr;
-	Idx i = m_mapping[handle.mappingIdx];
+	MappingIdx i = m_mappings[handle.mappingIdx];
 	return GetBodyAt(i.poolIdx);
 }
 
 Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 {
-	//#Do downcasting or embed body type enum in Rigidbody class for efficiency
+	//#Using pool mappings, could rapidly figure out memory offset from pool's m_start
+	//by comparing bodyTypes of all PoolIdx's
+	assert(i < m_poolMappings.size());
 	size_t curIdx = 0;
 	Rigidbody* rb = (Rigidbody*)m_pool.start;
 	for (size_t curIdx = 0; curIdx < i; curIdx++)
@@ -136,24 +165,38 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 
 void DefaultAllocator::DestroyBody(Handle handle)
 {
-	/*if (!is_valid(handle))
+	if (!IsHandleValid(handle))
+	{
+		cout << "PiP Warning: DestroyBody::Handle invalid" << endl;
 		return;
+	}
 
-	size_t obj_idx = mapping[handle.idx].idx;
-	Object<T>& last_obj = objects.back();
+	//Since pools are multiobjects, we need to swap and pop with last object of same body type
+	//Loop from end till we find first object of same bodyType, and check whether its the same object.
+	size_t objIdx = m_mappings[handle.mappingIdx].poolIdx;
+	BodyType bodyType = GetBody(handle)->m_bodyType;
+	for (int i = m_poolMappings.size() - 1; i >= 0; i--)
+	{
+		PoolIdx poolIdx = m_poolMappings[i];
+		if (poolIdx.bodyType == bodyType)
+		{
+			//Check its not same object
+			if (poolIdx.mappingIdx != handle.mappingIdx)
+			{
+				//Swap and pop
+				//Point last object's mapping idx to point at the object that will be destroyed
+				m_mappings[poolIdx.mappingIdx].poolIdx = objIdx;
 
-	// Point last object's mapping idx to point at the object that will be destroyed
-	mapping[last_obj.mapping_idx].idx = obj_idx;
-
-	// Swap the last object with the object to be destroyed, then pop the vec
-	objects[obj_idx] = last_obj;
-	objects.pop_back();
-
-	// Set the mapping to be inactive for the object that was destroyed
-	mapping[handle.idx].active = false;*/
+				// Swap the last object with the object to be destroyed, pop, then offset remaining pool objects
+				m_poolMappings[objIdx] = poolIdx;
+				m_poolMappings.erase(m_poolMappings.begin() + i);
+			}
+		}
+	}
+	//Need to update, swap and pop mappings and object pool, deactivate mapping,..
 }
 
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
-	return handle.mappingIdx < m_mapping.size() && m_mapping[handle.mappingIdx].active && handle.generation == m_mapping[handle.mappingIdx].generation;
+	return handle.mappingIdx < m_mappings.size() && m_mappings[handle.mappingIdx].active && handle.generation == m_mappings[handle.mappingIdx].generation;
 }

@@ -5,11 +5,11 @@ class Circle;
 class Capsule;
 class OrientedBox;
 
-enum BodyType
+enum class BodyType
 {
-	Circle,
-	Capsule,
-	Obb
+	E_Circle,
+	E_Capsule,
+	E_Obb
 };
 
 class Rigidbody
