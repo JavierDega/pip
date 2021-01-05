@@ -7,9 +7,9 @@ class OrientedBox;
 
 enum class BodyType
 {
-	E_Circle,
-	E_Capsule,
-	E_Obb
+	Circle,
+	Capsule,
+	Obb
 };
 
 class Rigidbody

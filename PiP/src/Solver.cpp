@@ -97,7 +97,7 @@ void Solver::Step(decimal dt)
 {
 	//Integration
 	std::vector<Rigidbody*> rigidbodies;
-	for (Rigidbody* rb = (Rigidbody*)m_allocator.m_pool.start; rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
+	for (Rigidbody* rb = m_allocator.GetFirstBody(); rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
 		rb->m_acceleration += Vector2(0, -m_gravity / rb->m_mass);
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) rb->m_velocity += rb->m_acceleration * dt;

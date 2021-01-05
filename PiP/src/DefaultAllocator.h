@@ -5,12 +5,12 @@
 
 struct Handle
 {
-    Handle(size_t mappingIdx = 0, uint64_t generation = 0)
+    Handle(size_t i = 0, uint64_t generation = 0)
     {
-        this->mappingIdx = mappingIdx;
+        this->idx = i;
         this->generation = generation;
     }
-    size_t mappingIdx;
+    size_t idx;
     uint64_t generation;
 };
 
@@ -22,39 +22,29 @@ public:
 
 	void CreatePool(size_t size);
 	void DestroyPool();//Profile whether free deallocates whole pool
-	void * AllocateBody(BodyType bodyType, Handle& handle);
+	void * AllocateBody(size_t length, Handle& handle);
 	void DestroyAllBodies();//Won't call destructors
+    void DestroyBody(Handle handle);
 	size_t AvailableInPool();
+    Rigidbody* GetFirstBody();
 	Rigidbody* GetNextBody(Rigidbody* prev);
     Rigidbody* GetBody(Handle handle);
     Rigidbody* GetBodyAt(size_t i);
-    void DestroyBody(Handle handle);
+    Rigidbody* GetLastBodyOfType(BodyType bodyType);
     bool IsHandleValid(Handle handle);
 
-    struct MappingIdx
+    struct Idx
     {
-        MappingIdx(bool active, size_t idx, uint64_t generation)
+        Idx(bool active, size_t i, uint64_t generation)
         {
             this->active = active;
-            this->poolIdx = idx;
+            this->idx = i;
             this->generation = generation;
         }
 
         bool active;
-        size_t poolIdx;
+        size_t idx;
         uint64_t generation;
-    };
-    
-    struct PoolIdx
-    {
-        PoolIdx(BodyType bodyType, size_t mappingIdx)
-        {
-            this->bodyType = bodyType;
-            this->mappingIdx = mappingIdx;
-        }
-
-        BodyType bodyType;
-        size_t mappingIdx;
     };
 
     struct Pool
@@ -70,10 +60,10 @@ public:
         char* end;
     };
 
-	Pool m_pool;
 protected:
-    std::vector<MappingIdx> m_mappings;//Maps growing, linear obj list to pool list
-    std::vector<PoolIdx> m_poolMappings;//Keeps track of relevant data in pool objects
+	Pool m_pool;
+    std::vector<Idx> m_mappings;//Maps reusable object list to linear object pool.
+    size_t m_bodyCount;
 };
 
 /*

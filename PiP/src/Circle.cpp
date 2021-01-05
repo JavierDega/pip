@@ -10,7 +10,7 @@ using namespace math;
 Circle::Circle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass,  decimal e, bool isKinematic)
 	: m_radius(rad), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
-	m_bodyType = BodyType::E_Circle;
+	m_bodyType = BodyType::Circle;
 	m_inertia = m_mass * m_radius * m_radius / 2;//mr^2/2
 }
 

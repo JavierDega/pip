@@ -8,7 +8,7 @@ using namespace math;
 Capsule::Capsule(decimal length, decimal radius, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 	: m_length(length), m_radius(radius), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
-	m_bodyType = BodyType::E_Capsule;
+	m_bodyType = BodyType::Capsule;
 	//Inertia tensor of two hemispheres (Parallel axis to translate CM) + the one of the rectangle
 	//Calculate mass of individual parts (assuming uniform density)
 	decimal areaHemicircles = m_radius * m_radius * PI;

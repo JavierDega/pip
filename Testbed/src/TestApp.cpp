@@ -151,7 +151,7 @@ void TestApp::UpdateLoop()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1, 1, 1);
 		//Loop through solver's rigidbody pool
-		for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.m_pool.start; rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
+		for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
 			glLoadIdentity();
 			if (Circle* circle = dynamic_cast<Circle*>(rb)) {
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
@@ -342,7 +342,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	ImGui::Columns(2);
 	ImGui::Separator();
 	int i = 0;
-	for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.m_pool.start; rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
+	for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
 		std::string objShape;
 		char* objDesc = new char[100];
 		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
@@ -541,18 +541,16 @@ void TestApp::ProcessInput()
 	m_inputDown = inputDownNew;
 
 	//React to input
-	if (m_inputPressed & KEY_F1)LoadScene(0);
-	if (m_inputPressed & KEY_F2)LoadScene(1);
-	if (m_inputPressed & KEY_F3)LoadScene(2);
-	if (m_inputPressed & KEY_F4)LoadScene(3);
-	if (m_inputPressed & KEY_F5)LoadScene(4);
-	if (m_inputPressed & KEY_F6)LoadScene(5);
+	if (m_inputPressed & E_KEY_F1)LoadScene(0);
+	if (m_inputPressed & E_KEY_F2)LoadScene(1);
+	if (m_inputPressed & E_KEY_F3)LoadScene(2);
+	if (m_inputPressed & E_KEY_F4)LoadScene(3);
+	if (m_inputPressed & E_KEY_F5)LoadScene(4);
+	if (m_inputPressed & E_KEY_F6)LoadScene(5);
 
-	if (m_inputPressed & KEY_R)m_solver.m_stepMode ^= 1;
-	if (m_inputPressed & KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
-	if (m_inputPressed & KEY_Y)m_showRigidbodyEditor ^= 1;
-	if (m_inputPressed & KEY_U)m_displayManifolds ^= 1;
-	if (m_inputPressed & KEY_I)m_drawGrid ^= 1;
-	//if (m_inputPressed & KEY_O)m_solver.m_ignoreSeparatingBodies ^= 1;
-	//if (m_inputPressed & KEY_P)m_solver.m_staticResolution ^= 1;
+	if (m_inputPressed & E_KEY_R)m_solver.m_stepMode ^= 1;
+	if (m_inputPressed & E_KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
+	if (m_inputPressed & E_KEY_Y)m_showRigidbodyEditor ^= 1;
+	if (m_inputPressed & E_KEY_U)m_displayManifolds ^= 1;
+	if (m_inputPressed & E_KEY_I)m_drawGrid ^= 1;
 }

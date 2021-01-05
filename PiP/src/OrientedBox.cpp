@@ -8,7 +8,7 @@ OrientedBox::OrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal r
 	decimal e, bool isKinematic)
 	: m_halfExtents(halfExtents), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
-	m_bodyType = BodyType::E_Obb;
+	m_bodyType = BodyType::Obb;
 	//Find inertia tensor formula for an oriented box (Derived from capsule's)
 	m_inertia = m_mass * (Pow(m_halfExtents.x * 2, 2) + Pow(m_halfExtents.y * 2, 2)) / 12;
 }

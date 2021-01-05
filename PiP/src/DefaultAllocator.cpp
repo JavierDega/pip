@@ -8,6 +8,7 @@
 using namespace std;
 
 DefaultAllocator::DefaultAllocator(size_t poolSize)
+	: m_bodyCount(0)
 {
 	if (poolSize > 0)
 	{
@@ -37,61 +38,37 @@ void DefaultAllocator::DestroyPool()
 	m_pool.end = nullptr;
 }
 
-void* DefaultAllocator::AllocateBody( BodyType bodyType, Handle& handle)
+void* DefaultAllocator::AllocateBody( size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
-	size_t bodyLength;
-	switch (bodyType)
-	{
-		case BodyType::E_Circle:
-		{
-			bodyLength = sizeof(Circle);
-			break;
-		}
-		case BodyType::E_Capsule:
-		{
-			bodyLength = sizeof(Capsule);
-			break;
-		}
-		case BodyType::E_Obb:
-		{
-			bodyLength = sizeof(OrientedBox);
-			break;
-		}
-		default:
-			break;
-	}
-
-	assert( bodyLength <= AvailableInPool());
-
-	size_t objIdx = m_poolMappings.size();
+	assert( length <= AvailableInPool());
+	size_t objIdx = m_bodyCount;
 	// Try to recycle a gap in the mapping list
 	for (size_t i = 0; i < m_mappings.size(); i++)
 	{
 		if (!m_mappings[i].active)
 		{
-			m_poolMappings.push_back(PoolIdx(bodyType, i));
+
 			
 			m_mappings[i].active = true;
 			m_mappings[i].generation++;
-			m_mappings[i].poolIdx = objIdx;
+			m_mappings[i].idx = objIdx;
 			
-			handle.mappingIdx = i;
+			handle.idx = i;
 			handle.generation = m_mappings[i].generation;
 		}
 	}
 	// Otherwise use a new mapping idx
-	m_poolMappings.push_back(PoolIdx(bodyType, m_mappings.size()));
 	
-	handle.mappingIdx = m_mappings.size();
+	handle.idx = m_mappings.size();
 	handle.generation = 0;
 
-	MappingIdx mapIdx = MappingIdx(true, objIdx, 0);
-	m_mappings.push_back(mapIdx);
-	
+	Idx idx = Idx(true, objIdx, 0);
+	m_mappings.push_back(idx);
+	m_bodyCount++;
 	//Allocate memory and move pool pointer
 	char* ret = m_pool.next;
-	m_pool.next += bodyLength;
+	m_pool.next += length;
 	return (void*)ret;
 }
 
@@ -100,12 +77,18 @@ void DefaultAllocator::DestroyAllBodies()
 	memset(m_pool.start, 0, m_pool.end - m_pool.start);//#Profile memleak
 	m_pool.next = m_pool.start;
 	m_mappings.clear();
-	m_poolMappings.clear();
+	m_bodyCount = 0;
 }
 //Bytes available
 size_t DefaultAllocator::AvailableInPool()
 {
 	return m_pool.end - m_pool.next;
+}
+
+Rigidbody* DefaultAllocator::GetFirstBody()
+{
+	assert(AvailableInPool() > sizeof(Rigidbody));
+	return (Rigidbody*)m_pool.start;
 }
 
 Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
@@ -115,17 +98,17 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 	char* charPNext = charP;
 	switch (prev->m_bodyType)
 	{
-		case BodyType::E_Circle:
+		case BodyType::Circle:
 		{
 			charPNext += sizeof(Circle);
 			break;
 		}
-		case BodyType::E_Capsule:
+		case BodyType::Capsule:
 		{
 			charPNext += sizeof(Capsule);
 			break;
 		}
-		case BodyType::E_Obb:
+		case BodyType::Obb:
 		{
 			charPNext += sizeof(OrientedBox);
 			break;
@@ -140,15 +123,15 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 Rigidbody* DefaultAllocator::GetBody(Handle handle)
 {
 	if (!IsHandleValid(handle)) return nullptr;
-	MappingIdx i = m_mappings[handle.mappingIdx];
-	return GetBodyAt(i.poolIdx);
+	Idx i = m_mappings[handle.idx];
+	return GetBodyAt(i.idx);
 }
 
 Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 {
 	//#Using pool mappings, could rapidly figure out memory offset from pool's m_start
 	//by comparing bodyTypes of all PoolIdx's
-	assert(i < m_poolMappings.size());
+	assert(i < m_bodyCount);
 	size_t curIdx = 0;
 	Rigidbody* rb = (Rigidbody*)m_pool.start;
 	for (size_t curIdx = 0; curIdx < i; curIdx++)
@@ -163,6 +146,20 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 	return rb;
 }
 
+Rigidbody* DefaultAllocator::GetLastBodyOfType(BodyType bodyType)
+{
+	Rigidbody* lastBodyOfType = nullptr;
+	for (Rigidbody* rb = GetFirstBody(); rb != nullptr; rb = GetNextBody(rb))
+	{
+		if (rb->m_bodyType == bodyType)
+		{
+			lastBodyOfType = rb;
+		}
+	}
+
+	return lastBodyOfType;
+}
+
 void DefaultAllocator::DestroyBody(Handle handle)
 {
 	if (!IsHandleValid(handle))
@@ -173,30 +170,26 @@ void DefaultAllocator::DestroyBody(Handle handle)
 
 	//Since pools are multiobjects, we need to swap and pop with last object of same body type
 	//Loop from end till we find first object of same bodyType, and check whether its the same object.
-	size_t objIdx = m_mappings[handle.mappingIdx].poolIdx;
+	size_t objIdx = m_mappings[handle.idx].idx;
 	BodyType bodyType = GetBody(handle)->m_bodyType;
-	for (int i = m_poolMappings.size() - 1; i >= 0; i--)
-	{
-		PoolIdx poolIdx = m_poolMappings[i];
-		if (poolIdx.bodyType == bodyType)
-		{
-			//Check its not same object
-			if (poolIdx.mappingIdx != handle.mappingIdx)
-			{
-				//Swap and pop
-				//Point last object's mapping idx to point at the object that will be destroyed
-				m_mappings[poolIdx.mappingIdx].poolIdx = objIdx;
+	Rigidbody* lastMatchingShape = GetLastBodyOfType(bodyType);//Swap and pop with last object of same shape, displace every object following
 
-				// Swap the last object with the object to be destroyed, pop, then offset remaining pool objects
-				m_poolMappings[objIdx] = poolIdx;
-				m_poolMappings.erase(m_poolMappings.begin() + i);
-			}
-		}
-	}
 	//Need to update, swap and pop mappings and object pool, deactivate mapping,..
+	/*  size_t obj_idx = mapping[handle.idx].idx;
+        Object<T>& last_obj = objects.back();
+
+        // Point last object's mapping idx to point at the object that will be destroyed
+        mapping[last_obj.mapping_idx].idx = obj_idx;
+
+        // Swap the last object with the object to be destroyed, then pop the vec
+        objects[obj_idx] = last_obj;
+        objects.pop_back();
+
+        // Set the mapping to be inactive for the object that was destroyed
+        mapping[handle.idx].active = false;*/
 }
 
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
-	return handle.mappingIdx < m_mappings.size() && m_mappings[handle.mappingIdx].active && handle.generation == m_mappings[handle.mappingIdx].generation;
+	return handle.idx < m_mappings.size() && m_mappings[handle.idx].active && handle.generation == m_mappings[handle.idx].generation;
 }
