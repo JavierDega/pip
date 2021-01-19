@@ -42,30 +42,34 @@ void* DefaultAllocator::AllocateBody( size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
 	assert( length <= AvailableInPool());
-	size_t objIdx = m_bodyCount;
+	size_t objIdx = m_objectToMappingIdx.size();
 	// Try to recycle a gap in the mapping list
 	for (size_t i = 0; i < m_mappings.size(); i++)
 	{
 		if (!m_mappings[i].active)
 		{
+			m_objectToMappingIdx.push_back(i);
 
-			
 			m_mappings[i].active = true;
 			m_mappings[i].generation++;
 			m_mappings[i].idx = objIdx;
 			
 			handle.idx = i;
 			handle.generation = m_mappings[i].generation;
+			char* ret = m_pool.next;
+			m_pool.next += length;
+			return (void*)ret;
 		}
 	}
 	// Otherwise use a new mapping idx
-	
+	m_objectToMappingIdx.push_back(m_mappings.size());
+
 	handle.idx = m_mappings.size();
 	handle.generation = 0;
 
 	Idx idx = Idx(true, objIdx, 0);
 	m_mappings.push_back(idx);
-	m_bodyCount++;
+
 	//Allocate memory and move pool pointer
 	char* ret = m_pool.next;
 	m_pool.next += length;
@@ -77,7 +81,7 @@ void DefaultAllocator::DestroyAllBodies()
 	memset(m_pool.start, 0, m_pool.end - m_pool.start);//#Profile memleak
 	m_pool.next = m_pool.start;
 	m_mappings.clear();
-	m_bodyCount = 0;
+	m_objectToMappingIdx.clear();
 }
 //Bytes available
 size_t DefaultAllocator::AvailableInPool()
@@ -87,7 +91,7 @@ size_t DefaultAllocator::AvailableInPool()
 
 Rigidbody* DefaultAllocator::GetFirstBody()
 {
-	assert(AvailableInPool() > sizeof(Rigidbody));
+	//Returns null if pool uninitted
 	return (Rigidbody*)m_pool.start;
 }
 
@@ -131,11 +135,12 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 {
 	//#Using pool mappings, could rapidly figure out memory offset from pool's m_start
 	//by comparing bodyTypes of all PoolIdx's
-	assert(i < m_bodyCount);
+	assert(i < m_objectToMappingIdx.size());
 	size_t curIdx = 0;
 	Rigidbody* rb = (Rigidbody*)m_pool.start;
 	for (size_t curIdx = 0; curIdx < i; curIdx++)
 	{
+		assert(rb);
 		if (rb == nullptr)
 		{
 			cout << "PiP Error: Trying to get body index bigger than poolSize" << endl;
@@ -169,7 +174,7 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	}
 
 	//Since pools are multiobjects, we need to swap and pop with last object of same body type
-	//Loop from end till we find first object of same bodyType, and check whether its the same object.
+	//Loop till we find first object of same bodyType, and check whether its the same object.
 	size_t objIdx = m_mappings[handle.idx].idx;
 	BodyType bodyType = GetBody(handle)->m_bodyType;
 	Rigidbody* lastMatchingShape = GetLastBodyOfType(bodyType);//Swap and pop with last object of same shape, displace every object following

@@ -347,21 +347,21 @@ Handle Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::V
 {
 	// Create the collision body, presumably a pool has been created beforehand
 	Handle circleHandle;
-	Circle* circle = new (m_allocator.AllocateBody( sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	Circle* circle = new (m_allocator.AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
 	return circleHandle;
 }
 
 Handle Solver::CreateCapsule(decimal length, decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
 	Handle capsuleHandle;
-	Capsule* capsule = new (m_allocator.AllocateBody( sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	Capsule* capsule = new (m_allocator.AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
 	return capsuleHandle;
 }
 
 Handle Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
 	Handle obbHandle;
-	OrientedBox* obb = new (m_allocator.AllocateBody( sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
+	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
 	return obbHandle;
 }
 

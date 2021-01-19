@@ -14,6 +14,33 @@ struct Handle
     uint64_t generation;
 };
 
+struct Idx
+{
+    Idx(bool active, size_t i, uint64_t generation)
+    {
+        this->active = active;
+        this->idx = i;
+        this->generation = generation;
+    }
+
+    bool active;
+    size_t idx;
+    uint64_t generation;
+};
+
+struct Pool
+{
+    Pool()
+    {
+        start = nullptr;
+        next = nullptr;
+        end = nullptr;
+    }
+    char* start;
+    char* next;//Where to allocate next
+    char* end;
+};
+
 class DefaultAllocator
 {
 public:
@@ -33,37 +60,10 @@ public:
     Rigidbody* GetLastBodyOfType(BodyType bodyType);
     bool IsHandleValid(Handle handle);
 
-    struct Idx
-    {
-        Idx(bool active, size_t i, uint64_t generation)
-        {
-            this->active = active;
-            this->idx = i;
-            this->generation = generation;
-        }
-
-        bool active;
-        size_t idx;
-        uint64_t generation;
-    };
-
-    struct Pool
-    {
-        Pool()
-        {
-            start = nullptr;
-            next = nullptr;
-            end = nullptr;
-        }
-        char* start;
-        char* next;//Where to allocate next
-        char* end;
-    };
-
 protected:
 	Pool m_pool;
     std::vector<Idx> m_mappings;//Maps reusable object list to linear object pool.
-    size_t m_bodyCount;
+    std::vector<size_t> m_objectToMappingIdx;//Maps object idx in the pool to their mapping idx
 };
 
 /*
