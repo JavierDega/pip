@@ -8,7 +8,6 @@
 using namespace std;
 
 DefaultAllocator::DefaultAllocator(size_t poolSize)
-	: m_bodyCount(0)
 {
 	if (poolSize > 0)
 	{
@@ -151,17 +150,19 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 	return rb;
 }
 
-Rigidbody* DefaultAllocator::GetLastBodyOfType(BodyType bodyType)
+Rigidbody* DefaultAllocator::GetLastBodyOfType(BodyType bodyType, int& idx )
 {
 	Rigidbody* lastBodyOfType = nullptr;
+	unsigned int curIdx = 0;
 	for (Rigidbody* rb = GetFirstBody(); rb != nullptr; rb = GetNextBody(rb))
 	{
 		if (rb->m_bodyType == bodyType)
 		{
 			lastBodyOfType = rb;
+			idx = curIdx;
 		}
+		curIdx++;
 	}
-
 	return lastBodyOfType;
 }
 
@@ -174,27 +175,77 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	}
 
 	//Since pools are multiobjects, we need to swap and pop with last object of same body type
-	//Loop till we find first object of same bodyType, and check whether its the same object.
+	// check whether its the same object.
 	size_t objIdx = m_mappings[handle.idx].idx;
-	BodyType bodyType = GetBody(handle)->m_bodyType;
-	Rigidbody* lastMatchingShape = GetLastBodyOfType(bodyType);//Swap and pop with last object of same shape, displace every object following
-
-	//Need to update, swap and pop mappings and object pool, deactivate mapping,..
-	/*  size_t obj_idx = mapping[handle.idx].idx;
-        Object<T>& last_obj = objects.back();
-
-        // Point last object's mapping idx to point at the object that will be destroyed
-        mapping[last_obj.mapping_idx].idx = obj_idx;
-
-        // Swap the last object with the object to be destroyed, then pop the vec
-        objects[obj_idx] = last_obj;
-        objects.pop_back();
-
-        // Set the mapping to be inactive for the object that was destroyed
-        mapping[handle.idx].active = false;*/
+	Rigidbody* bodyToDestroy = GetBody(handle);
+	BodyType bodyType = bodyToDestroy->m_bodyType;
+	int lastBodyOfTypeIdx = -1;
+	Rigidbody* lastMatchingBody = GetLastBodyOfType(bodyType, lastBodyOfTypeIdx);//Swap and pop with last object of same shape, displace every object following
+	//Swap
+	size_t lastBodyOfTypeMappingIdx = m_objectToMappingIdx[lastBodyOfTypeIdx];
+	// Point last object's mapping idx to point at the object that will be destroyed
+	m_mappings[lastBodyOfTypeMappingIdx].idx = objIdx;
+	// Swap the last object with the object to be destroyed, then erase the vec
+	switch (bodyType)
+	{
+		case BodyType::Circle:
+		{
+			*(Circle*)bodyToDestroy = *(Circle*)lastMatchingBody;
+			break;
+		}
+		case BodyType::Capsule:
+		{
+			*(Capsule*)bodyToDestroy = *(Capsule*)lastMatchingBody;
+			break;
+		}
+		case BodyType::Obb:
+		{
+			*(OrientedBox*)bodyToDestroy = *(OrientedBox*)lastMatchingBody;
+			break;
+		}
+	}
+	//Pop and displace (objMapping and Pool)
+	vector<size_t>::iterator it = m_objectToMappingIdx.begin() + lastBodyOfTypeIdx;
+	m_objectToMappingIdx.erase(it);
+	DestroyBodyFromPool(lastMatchingBody);
+	//Now every object after the one deleted, needs to have its mapping idx updated (-1), to point to its new idx on the list and the pool
+	for (it; it != m_objectToMappingIdx.end(); it++) 
+	{
+		size_t objIdx = it - m_objectToMappingIdx.begin();
+		size_t objMappingIdx = *it;
+		m_mappings[objMappingIdx].idx = objIdx;
+	}
+	// Set the mapping to be inactive for the object that was destroyed
+	m_mappings[handle.idx].active = false;
 }
 
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
 	return handle.idx < m_mappings.size() && m_mappings[handle.idx].active && handle.generation == m_mappings[handle.idx].generation;
+}
+
+void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
+{
+	assert(bodyToDestroy);
+	BodyType bodyType = bodyToDestroy->m_bodyType;
+	//Memset 0 full body
+	switch (bodyType) 
+	{
+		case BodyType::Circle:
+		{
+			break;
+		}
+		case BodyType::Capsule:
+		{
+			break;
+		}
+		case BodyType::Obb:
+		{
+			break;
+		}
+	}
+
+	//Displace every following body back
+
+	//Update m_pool pointers
 }

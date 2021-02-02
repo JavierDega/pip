@@ -57,10 +57,12 @@ public:
 	Rigidbody* GetNextBody(Rigidbody* prev);
     Rigidbody* GetBody(Handle handle);
     Rigidbody* GetBodyAt(size_t i);
-    Rigidbody* GetLastBodyOfType(BodyType bodyType);
+    Rigidbody* GetLastBodyOfType(BodyType bodyType, int& idx);
     bool IsHandleValid(Handle handle);
 
 protected:
+    void DestroyBodyFromPool(Rigidbody* bodyToDestroy);//Realigns pool
+
 	Pool m_pool;
     std::vector<Idx> m_mappings;//Maps reusable object list to linear object pool.
     std::vector<size_t> m_objectToMappingIdx;//Maps object idx in the pool to their mapping idx
