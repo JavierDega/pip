@@ -55,6 +55,7 @@ public:
 	size_t AvailableInPool();
     Rigidbody* GetFirstBody();
 	Rigidbody* GetNextBody(Rigidbody* prev);
+    size_t GetBodyByteSize(Rigidbody* rb);
     Rigidbody* GetBody(Handle handle);
     Rigidbody* GetBodyAt(size_t i);
     Rigidbody* GetLastBodyOfType(BodyType bodyType, int& idx);

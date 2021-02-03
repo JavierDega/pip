@@ -99,28 +99,35 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 	assert(AvailableInPool() > sizeof(Rigidbody));
 	char* charP = (char*)prev;
 	char* charPNext = charP;
-	switch (prev->m_bodyType)
-	{
-		case BodyType::Circle:
-		{
-			charPNext += sizeof(Circle);
-			break;
-		}
-		case BodyType::Capsule:
-		{
-			charPNext += sizeof(Capsule);
-			break;
-		}
-		case BodyType::Obb:
-		{
-			charPNext += sizeof(OrientedBox);
-			break;
-		}
-		default:
-			break;
-	}
+	charPNext += GetBodyByteSize(prev);
 	if (charPNext == m_pool.next) return nullptr;
 	return (Rigidbody*)charPNext;
+}
+
+size_t DefaultAllocator::GetBodyByteSize(Rigidbody* rb)
+{
+	assert(rb);
+	switch (rb->m_bodyType)
+	{
+	case BodyType::Circle:
+	{
+		return sizeof(Circle);
+		break;
+	}
+	case BodyType::Capsule:
+	{
+		return sizeof(Capsule);
+		break;
+	}
+	case BodyType::Obb:
+	{
+		return sizeof(OrientedBox);
+		break;
+	}
+	default:
+		break;
+	}
+	return size_t();
 }
 
 Rigidbody* DefaultAllocator::GetBody(Handle handle)
@@ -228,24 +235,41 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 {
 	assert(bodyToDestroy);
 	BodyType bodyType = bodyToDestroy->m_bodyType;
-	//Memset 0 full body
+	size_t displacementSize = 0;
 	switch (bodyType) 
 	{
 		case BodyType::Circle:
 		{
+			displacementSize = sizeof(Circle);
 			break;
 		}
 		case BodyType::Capsule:
 		{
+			displacementSize = sizeof(Capsule);
 			break;
 		}
 		case BodyType::Obb:
 		{
+			displacementSize = sizeof(OrientedBox);
 			break;
 		}
 	}
-
 	//Displace every following body back
-
+	Rigidbody* bodyToDisplace = GetNextBody(bodyToDestroy);
+	memset(bodyToDestroy, 0, displacementSize);
+	for (bodyToDisplace; bodyToDisplace != nullptr; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize)) 
+	{
+		//void* memcpy(void* destination, const void* source, size_t num);
+		//Cache body to displace somewhere else in memory
+		//Empty on the pool
+		//Copy into the pool, now displaced back accordingly
+		size_t bodyToDisplaceSize = GetBodyByteSize(bodyToDisplace);
+		char* cachedBodyToDisplace = (char*)(malloc(bodyToDisplaceSize));
+		memcpy(cachedBodyToDisplace, (char*)bodyToDisplace, bodyToDisplaceSize);//cached
+		memset(bodyToDisplace, 0, bodyToDisplaceSize);
+		bodyToDisplace = (Rigidbody*)((char*)bodyToDisplace - displacementSize);
+		memcpy(bodyToDisplace, cachedBodyToDisplace, bodyToDisplaceSize);
+	}
 	//Update m_pool pointers
+	m_pool.next -= sizeof(OrientedBox);
 }
