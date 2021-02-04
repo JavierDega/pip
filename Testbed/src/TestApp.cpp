@@ -75,53 +75,52 @@ void TestApp::LoadScene(unsigned int index)
 {
 	//Deallocate m_allocator pool
 	m_solver.m_allocator.DestroyAllBodies();
-	if (!m_solver.m_currentManifolds.empty()) m_solver.m_currentManifolds.clear();
+	m_solver.m_currentManifolds.clear();
+	m_bodyHandles.clear();
 	switch (index) {
 	case 0:
 	{
 		m_sceneName = "Scene 0: Circles v Capsule";
-		//m_solver.AddBody(new Circle(Vector2(7, 5), 45 * DEG2RAD, Vector2(-5, 0), 0, Vector2()));
-		m_solver.CreateCircle(1.0f, Vector2(-5, 6), 0, Vector2(5, 0));
-		m_solver.CreateCapsule(2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true);
-		m_solver.CreateCircle(1.0f, Vector2(5, 5), 0, Vector2(-5, 0));
+		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-5, 6), 0, Vector2(5, 0)));
+		m_bodyHandles.push_back(m_solver.CreateCapsule(2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true));
+		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(5, 5), 0, Vector2(-5, 0)));
 		break;
 	}
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		m_solver.CreateCapsule(2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD);
-		m_solver.CreateOrientedBox(Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f);
+		m_bodyHandles.push_back(m_solver.CreateCapsule(2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD));
+		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f));
 		break;
 	}
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_solver.CreateCircle(1.0f, Vector2(0.1f, 5));
-		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f);
-		m_solver.CreateOrientedBox(Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f);
+		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(0.1f, 5)));
+		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f));
+		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f));
 		break;
 	}
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
-		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f);
-		m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f);
+		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f));
+		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f));
 		break;
 	}
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
-		m_solver.CreateCapsule(1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f);
-		m_solver.CreateCapsule(4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
+		m_bodyHandles.push_back(m_solver.CreateCapsule(1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f));
+		m_bodyHandles.push_back(m_solver.CreateCapsule(4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true));
 		break;
 	}
 	case 5:
 	{
 		m_sceneName = "Scene 5: Testing QuadTree";
-		m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true);
-
+		m_bodyHandles.push_back(m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true));
 		//Circles
-		m_solver.CreateCircle(1.0f, Vector2(-2.f, -4), 0.0f, Vector2(0.5f, 0));
+		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-2.f, -4), 0.0f, Vector2(0.5f, 0)));
 		break;
 	}
 	break;
@@ -553,4 +552,15 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & E_KEY_Y)m_showRigidbodyEditor ^= 1;
 	if (m_inputPressed & E_KEY_U)m_displayManifolds ^= 1;
 	if (m_inputPressed & E_KEY_I)m_drawGrid ^= 1;
+	if (m_inputPressed & E_KEY_O) 
+	{
+		//Debug delete first body handle on the list
+		m_solver.m_allocator.DestroyBody(m_bodyHandles[0]);
+		m_bodyHandles.erase(m_bodyHandles.begin());
+	}
+	if (m_inputPressed & E_KEY_P) 
+	{
+		//Debug add circle at 0,0,0
+		m_bodyHandles.push_back(m_solver.CreateCircle());
+	}
 }

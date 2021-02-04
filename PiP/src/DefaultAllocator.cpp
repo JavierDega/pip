@@ -257,7 +257,7 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 	//Displace every following body back
 	Rigidbody* bodyToDisplace = GetNextBody(bodyToDestroy);
 	memset(bodyToDestroy, 0, displacementSize);
-	for (bodyToDisplace; bodyToDisplace != nullptr; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize)) 
+	for (bodyToDisplace; (char*)bodyToDisplace != m_pool.next; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize))
 	{
 		//void* memcpy(void* destination, const void* source, size_t num);
 		//Cache body to displace somewhere else in memory
@@ -265,11 +265,11 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 		//Copy into the pool, now displaced back accordingly
 		size_t bodyToDisplaceSize = GetBodyByteSize(bodyToDisplace);
 		char* cachedBodyToDisplace = (char*)(malloc(bodyToDisplaceSize));
-		memcpy(cachedBodyToDisplace, (char*)bodyToDisplace, bodyToDisplaceSize);//cached
+		memcpy(cachedBodyToDisplace, bodyToDisplace, bodyToDisplaceSize);//cached
 		memset(bodyToDisplace, 0, bodyToDisplaceSize);
-		bodyToDisplace = (Rigidbody*)((char*)bodyToDisplace - displacementSize);
+		bodyToDisplace = (Rigidbody*)((char*)bodyToDisplace - displacementSize);//Invalid right now
 		memcpy(bodyToDisplace, cachedBodyToDisplace, bodyToDisplaceSize);
 	}
 	//Update m_pool pointers
-	m_pool.next -= sizeof(OrientedBox);
+	m_pool.next -= displacementSize;
 }

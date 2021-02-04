@@ -44,6 +44,7 @@ public:
 	std::string m_sceneName;
 	//Physics
 	Solver m_solver;
+	std::vector<Handle> m_bodyHandles;
 	//Timestep
 	decimal m_prevTime;
 	//Imgui
