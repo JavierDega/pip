@@ -172,7 +172,7 @@ Rigidbody* DefaultAllocator::GetLastBodyOfType(BodyType bodyType, int& idx )
 	}
 	return lastBodyOfType;
 }
-
+#pragma optimize ("", off)
 void DefaultAllocator::DestroyBody(Handle handle)
 {
 	if (!IsHandleValid(handle))
@@ -184,12 +184,13 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	//Since pools are multiobjects, we need to swap and pop with last object of same body type
 	// check whether its the same object.
 	size_t objIdx = m_mappings[handle.idx].idx;
-	Rigidbody* bodyToDestroy = GetBody(handle);
+	Rigidbody* bodyToDestroy = GetBodyAt(objIdx);
 	BodyType bodyType = bodyToDestroy->m_bodyType;
 	int lastBodyOfTypeIdx = -1;
 	Rigidbody* lastMatchingBody = GetLastBodyOfType(bodyType, lastBodyOfTypeIdx);//Swap and pop with last object of same shape, displace every object following
 	//Swap
 	size_t lastBodyOfTypeMappingIdx = m_objectToMappingIdx[lastBodyOfTypeIdx];
+	m_objectToMappingIdx[objIdx] = lastBodyOfTypeMappingIdx;
 	// Point last object's mapping idx to point at the object that will be destroyed
 	m_mappings[lastBodyOfTypeMappingIdx].idx = objIdx;
 	// Swap the last object with the object to be destroyed, then erase the vec
@@ -213,19 +214,17 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	}
 	//Pop and displace (objMapping and Pool)
 	vector<size_t>::iterator it = m_objectToMappingIdx.begin() + lastBodyOfTypeIdx;
-	m_objectToMappingIdx.erase(it);
+	m_objectToMappingIdx.erase(it);//#This possibly needs to be updated too?
 	DestroyBodyFromPool(lastMatchingBody);
 	//Now every object after the one deleted, needs to have its mapping idx updated (-1), to point to its new idx on the list and the pool
-	for (it; it != m_objectToMappingIdx.end(); it++) 
+	for (int i = lastBodyOfTypeIdx; i < m_objectToMappingIdx.size(); i++) 
 	{
-		size_t objIdx = it - m_objectToMappingIdx.begin();
-		size_t objMappingIdx = *it;
-		m_mappings[objMappingIdx].idx = objIdx;
+		m_mappings[m_objectToMappingIdx[i]].idx = i;
 	}
 	// Set the mapping to be inactive for the object that was destroyed
 	m_mappings[handle.idx].active = false;
 }
-
+#pragma optimize ("", on)
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
 	return handle.idx < m_mappings.size() && m_mappings[handle.idx].active && handle.generation == m_mappings[handle.idx].generation;
@@ -257,7 +256,7 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 	//Displace every following body back
 	Rigidbody* bodyToDisplace = GetNextBody(bodyToDestroy);
 	memset(bodyToDestroy, 0, displacementSize);
-	for (bodyToDisplace; (char*)bodyToDisplace != m_pool.next; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize))
+	for (bodyToDisplace; (char*)bodyToDisplace != nullptr; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize))
 	{
 		//void* memcpy(void* destination, const void* source, size_t num);
 		//Cache body to displace somewhere else in memory

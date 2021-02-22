@@ -324,6 +324,8 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
+		ImGui::Text("Destroy first body (O)");
+		ImGui::Text("Create circle (P)");
 		ImGui::Text("Ignore separating bodies: True");
 		ImGui::Text("Static collision resolution: True");
 		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
