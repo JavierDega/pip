@@ -152,7 +152,9 @@ void TestApp::UpdateLoop()
 		//Loop through solver's rigidbody pool
 		for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
 			glLoadIdentity();
-			if (Circle* circle = dynamic_cast<Circle*>(rb)) {
+			switch (rb->m_bodyType) {
+			case BodyType::Circle: {
+				Circle* circle = (Circle*)rb;
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
@@ -164,8 +166,10 @@ void TestApp::UpdateLoop()
 					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
 					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
 				}
+				break;
 			}
-			else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
+			case BodyType::Capsule: {
+				Capsule* capsule = (Capsule*)rb;
 				//Capsule matrix stuff
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
@@ -191,8 +195,10 @@ void TestApp::UpdateLoop()
 				glVertex3f(-offSet, -rad, 0);
 				glVertex3f(offSet, rad, 0);
 				glVertex3f(-offSet, rad, 0);
+				break;
 			}
-			else if (OrientedBox* obb = dynamic_cast<OrientedBox*>(rb)) {
+			case BodyType::Obb: {
+				OrientedBox* obb = (OrientedBox*)rb;
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
 				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
 				glBegin(GL_TRIANGLES);
@@ -205,6 +211,8 @@ void TestApp::UpdateLoop()
 				glVertex3f(-(float)halfExtents.x, -(float)halfExtents.y, 0);
 				glVertex3f((float)halfExtents.x, (float)halfExtents.y, 0);
 				glVertex3f(-(float)halfExtents.x, (float)halfExtents.y, 0);
+				break;
+			}
 			}
 			glEnd();
 		}
@@ -346,17 +354,25 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
 		std::string objShape;
 		char* objDesc = new char[100];
-		if (Circle* circle = dynamic_cast<Circle*>(rb)) {
+		switch (rb->m_bodyType) {
+		case BodyType::Circle: {
+			Circle* circle = (Circle*)rb;
 			objShape = "Circle";
 			snprintf(objDesc, 100, "Radius(%f)", (double)circle->m_radius);
+			break;
 		}
-		else if (Capsule* capsule = dynamic_cast<Capsule*>(rb)) {
+		case BodyType::Capsule: {
+			Capsule* capsule = (Capsule*)rb;
 			objShape = "Capsule";
 			snprintf(objDesc, 100, "Radius(%f), Length(%f)", (double)capsule->m_radius, (double)capsule->m_length);
+			break;
 		}
-		else if (OrientedBox* orientedBox = dynamic_cast<OrientedBox*>(rb)) {
+		case BodyType::Obb: {
+			OrientedBox* obb = (OrientedBox*)rb;
 			objShape = "OrientedBox";
-			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", (double)orientedBox->m_halfExtents.x, (double)orientedBox->m_halfExtents.y);//Worth revising this
+			snprintf(objDesc, 100, "halfExtents: x(%f), y(%f)", (double)obb->m_halfExtents.x, (double)obb->m_halfExtents.y);//Worth revising this
+			break;
+		}
 		}
 		//Turn to char*
 		char* strId = new char[10];

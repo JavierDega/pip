@@ -187,29 +187,31 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	Rigidbody* bodyToDestroy = GetBodyAt(objIdx);
 	BodyType bodyType = bodyToDestroy->m_bodyType;
 	int lastBodyOfTypeIdx = -1;
-	Rigidbody* lastMatchingBody = GetLastBodyOfType(bodyType, lastBodyOfTypeIdx);//Swap and pop with last object of same shape, displace every object following
-	//Swap
-	size_t lastBodyOfTypeMappingIdx = m_objectToMappingIdx[lastBodyOfTypeIdx];
-	m_objectToMappingIdx[objIdx] = lastBodyOfTypeMappingIdx;
-	// Point last object's mapping idx to point at the object that will be destroyed
-	m_mappings[lastBodyOfTypeMappingIdx].idx = objIdx;
-	// Swap the last object with the object to be destroyed, then erase the vec
-	switch (bodyType)
-	{
-		case BodyType::Circle:
+	Rigidbody* lastMatchingBody = GetLastBodyOfType(bodyType, lastBodyOfTypeIdx);
+	if (bodyToDestroy != lastMatchingBody) {
+		//Swap and pop with last object of same shape, displace every object following
+		size_t lastBodyOfTypeMappingIdx = m_objectToMappingIdx[lastBodyOfTypeIdx];
+		m_objectToMappingIdx[objIdx] = lastBodyOfTypeMappingIdx;
+		// Point last object's mapping idx to point at the object that will be destroyed
+		m_mappings[lastBodyOfTypeMappingIdx].idx = objIdx;
+		// Swap the last object with the object to be destroyed, then erase the vec
+		switch (bodyType)
 		{
-			*(Circle*)bodyToDestroy = *(Circle*)lastMatchingBody;
-			break;
-		}
-		case BodyType::Capsule:
-		{
-			*(Capsule*)bodyToDestroy = *(Capsule*)lastMatchingBody;
-			break;
-		}
-		case BodyType::Obb:
-		{
-			*(OrientedBox*)bodyToDestroy = *(OrientedBox*)lastMatchingBody;
-			break;
+			case BodyType::Circle:
+			{
+				*(Circle*)bodyToDestroy = *(Circle*)lastMatchingBody;
+				break;
+			}
+			case BodyType::Capsule:
+			{
+				*(Capsule*)bodyToDestroy = *(Capsule*)lastMatchingBody;
+				break;
+			}
+			case BodyType::Obb:
+			{
+				*(OrientedBox*)bodyToDestroy = *(OrientedBox*)lastMatchingBody;
+				break;
+			}
 		}
 	}
 	//Pop and displace (objMapping and Pool)
@@ -256,7 +258,7 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 	//Displace every following body back
 	Rigidbody* bodyToDisplace = GetNextBody(bodyToDestroy);
 	memset(bodyToDestroy, 0, displacementSize);
-	for (bodyToDisplace; (char*)bodyToDisplace != nullptr; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize))
+	for (bodyToDisplace; bodyToDisplace != nullptr; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize))
 	{
 		//void* memcpy(void* destination, const void* source, size_t num);
 		//Cache body to displace somewhere else in memory
