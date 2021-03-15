@@ -14,7 +14,7 @@ QuadNode::QuadNode(Vector2 topRight, Vector2 bottomLeft, bool isLeaf)
 
 QuadNode::~QuadNode()
 {
-	delete[4] m_children;
+	delete[] m_children;
 }
 
 unsigned int QuadNode::GetLeafNodes(std::vector<QuadNode*>& leafNodes)
@@ -81,7 +81,7 @@ void QuadNode::TryMerge()
 	}
 	if (childrenBodyTotal <= QNODE_MERGE_THRESHOLD)
 	{
-		delete[4] m_children;//Should delete recursively
+		delete[] m_children;//Should delete recursively
 		m_children = nullptr;
 		m_isLeaf = true;
 	}

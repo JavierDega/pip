@@ -379,7 +379,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		snprintf(strId, 10, "Rb%i", i);//Worth revising this
 		bool nodeOpen = ImGui::TreeNode(strId, "%s_%u Pos: x(%f), y(%f)", objShape.c_str(), i, (double)rb->m_position.x, (double)rb->m_position.y);
 		ImGui::NextColumn();
-		ImGui::Text(objDesc);
+		ImGui::Text("%s", objDesc);
 		ImGui::NextColumn();
 		if (nodeOpen)
 		{
@@ -388,7 +388,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::NextColumn();
 			char rotation[50];
 			snprintf(rotation, 50, "Rad(%f), Deg(%f)", (double)rb->m_rotation, (double)rb->m_rotation * RAD2DEG);
-			ImGui::Text(rotation);
+			ImGui::Text("%s", rotation);
 			ImGui::NextColumn();
 
 			ImGui::Text("Velocity");
@@ -430,7 +430,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::NextColumn();
 			char mass[50];
 			snprintf(mass, 50, "%f", (float)rb->m_mass);
-			ImGui::Text(mass);
+			ImGui::Text("%s", mass);
 			ImGui::NextColumn();
 
 
@@ -438,7 +438,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::NextColumn();
 			char inertia[50];
 			snprintf(inertia, 50, "%f", (float)rb->m_inertia);
-			ImGui::Text(inertia);
+			ImGui::Text("%s", inertia);
 			ImGui::NextColumn();
 
 			ImGui::Text("Kinematic");
@@ -494,7 +494,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 		char* manifoldTitle = new char[100];
 		snprintf(manifoldTitle, 100, "%s vs %s", obj1.c_str(), obj2.c_str());//Worth revising this
 
-		ImGui::Text(manifoldTitle);
+		ImGui::Text("%s", manifoldTitle);
 		ImGui::NextColumn();
 		if (nodeOpen) {
 			ImGui::Text("%s, position:", obj1.c_str());

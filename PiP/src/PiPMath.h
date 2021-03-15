@@ -27,7 +27,7 @@ namespace math
 #if USE_FIXEDPOINT
 		return fp64::Fp64::Abs(x);
 #else 
-		return abs(x);
+		return std::abs(x);
 #endif
 	}
 
@@ -516,6 +516,7 @@ namespace math
 			m.m[1][1] = 1;
 			m.m[2][2] = 1;
 			m.m[3][3] = 1;
+			return m;
 		}
 
 		Vector4 operator * (Vector4 v1)

@@ -1,9 +1,12 @@
+#include <iostream>
+#include <assert.h>
+#include <float.h>
+#include <algorithm>
+
 #include "Solver.h"
 #include "Circle.h"
 #include "Capsule.h"
 #include "OrientedBox.h"
-#include <iostream>
-#include <assert.h>
 
 using namespace std;
 using namespace math;

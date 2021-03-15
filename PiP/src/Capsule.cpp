@@ -1,3 +1,4 @@
+#include <float.h>
 
 #include "Capsule.h"
 #include "Circle.h"
