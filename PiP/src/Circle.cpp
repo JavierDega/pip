@@ -1,13 +1,13 @@
-
 #include "Circle.h"
+
 #include "Capsule.h"
 #include "OrientedBox.h"
 
 //https://en.wikipedia.org/wiki/List_of_moments_of_inertia
 
-using namespace math;
+using namespace pipmath;
 
-Circle::Circle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass,  decimal e, bool isKinematic)
+Circle::Circle(decimal rad, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,  decimal e, bool isKinematic)
 	: m_radius(rad), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
 	m_bodyType = BodyType::Circle;
@@ -18,9 +18,8 @@ Circle::~Circle()
 {
 }
 //Intersect with AABB for Quad Nodes
-bool Circle::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
+bool Circle::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 {
-	
 	//Clamp Circle point to aabb bounds, compare sqdist to clamped point against sqRad
 	Vector2 clampedPos = Vector2(Clamp(m_position.x, bottomLeft.x, topRight.x), Clamp(m_position.y, bottomLeft.y, topRight.y));
 	return (m_radius*m_radius >= (m_position - clampedPos).LengthSqr());
@@ -80,7 +79,7 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 	return false;
 }
 
-bool Circle::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
+bool Circle::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 {
 	//ClosestPtToObb query
 	//Set world origin to be box's center, unrotate all, clamp pt to AABB. Rotate point with box and move it to its pos.
@@ -117,10 +116,8 @@ decimal Circle::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)
 decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 {
 	//https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=2
-
 	//A = A0 + U*VA
 	//B = B0 + U*V
-
 	//B(U) - A(U) = ra + rb
 
 	const decimal ra = m_radius;
@@ -167,7 +164,7 @@ decimal Circle::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 	return decimal();
 }
 
-decimal Circle::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold)
+decimal Circle::SweepWith(OrientedBox* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }

@@ -1,9 +1,11 @@
 #include "DefaultAllocator.h"
+
+#include <assert.h>
+#include <string.h>
+
 #include "Circle.h"
 #include "Capsule.h"
 #include "OrientedBox.h"
-#include <assert.h>
-#include <string.h>
 
 using namespace std;
 
@@ -96,7 +98,6 @@ Rigidbody* DefaultAllocator::GetFirstBody()
 
 Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 {
-	assert(AvailableInPool() > sizeof(Rigidbody));
 	char* charP = (char*)prev;
 	char* charPNext = charP;
 	charPNext += GetBodyByteSize(prev);
@@ -172,7 +173,7 @@ Rigidbody* DefaultAllocator::GetLastBodyOfType(BodyType bodyType, int& idx )
 	}
 	return lastBodyOfType;
 }
-#pragma optimize ("", off)
+
 void DefaultAllocator::DestroyBody(Handle handle)
 {
 	if (!IsHandleValid(handle))
@@ -226,7 +227,7 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	// Set the mapping to be inactive for the object that was destroyed
 	m_mappings[handle.idx].active = false;
 }
-#pragma optimize ("", on)
+
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
 	return handle.idx < m_mappings.size() && m_mappings[handle.idx].active && handle.generation == m_mappings[handle.idx].generation;
@@ -265,11 +266,11 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 		//Empty on the pool
 		//Copy into the pool, now displaced back accordingly
 		size_t bodyToDisplaceSize = GetBodyByteSize(bodyToDisplace);
-		char* cachedBodyToDisplace = (char*)(malloc(bodyToDisplaceSize));
-		memcpy(cachedBodyToDisplace, (void*)bodyToDisplace, bodyToDisplaceSize);//cached
+		Rigidbody* cachedBodyToDisplace = (Rigidbody*)malloc(bodyToDisplaceSize);
+		memcpy((void*)cachedBodyToDisplace, (void*)bodyToDisplace, bodyToDisplaceSize);//cached
 		memset((void*)bodyToDisplace, 0, bodyToDisplaceSize);
 		bodyToDisplace = (Rigidbody*)((char*)bodyToDisplace - displacementSize);//Invalid right now
-		memcpy((void*)bodyToDisplace, cachedBodyToDisplace, bodyToDisplaceSize);
+		memcpy((void*)bodyToDisplace, (void*)cachedBodyToDisplace, bodyToDisplaceSize);
 	}
 	//Update m_pool pointers
 	m_pool.next -= displacementSize;

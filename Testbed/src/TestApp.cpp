@@ -1,10 +1,10 @@
-
 #include "TestApp.h"
+
 #include "Circle.h"
 #include "Capsule.h"
 #include "OrientedBox.h"
 
-using namespace math;
+using namespace pipmath;
 
 TestApp::TestApp()
 	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(true), m_displayManifolds(true), m_drawGrid(true),
@@ -63,8 +63,8 @@ void TestApp::InitImgui()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	//ImGui::StyleColorsDark();
-	ImGui::StyleColorsClassic();
+	ImGui::StyleColorsDark();
+	//ImGui::StyleColorsClassic();
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(m_window, true);
@@ -123,7 +123,6 @@ void TestApp::LoadScene(unsigned int index)
 		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-2.f, -4), 0.0f, Vector2(0.5f, 0)));
 		break;
 	}
-	break;
 	default:
 		break;
 	}
@@ -558,27 +557,23 @@ void TestApp::ProcessInput()
 	m_inputDown = inputDownNew;
 
 	//React to input
-	if (m_inputPressed & E_KEY_F1)LoadScene(0);
-	if (m_inputPressed & E_KEY_F2)LoadScene(1);
-	if (m_inputPressed & E_KEY_F3)LoadScene(2);
-	if (m_inputPressed & E_KEY_F4)LoadScene(3);
-	if (m_inputPressed & E_KEY_F5)LoadScene(4);
-	if (m_inputPressed & E_KEY_F6)LoadScene(5);
+	if (m_inputPressed & (short)Keys::F1)LoadScene(0);
+	if (m_inputPressed & (short)Keys::F2)LoadScene(1);
+	if (m_inputPressed & (short)Keys::F3)LoadScene(2);
+	if (m_inputPressed & (short)Keys::F4)LoadScene(3);
+	if (m_inputPressed & (short)Keys::F5)LoadScene(4);
+	if (m_inputPressed & (short)Keys::F6)LoadScene(5);
 
-	if (m_inputPressed & E_KEY_R)m_solver.m_stepMode ^= 1;
-	if (m_inputPressed & E_KEY_T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
-	if (m_inputPressed & E_KEY_Y)m_showRigidbodyEditor ^= 1;
-	if (m_inputPressed & E_KEY_U)m_displayManifolds ^= 1;
-	if (m_inputPressed & E_KEY_I)m_drawGrid ^= 1;
-	if (m_inputPressed & E_KEY_O) 
+	if (m_inputPressed & (short)Keys::R)m_solver.m_stepMode ^= 1;
+	if (m_inputPressed & (short)Keys::T)m_solver.m_stepOnce = m_solver.m_stepMode & true;
+	if (m_inputPressed & (short)Keys::Y)m_showRigidbodyEditor ^= 1;
+	if (m_inputPressed & (short)Keys::U)m_displayManifolds ^= 1;
+	if (m_inputPressed & (short)Keys::I)m_drawGrid ^= 1;
+	if (m_inputPressed & (short)Keys::O) 
 	{
 		//Debug delete first body handle on the list
 		m_solver.m_allocator.DestroyBody(m_bodyHandles[0]);
 		m_bodyHandles.erase(m_bodyHandles.begin());
 	}
-	if (m_inputPressed & E_KEY_P) 
-	{
-		//Debug add circle at 0,0,0
-		m_bodyHandles.push_back(m_solver.CreateCircle());
-	}
+	if (m_inputPressed & (short)Keys::P) m_bodyHandles.push_back(m_solver.CreateCircle());//Debug add cirlce at (0, 0)
 }

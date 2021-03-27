@@ -1,10 +1,12 @@
 #include "QuadNode.h"
-#include <assert.h>
 
-using namespace math;
+#include <assert.h>
 
 #define QNODE_MERGE_THRESHOLD 8 // 8 objects in 1 node = 28 tests. 8 objects in 4 nodes = 32 + 1*4 = 36 tests if fully balanced
 #define QNODE_SUBDIVIDE_THRESHOLD 12 //12 objects in 1 node = 66 tests. 12 objects in 4 nodes = 48 + 3*4 = 60 tests if fully balanced
+
+using namespace pipmath;
+
 
 QuadNode::QuadNode(Vector2 topRight, Vector2 bottomLeft, bool isLeaf)
 	: m_topRight(topRight), m_bottomLeft(bottomLeft), m_isLeaf(isLeaf), m_owner(nullptr), m_children (nullptr)

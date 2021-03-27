@@ -1,12 +1,14 @@
+#include "Capsule.h"
+
 #include <float.h>
 
-#include "Capsule.h"
 #include "Circle.h"
 #include "OrientedBox.h"
 
-using namespace math;
+using namespace pipmath;
 
-Capsule::Capsule(decimal length, decimal radius, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Capsule::Capsule(decimal length, decimal radius, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass, decimal e,
+ bool isKinematic)
 	: m_length(length), m_radius(radius), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
 	m_bodyType = BodyType::Capsule;
@@ -29,7 +31,7 @@ Capsule::~Capsule()
 {
 }
 //Intersect test with AABB (Quad Nodes)
-bool Capsule::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
+bool Capsule::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 {
 	//#Early out tests
 	//Equation of a line
@@ -240,7 +242,7 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	else return false;
 }
 
-bool Capsule::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
+bool Capsule::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 {
 	//Haven't done this one before, probably ClosestPtObbToSegment query
 	///#Randy Gaul: 
@@ -341,7 +343,7 @@ decimal Capsule::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 	return decimal();
 }
 
-decimal Capsule::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold)
+decimal Capsule::SweepWith(OrientedBox* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }

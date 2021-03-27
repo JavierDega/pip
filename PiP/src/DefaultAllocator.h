@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdlib.h>
 
 #include "Rigidbody.h"
@@ -46,10 +47,9 @@ class DefaultAllocator
 public:
 	DefaultAllocator(size_t poolSize = 0);
 	~DefaultAllocator();
-
 	void CreatePool(size_t size);
 	void DestroyPool();//Profile whether free deallocates whole pool
-	void * AllocateBody(size_t length, Handle& handle);
+	void* AllocateBody(size_t length, Handle& handle);
 	void DestroyAllBodies();//Won't call destructors
     void DestroyBody(Handle handle);
 	size_t AvailableInPool();
@@ -60,10 +60,9 @@ public:
     Rigidbody* GetBodyAt(size_t i);
     Rigidbody* GetLastBodyOfType(BodyType bodyType, int& idx);
     bool IsHandleValid(Handle handle);
-
 protected:
     void DestroyBodyFromPool(Rigidbody* bodyToDestroy);//Realigns pool
-
+public:
 	Pool m_pool;
     std::vector<Idx> m_mappings;//Maps reusable object list to linear object pool.
     std::vector<size_t> m_objectToMappingIdx;//Maps object idx in the pool to their mapping idx

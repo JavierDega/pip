@@ -1,3 +1,4 @@
+#pragma once
 
 #include "Rigidbody.h"
 
@@ -11,21 +12,23 @@ class OrientedBox :
 	public Rigidbody
 {
 public:
-	OrientedBox(math::Vector2 halfExtents = math::Vector2(1.f, 1.f), math::Vector2 pos = math::Vector2(), decimal rot = 0.0f, math::Vector2 vel = math::Vector2(),
+	OrientedBox(pipmath::Vector2 halfExtents = pipmath::Vector2(1.f, 1.f), pipmath::Vector2 pos = pipmath::Vector2(),
+	 decimal rot = 0.0f, pipmath::Vector2 vel = pipmath::Vector2(),
 		decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false);
 	~OrientedBox();
-	virtual bool IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft) override;
-	virtual bool IntersectWith(Rigidbody* rb2, math::Manifold& manifold) override;
-	virtual bool IntersectWith(Circle* rb2, math::Manifold& manifold) override;
-	virtual bool IntersectWith(Capsule* rb2, math::Manifold& manifold) override;
-	virtual bool IntersectWith(OrientedBox* rb2, math::Manifold& manifold) override;
-	virtual decimal SweepWith(Rigidbody* rb2, decimal dt, math::Manifold& manifold) override;
-	virtual decimal SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold) override;
-	virtual decimal SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold) override;
-	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold) override;
-
-	//private
-	bool TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2 pos2, math::Vector2 rotExtents, math::Vector2 rotExtents2, decimal& penetration);
-
-	math::Vector2 m_halfExtents;
+	virtual bool IntersectWith(pipmath::Vector2 topRight, pipmath::Vector2 bottomLeft) override;
+	virtual bool IntersectWith(Rigidbody* rb2, pipmath::Manifold& manifold) override;
+	virtual bool IntersectWith(Circle* rb2, pipmath::Manifold& manifold) override;
+	virtual bool IntersectWith(Capsule* rb2, pipmath::Manifold& manifold) override;
+	virtual bool IntersectWith(OrientedBox* rb2, pipmath::Manifold& manifold) override;
+	virtual decimal SweepWith(Rigidbody* rb2, decimal dt, pipmath::Manifold& manifold) override;
+	virtual decimal SweepWith(Circle* rb2, decimal dt, pipmath::Manifold& manifold) override;
+	virtual decimal SweepWith(Capsule* rb2, decimal dt, pipmath::Manifold& manifold) override;
+	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, pipmath::Manifold& manifold) override;
+private:
+	//#possibly apply Strategy design pattern?
+	bool TestAxis(pipmath::Vector2 axis, pipmath::Vector2 pos1, pipmath::Vector2 pos2, pipmath::Vector2 rotExtents,
+	 pipmath::Vector2 rotExtents2, decimal& penetration);
+public:
+	pipmath::Vector2 m_halfExtents;
 };

@@ -1,8 +1,8 @@
-﻿#ifndef PIP_MATH
-#define PIP_MATH
+﻿#pragma once
 
 #include <cmath>
 #include <iostream>
+
 #include "fp_math.h"
 
 #define USE_FIXEDPOINT 0
@@ -19,7 +19,7 @@ typedef float decimal;
 
 class Rigidbody;//Manifold needs fwdecl
 
-namespace math 
+namespace pipmath 
 {
 
 	inline decimal Abs(decimal x) 
@@ -648,8 +648,8 @@ namespace math
 	{
 		int numContactPoints;
 		decimal penetration;
-		math::Vector2 normal;
-		math::Vector2 contactPoints[2] = { Vector2(0,0), Vector2(0,0) };//Obb to Obb may use 2 contact points (If incident face complete interpenetrates reference face)
+		pipmath::Vector2 normal;
+		pipmath::Vector2 contactPoints[2] = { Vector2(0,0), Vector2(0,0) };//Obb to Obb may use 2 contact points (If incident face complete interpenetrates reference face)
 		Rigidbody* rb1;
 		Rigidbody* rb2;
 
@@ -663,5 +663,4 @@ namespace math
 		}
 	};
 }
-#endif // PIP_MATH
 

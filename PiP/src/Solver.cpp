@@ -9,7 +9,7 @@
 #include "OrientedBox.h"
 
 using namespace std;
-using namespace math;
+using namespace pipmath;
 
 Solver::Solver()
 	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_ignoreSeparatingBodies(true), m_staticResolution(true), m_logCollisionInfo(false),
@@ -346,7 +346,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 }
 
 //Go through custom allocator
-Handle Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Handle Solver::CreateCircle(decimal rad, pipmath::Vector2 pos, decimal rot, pipmath::Vector2 vel, decimal angVel, decimal mass,
+ decimal e, bool isKinematic)
 {
 	// Create the collision body, presumably a pool has been created beforehand
 	Handle circleHandle;
@@ -354,14 +355,15 @@ Handle Solver::CreateCircle(decimal rad, math::Vector2 pos, decimal rot, math::V
 	return circleHandle;
 }
 
-Handle Solver::CreateCapsule(decimal length, decimal rad, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Handle Solver::CreateCapsule(decimal length, decimal rad, pipmath::Vector2 pos, decimal rot, pipmath::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
 	Handle capsuleHandle;
 	Capsule* capsule = new (m_allocator.AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
 	return capsuleHandle;
 }
 
-Handle Solver::CreateOrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+Handle Solver::CreateOrientedBox(pipmath::Vector2 halfExtents, pipmath::Vector2 pos, decimal rot, pipmath::Vector2 vel, decimal angVel,
+ decimal mass, decimal e, bool isKinematic)
 {
 	Handle obbHandle;
 	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);

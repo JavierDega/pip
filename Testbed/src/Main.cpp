@@ -1,19 +1,22 @@
 #define CATCH_CONFIG_RUNNER
 #include "catch.h"
+
 #include "TestApp.h"
 #include "Circle.h"
 #include "Capsule.h"
 #include "OrientedBox.h"
-using namespace math;
-using namespace std;
+
 #define FP_EPSILON_TEMP 0.00001f
+
+using namespace pipmath;
+using namespace std;
 
 //Unit Tests
 TEST_CASE("Base math queries") {
 	Vector2 segment1 = Vector2(-1, 0);
 	Vector2 segment2 = Vector2(1, 0);
 	Vector2 p = Vector2(0, 1);
-	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps( Vector2(0.f, 0.f), FP_EPSILON_TEMP));
+	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps(Vector2(0.f, 0.f), FP_EPSILON_TEMP));
 #if USE_FIXEDPOINT
 	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps( Sqrt(2), FP_EPSILON_TEMP));
 #else
@@ -38,7 +41,7 @@ TEST_CASE("Collision response behavior") {
 
 	mockSolver.ComputeResponse(testManifold);
 
-	REQUIRE( (circle1.m_velocity == Vector2(-1, 0) && circle2.m_velocity == Vector2(1, 0)) );
+	REQUIRE((circle1.m_velocity == Vector2(-1, 0) && circle2.m_velocity == Vector2(1, 0)));
 	
 	OrientedBox obb1 = OrientedBox(Vector2(1.f, 1.f), Vector2(-1.f, 0.f), 0.f, Vector2(5.f, 1.f));
 	OrientedBox obb2 = OrientedBox(Vector2(1.f, 1.f), Vector2(1.f, 0.f), 0.f, Vector2(-5.f, 1.f));
@@ -54,7 +57,7 @@ TEST_CASE("Collision response behavior") {
 
 	REQUIRE((obb1.m_velocity == Vector2(-5.f, 1.f) && obb2.m_velocity == Vector2(5.f, 1.f)));
 
-	//Possibly test collision detection logging aswell?
+	//#Possibly test collision detection logging aswell?
 }
 
 TEST_CASE("Colliders vs QuadNode intersect tests")

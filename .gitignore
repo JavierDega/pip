@@ -33,9 +33,10 @@
 #Visual studio
 *.ipch
 
-#Build
+#Build (CMake VS/VSCode)
 Build/*
 build/*
+
 #Vim / vimdiff
 *.swp
 *.swo

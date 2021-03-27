@@ -16,4 +16,4 @@ set(IMGUI_SOURCE_FILES
 	imgui_impl_opengl3.cpp
 	imgui_widgets.cpp)
 
-add_library(Imgui ${IMGUI_HEADER_FILES} ${IMGUI_SOURCE_FILES})
+add_library(imgui ${IMGUI_HEADER_FILES} ${IMGUI_SOURCE_FILES})

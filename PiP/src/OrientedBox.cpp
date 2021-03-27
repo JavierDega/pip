@@ -1,10 +1,11 @@
 #include "OrientedBox.h"
+
 #include "Circle.h"
 #include "Capsule.h"
 
-using namespace math;
+using namespace pipmath;
 
-OrientedBox::OrientedBox(math::Vector2 halfExtents, math::Vector2 pos, decimal rot, math::Vector2 vel, decimal angVel, decimal mass,
+OrientedBox::OrientedBox(Vector2 halfExtents, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic)
 	: m_halfExtents(halfExtents), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
 {
@@ -17,7 +18,7 @@ OrientedBox::~OrientedBox()
 {
 }
 //Intersect AABB for Quad Nodes (Simplified SAT?)
-bool OrientedBox::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft)
+bool OrientedBox::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 {
 	Vector2 rotExtents = m_halfExtents.Rotated(m_rotation);
 	Vector2 quadCenter = topRight + (bottomLeft - topRight) / 2;
@@ -33,23 +34,23 @@ bool OrientedBox::IntersectWith(math::Vector2 topRight, math::Vector2 bottomLeft
 	return true;
 }
 
-bool OrientedBox::IntersectWith(Rigidbody* rb2, math::Manifold& manifold)
+bool OrientedBox::IntersectWith(Rigidbody* rb2, Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
 
-bool OrientedBox::IntersectWith(Circle* rb2, math::Manifold& manifold)
+bool OrientedBox::IntersectWith(Circle* rb2, Manifold& manifold)
 {
 	//ClosestPtCircleToObb query
 	return rb2->IntersectWith(this, manifold);
 }
 
-bool OrientedBox::IntersectWith(Capsule* rb2, math::Manifold& manifold)
+bool OrientedBox::IntersectWith(Capsule* rb2, Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
 
-bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
+bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 {
 	//SAT
 	//We only have 4 axis to project to, but we can simplify it by bringing things to one Obb's reference frame
@@ -188,27 +189,27 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, math::Manifold& manifold)
 	return true;
 }
 
-decimal OrientedBox::SweepWith(Rigidbody* rb2, decimal dt, math::Manifold& manifold)
+decimal OrientedBox::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
 	return rb2->SweepWith(this, dt, manifold);
 }
 
-decimal OrientedBox::SweepWith(Circle* rb2, decimal dt, math::Manifold& manifold)
+decimal OrientedBox::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }
 
-decimal OrientedBox::SweepWith(Capsule* rb2, decimal dt, math::Manifold& manifold)
+decimal OrientedBox::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }
 
-decimal OrientedBox::SweepWith(OrientedBox* rb2, decimal dt, math::Manifold& manifold)
+decimal OrientedBox::SweepWith(OrientedBox* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }
 
-bool OrientedBox::TestAxis(math::Vector2 axis, math::Vector2 pos1, math::Vector2 pos2, math::Vector2 rotExtents, math::Vector2 rotExtents2, decimal& penetration)
+bool OrientedBox::TestAxis(Vector2 axis, Vector2 pos1, Vector2 pos2, Vector2 rotExtents, Vector2 rotExtents2, decimal& penetration)
 {
 	decimal pos1Axis = pos1.Dot(axis);
 	decimal pos2Axis = pos2.Dot(axis);

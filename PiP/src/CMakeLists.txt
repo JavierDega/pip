@@ -1,5 +1,5 @@
 set(PIP_HEADER_FILES
-	PiPMath.h
+	pipmath.h
 	Rigidbody.h
 	Circle.h
 	Capsule.h
@@ -17,4 +17,4 @@ set(PIP_SOURCE_FILES
 	DefaultAllocator.cpp
 	QuadNode.cpp)
 
-add_library(PiP ${PIP_HEADER_FILES} ${PIP_SOURCE_FILES})
+add_library(pip ${PIP_HEADER_FILES} ${PIP_SOURCE_FILES})
