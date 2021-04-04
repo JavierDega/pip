@@ -575,6 +575,8 @@ void TestApp::ProcessInput()
 		if (!m_bodyHandles.empty()){
 			m_solver.m_allocator.DestroyBody(m_bodyHandles[0]);
 			m_bodyHandles.erase(m_bodyHandles.begin());
+			//#WIP Solution to manifolds being invalid when deleting objs on step mode, as Step() doesn't run to clear them
+			if (m_solver.m_stepMode) m_solver.m_currentManifolds.clear();
 		}
 	}
 	if (m_inputPressed & (short)Keys::P) m_bodyHandles.push_back(m_solver.CreateCircle());//Debug add cirlce at (0, 0)
