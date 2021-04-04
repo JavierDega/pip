@@ -92,7 +92,8 @@ size_t DefaultAllocator::AvailableInPool()
 
 Rigidbody* DefaultAllocator::GetFirstBody()
 {
-	//Returns null if pool uninitted
+	//Returns null if pool uninitted, dynamic cast
+	if (m_pool.start == m_pool.next)return nullptr;
 	return (Rigidbody*)m_pool.start;
 }
 
@@ -256,15 +257,13 @@ void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 			break;
 		}
 	}
-	//Displace every following body back
 	Rigidbody* bodyToDisplace = GetNextBody(bodyToDestroy);
 	memset((void*)bodyToDestroy, 0, displacementSize);
 	for (; bodyToDisplace != nullptr; bodyToDisplace = (Rigidbody*)((char*)GetNextBody(bodyToDisplace) + displacementSize))
 	{
-		//void* memcpy(void* destination, const void* source, size_t num);
-		//Cache body to displace somewhere else in memory
-		//Empty on the pool
-		//Copy into the pool, now displaced back accordingly
+		//Before displacing, getnextbody will return nullptr if its the last one, however after displacing stuff it will not
+		if ((char*)bodyToDisplace == m_pool.next) break;
+		//Cache body and displace it back in the pool
 		size_t bodyToDisplaceSize = GetBodyByteSize(bodyToDisplace);
 		Rigidbody* cachedBodyToDisplace = (Rigidbody*)malloc(bodyToDisplaceSize);
 		memcpy((void*)cachedBodyToDisplace, (void*)bodyToDisplace, bodyToDisplaceSize);//cached

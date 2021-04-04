@@ -572,8 +572,10 @@ void TestApp::ProcessInput()
 	if (m_inputPressed & (short)Keys::O) 
 	{
 		//Debug delete first body handle on the list
-		m_solver.m_allocator.DestroyBody(m_bodyHandles[0]);
-		m_bodyHandles.erase(m_bodyHandles.begin());
+		if (!m_bodyHandles.empty()){
+			m_solver.m_allocator.DestroyBody(m_bodyHandles[0]);
+			m_bodyHandles.erase(m_bodyHandles.begin());
+		}
 	}
 	if (m_inputPressed & (short)Keys::P) m_bodyHandles.push_back(m_solver.CreateCircle());//Debug add cirlce at (0, 0)
 }
