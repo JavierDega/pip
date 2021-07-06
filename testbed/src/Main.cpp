@@ -7,6 +7,8 @@
 #include "OrientedBox.h"
 
 #define FP_EPSILON_TEMP 0.00001f
+//Enable/Disable unit tests
+#define RUN_TESTS 0
 
 using namespace pipmath;
 using namespace std;
@@ -99,7 +101,9 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 int main(int argc, char* argv[])
 {
 	//Do tests here (asserts)
+#if RUN_TESTS
 	int testResult = Catch::Session().run(argc, argv);
+#endif
 	TestApp testApp;
 	if (testApp.Init() == -1) {
 		cout << "TestApp initialize failed" << endl;

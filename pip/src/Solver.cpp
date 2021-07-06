@@ -312,12 +312,9 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		{
 			t = Vector2(0, 0);
 		}
-		else
-		{
-			t.Normalize();
-		}
-		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
 
+		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
+		//Figure out what part of impulseReactionary was applied through t
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		resultVelA -= impulseFrictional1 * t * invMassA;
