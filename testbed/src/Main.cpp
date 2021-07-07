@@ -10,7 +10,7 @@
 //Enable/Disable unit tests
 #define RUN_TESTS 0
 
-using namespace pipmath;
+using namespace PipMath;
 using namespace std;
 
 //Unit Tests

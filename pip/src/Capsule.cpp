@@ -5,7 +5,7 @@
 #include "Circle.h"
 #include "OrientedBox.h"
 
-using namespace pipmath;
+using namespace PipMath;
 
 Capsule::Capsule(decimal length, decimal radius, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass, decimal e,
  bool isKinematic)

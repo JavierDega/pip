@@ -3,7 +3,7 @@
 #include "Circle.h"
 #include "Capsule.h"
 
-using namespace pipmath;
+using namespace PipMath;
 
 OrientedBox::OrientedBox(Vector2 halfExtents, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic)

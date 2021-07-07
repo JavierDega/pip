@@ -1,5 +1,5 @@
 set(PIP_HEADER_FILES
-	pipmath.h
+	PipMath.h
 	Rigidbody.h
 	Circle.h
 	Capsule.h

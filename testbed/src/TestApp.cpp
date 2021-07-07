@@ -4,7 +4,7 @@
 #include "Capsule.h"
 #include "OrientedBox.h"
 
-using namespace pipmath;
+using namespace PipMath;
 
 TestApp::TestApp()
 	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(true), m_displayManifolds(true), m_drawGrid(true),

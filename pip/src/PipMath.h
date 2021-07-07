@@ -19,7 +19,7 @@ typedef float decimal;
 
 class Rigidbody;//Manifold needs fwdecl
 
-namespace pipmath 
+namespace PipMath 
 {
 
 	inline decimal Abs(decimal x) 
@@ -648,8 +648,8 @@ namespace pipmath
 	{
 		int numContactPoints;
 		decimal penetration;
-		pipmath::Vector2 normal;
-		pipmath::Vector2 contactPoints[2] = { Vector2(0,0), Vector2(0,0) };//Obb to Obb may use 2 contact points (If incident face complete interpenetrates reference face)
+		PipMath::Vector2 normal;
+		PipMath::Vector2 contactPoints[2] = { Vector2(0,0), Vector2(0,0) };//Obb to Obb may use 2 contact points (If incident face complete interpenetrates reference face)
 		Rigidbody* rb1;
 		Rigidbody* rb2;
 

@@ -5,7 +5,7 @@
 
 //https://en.wikipedia.org/wiki/List_of_moments_of_inertia
 
-using namespace pipmath;
+using namespace PipMath;
 
 Circle::Circle(decimal rad, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,  decimal e, bool isKinematic)
 	: m_radius(rad), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
