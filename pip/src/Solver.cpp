@@ -307,20 +307,27 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		//vbaDotN = vba.Dot(n);
 		decimal sFrictionCoefficient = 0.1f;
 		decimal kFrictionCoefficient = 0.05f;
-		Vector2 t = (vba - n * vbaDotN);
-		if (t.EqualsEps(Vector2(0, 0), FLT_EPSILON))
-		{
-			t = Vector2(0, 0);
-		}
-
-		//cout << "t: " << t << " vba: " << vba << " n: " << n << " vbaDotN: " << vbaDotN << endl;
+		Vector2 vbaLinear = rb1->m_velocity - rb2->m_velocity;
+		Vector2 t = (vbaLinear - n * vbaLinear.Dot(n));//Tangential component of relative (linear) velocities
+		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), FLT_EPSILON) ? Vector2(0, 0) : t.Normalized();
 		//Figure out what part of impulseReactionary was applied through t
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
-		resultVelA -= impulseFrictional1 * t * invMassA;
-		resultAngVelA -= raP.Dot(impulseFrictional1 * t) * invIA;
-		resultVelB += impulseFrictional2 * t * invMassB;
-		resultAngVelB += rbP.Dot(impulseFrictional2 * t) * invIB;
+		//Probably neutralize tangential component of velocity in rb1 which hsould help it goto sleep
+		if (impulseFrictional1 >= t.Length()){
+			if (!rb1->m_isKinematic) resultVelA -= t;
+		}
+		else {
+			resultVelA -= impulseFrictional1 * tangentDir * invMassA;
+		}
+		if (impulseFrictional2 >= t.Length()){
+			if (!rb2->m_isKinematic) resultVelB += t;
+		}
+		else {
+			resultVelB += impulseFrictional2 * tangentDir * invMassB;
+		}
+		resultAngVelA -= raP.Dot(impulseFrictional1 * tangentDir) * invIA;
+		resultAngVelB += rbP.Dot(impulseFrictional2 * tangentDir) * invIB;
 	}
 
 	if (m_logCollisionInfo) {

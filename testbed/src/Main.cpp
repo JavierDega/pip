@@ -6,9 +6,9 @@
 #include "Capsule.h"
 #include "OrientedBox.h"
 
-#define FP_EPSILON_TEMP 0.00001f
+#define FP_EPSILON_TESTS 0.00001f
 //Enable/Disable unit tests
-#define RUN_TESTS 0
+#define RUN_TESTS 1
 
 using namespace PipMath;
 using namespace std;
@@ -18,9 +18,9 @@ TEST_CASE("Base math queries") {
 	Vector2 segment1 = Vector2(-1, 0);
 	Vector2 segment2 = Vector2(1, 0);
 	Vector2 p = Vector2(0, 1);
-	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps(Vector2(0.f, 0.f), FP_EPSILON_TEMP));
+	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps(Vector2(0.f, 0.f), FP_EPSILON_TESTS));
 #if USE_FIXEDPOINT
-	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps( Sqrt(2), FP_EPSILON_TEMP));
+	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps( Sqrt(2), FP_EPSILON_TESTS));
 #else
 	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2));
 #endif
@@ -72,7 +72,7 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 	Vector2 bottomLeft = Vector2(-5, -5);
 	REQUIRE(mockCircle.IntersectWith(topRight, bottomLeft));
 	mockCircle.m_position = Vector2(5 + Sqrt(0.5), 5 + Sqrt(0.5));
-	mockCircle.m_position -= Vector2(FP_EPSILON_TEMP, FP_EPSILON_TEMP);
+	mockCircle.m_position -= Vector2(FP_EPSILON_TESTS, FP_EPSILON_TESTS);
 	REQUIRE(mockCircle.IntersectWith(topRight, bottomLeft));
 	
 	//All positions for capsule vs QuadNode
