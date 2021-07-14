@@ -17,7 +17,6 @@ Solver::Solver()
 {
 }
 
-
 Solver::~Solver()
 {
 }
@@ -103,11 +102,18 @@ void Solver::Step(decimal dt)
 	for (Rigidbody* rb = m_allocator.GetFirstBody(); rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
 		rb->m_acceleration += Vector2(0, -m_gravity / rb->m_mass);
-		if (!(rb->m_isKinematic || rb->m_isSleeping)) rb->m_velocity += rb->m_acceleration * dt;
+		rb->m_acceleration -= 0.133 * rb->m_velocity / rb->m_mass;
+		rb->m_angularAccel -= (decimal)0.133 * rb->m_angularVelocity / rb->m_mass; 
+		if (!(rb->m_isKinematic || rb->m_isSleeping)) {
+			rb->m_velocity += rb->m_acceleration * dt;
+			rb->m_angularVelocity += rb->m_angularAccel * dt;	
+		}
 		rb->m_prevPos = rb->m_position;
+		rb->m_prevRot = rb->m_rotation;
 		rb->m_position += rb->m_velocity * dt;
 		rb->m_rotation += rb->m_angularVelocity * dt;
 		rb->m_acceleration = Vector2();
+		rb->m_angularAccel = 0;
 	}
 
 	//Q-tree: Assume space time coherence. Space: Objects cannot have a velocity bigger than the extent of a Q-node. Time: If we know what Q-node we were on
@@ -163,7 +169,8 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= FLT_EPSILON * FLT_EPSILON)
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= 0.001 * 0.001 &&
+			(rb->m_rotation - rb->m_prevRot) <= 0.001)
 			{
 				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 				rb->m_timeInSleep += dt;
@@ -172,6 +179,7 @@ void Solver::Step(decimal dt)
 				{
 					rb->m_isSleeping = true;
 					rb->m_velocity = Vector2();
+					rb->m_angularVelocity = 0;
 				}
 			}
 			else
@@ -305,28 +313,16 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		//vb = resultVelB + resultAngVelB * rbP;
 		//vba = va - vb;
 		//vbaDotN = vba.Dot(n);
-		decimal sFrictionCoefficient = 0.1f;
-		decimal kFrictionCoefficient = 0.05f;
-		Vector2 vbaLinear = rb1->m_velocity - rb2->m_velocity;
-		Vector2 t = (vbaLinear - n * vbaLinear.Dot(n));//Tangential component of relative (linear) velocities
-		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), FLT_EPSILON) ? Vector2(0, 0) : t.Normalized();
+		decimal sFrictionCoefficient = 0.06f;
+		decimal kFrictionCoefficient = 0.03f;
+		Vector2 t = (vba - n * vbaDotN);//Tangential component of relative (linear) velocities
+		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), FLT_EPSILON_TESTS) ? Vector2(0, 0) : t.Normalized();
 		//Figure out what part of impulseReactionary was applied through t
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
-		//Probably neutralize tangential component of velocity in rb1 which hsould help it goto sleep
-		if (impulseFrictional1 >= t.Length()){
-			if (!rb1->m_isKinematic) resultVelA -= t;
-		}
-		else {
-			resultVelA -= impulseFrictional1 * tangentDir * invMassA;
-		}
-		if (impulseFrictional2 >= t.Length()){
-			if (!rb2->m_isKinematic) resultVelB += t;
-		}
-		else {
-			resultVelB += impulseFrictional2 * tangentDir * invMassB;
-		}
+		resultVelA -= impulseFrictional1 * tangentDir * invMassA;
 		resultAngVelA -= raP.Dot(impulseFrictional1 * tangentDir) * invIA;
+		resultVelB += impulseFrictional2 * tangentDir * invMassB;
 		resultAngVelB += rbP.Dot(impulseFrictional2 * tangentDir) * invIB;
 	}
 

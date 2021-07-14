@@ -117,10 +117,10 @@ void TestApp::LoadScene(unsigned int index)
 	}
 	case 5:
 	{
-		m_sceneName = "Scene 5: Testing QuadTree";
+		m_sceneName = "Scene 5: Testing friction";
 		m_bodyHandles.push_back(m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true));
 		//Circles
-		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-2.f, -4), 0.0f, Vector2(0.5f, 0)));
+		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)));
 		break;
 	}
 	default:
@@ -424,6 +424,18 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::DragFloat("AccelX", &rb->m_acceleration.x, 1.0f);
 			ImGui::DragFloat("AccelY", &rb->m_acceleration.y, 1.0f);
 #endif
+			ImGui::NextColumn();
+
+			ImGui::Text("Angular Acceleration");
+			ImGui::NextColumn();
+#if USE_FIXEDPOINT
+			char angularAccel[50];
+			snprintf(angularAccel, 50, "Angular accel (%f)" , (double)rb->m_angularAccel);
+			ImGui::Text(angularAccel);
+#else
+			ImGui::DragFloat("AngAccel", &rb->m_angularAccel, 1.0f);
+#endif
+
 			ImGui::NextColumn();
 			ImGui::Text("Mass");
 			ImGui::NextColumn();

@@ -36,9 +36,11 @@ public:
 	PipMath::Vector2 m_position;
 	PipMath::Vector2 m_prevPos;
 	decimal m_rotation;//In radians
+	decimal m_prevRot;
 	PipMath::Vector2 m_velocity;
 	decimal m_angularVelocity;
 	PipMath::Vector2 m_acceleration;
+	decimal m_angularAccel;
 	decimal m_mass;
 	decimal m_e;//coefficient of restitution
 	decimal m_timeInSleep;
