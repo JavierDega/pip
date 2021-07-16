@@ -77,50 +77,57 @@ void TestApp::LoadScene(unsigned int index)
 	m_solver.m_allocator.DestroyAllBodies();
 	m_solver.m_currentManifolds.clear();
 	m_bodyHandles.clear();
+	Handle handle;
 	switch (index) {
 	case 0:
 	{
 		m_sceneName = "Scene 0: Circles v Capsule";
-		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-5, 6), 0, Vector2(5, 0)));
-		m_bodyHandles.push_back(m_solver.CreateCapsule(2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true));
-		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(5, 5), 0, Vector2(-5, 0)));
+		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 6), 0, Vector2(5, 0)) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true) != -1) 
+		m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCircle(handle, 1.0f, Vector2(5, 5), 0, Vector2(-5, 0)) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		m_bodyHandles.push_back(m_solver.CreateCapsule(2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD));
-		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f));
+		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f) != -1)
+		m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 2:
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
-		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(0.1f, 5)));
-		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f));
-		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f));
+		if (m_solver.CreateCircle(handle, 1.0f, Vector2(0.1f, 5)) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
+		m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
+		m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
-		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f));
-		m_bodyHandles.push_back(m_solver.CreateOrientedBox(Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f));
+		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
+		m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
+		m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
-		m_bodyHandles.push_back(m_solver.CreateCapsule(1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f));
-		m_bodyHandles.push_back(m_solver.CreateCapsule(4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true));
+		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 5:
 	{
 		m_sceneName = "Scene 5: Testing friction";
-		m_bodyHandles.push_back(m_solver.CreateCapsule(16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true));
+		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		//Circles
-		m_bodyHandles.push_back(m_solver.CreateCircle(1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)));
+		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	default:
@@ -322,20 +329,19 @@ void TestApp::DrawImgui()
 	{
 		ImGui::Begin(m_sceneName.c_str());                          // Create a window and append into it.
 		ImGui::Text("Press F1-F10 to load scenes");
+		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Step mode (R)", &m_solver.m_stepMode);
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
-		ImGui::Text("Continuous Collision : False");
-		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
-		ImGui::Checkbox("Static & Kinetic friction", &m_solver.m_frictionModel);
 		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
 		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
 		ImGui::Text("Destroy first body (O)");
-		ImGui::Text("Create circle (P)");
-		ImGui::Text("Ignore separating bodies: True");
-		ImGui::Text("Static collision resolution: True");
+		ImGui::Text("Launch bomb (P)");
+		ImGui::Checkbox("Static & Kinetic friction", &m_solver.m_frictionModel);
+		ImGui::Checkbox("Static collision resolution: True", &m_solver.m_staticResolution);
 		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
+		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
+		ImGui::Text("Continuous Collision : False");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
@@ -591,5 +597,11 @@ void TestApp::ProcessInput()
 			if (m_solver.m_stepMode) m_solver.m_currentManifolds.clear();
 		}
 	}
-	if (m_inputPressed & (short)Keys::P) m_bodyHandles.push_back(m_solver.CreateCircle());//Debug add cirlce at (0, 0)
+	if (m_inputPressed & (short)Keys::P) LaunchBomb();
+}
+
+void TestApp::LaunchBomb(){
+	Handle handle;
+	int r = m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 2), 0.f, Vector2(5, 0));
+	if (r != -1) m_bodyHandles.push_back(handle);
 }

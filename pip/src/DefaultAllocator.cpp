@@ -42,7 +42,10 @@ void DefaultAllocator::DestroyPool()
 void* DefaultAllocator::AllocateBody( size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
-	assert( length <= AvailableInPool());
+	if (length > AvailableInPool()) {
+		std::cout << "Error! Trying to allocate past pool size" << std::endl;
+		return nullptr;
+	}
 	size_t objIdx = m_objectToMappingIdx.size();
 	// Try to recycle a gap in the mapping list
 	for (size_t i = 0; i < m_mappings.size(); i++)

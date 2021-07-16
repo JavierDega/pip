@@ -38,6 +38,7 @@ public:
 	void DrawImgui();
 	void ImGuiShowRigidbodyEditor();
 	void ProcessInput();
+	void LaunchBomb();
 public:
 	//Graphics/Window
 	GLFWwindow* m_window;
