@@ -17,7 +17,7 @@ TEST_CASE("Base math queries") {
 	Vector2 segment1 = Vector2(-1, 0);
 	Vector2 segment2 = Vector2(1, 0);
 	Vector2 p = Vector2(0, 1);
-	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps(Vector2(0.f, 0.f), FLT_EPSILON_TESTS));
+	REQUIRE(ClosestPtToSegment(segment1, segment2, p).EqualsEps(segment1, FLT_EPSILON_TESTS));
 #if USE_FIXEDPOINT
 	REQUIRE(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps( Sqrt(2), FLT_EPSILON_TESTS));
 #else

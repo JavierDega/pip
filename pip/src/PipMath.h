@@ -5,8 +5,8 @@
 
 #include "fp_math.h"
 
-#define FLT_EPSILON_TESTS 0.00001f
-#define USE_FIXEDPOINT 0
+#define FLT_EPSILON_TESTS 0.001
+#define USE_FIXEDPOINT 1
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
 #define RAD2DEG 180/(PI)
@@ -253,14 +253,14 @@ namespace PipMath
 
 	inline std::ostream& operator << (std::ostream& out, const Vector2& v)
 	{
-		out << "x(" << (float)v.x << ")" << " y(" << (float)v.y << ")";
+		out << "x(" << (double)v.x << ")" << " y(" << (double)v.y << ")";
 		return out;
 	}
 	
 #if USE_FIXEDPOINT
 	inline std::ostream& operator << (std::ostream& out, const decimal& v)
 	{
-		out << (float)v;
+		out << (double)v;
 		return out;
 	}
 #else
@@ -272,6 +272,7 @@ namespace PipMath
 		Vector2 ab = b - a;
 		Vector2 ap = p - a;
 		Vector2 bp = p - b;
+		std::cout << ab << std::endl;
 		//Case 1
 		if (ab.Dot(ap) <= 0) 
 		{

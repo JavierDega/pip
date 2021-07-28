@@ -341,6 +341,9 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Static collision resolution: True", &m_solver.m_staticResolution);
 		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
 		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
+		char airViscosity[50];
+		snprintf(airViscosity, 50, "Air viscosity (%f)", (double)m_solver.m_airViscosity);
+		ImGui::Text("%s", airViscosity);
 		ImGui::Text("Continuous Collision : False");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
@@ -401,7 +404,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 #if USE_FIXEDPOINT
 			char realVel[50];
 			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (double)rb->m_velocity.x, (double)rb->m_velocity.y);
-			ImGui::Text(realVel);
+			ImGui::Text("%s", realVel);
 #else
 			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f);//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
 			ImGui::DragFloat("VelY", &rb->m_velocity.y, 1.0f);
@@ -413,7 +416,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 #if USE_FIXEDPOINT
 			char realRot[50];
 			snprintf(realRot, 50, "Rot (Real) (%f)", (double)rb->m_angularVelocity);
-			ImGui::Text(realRot);
+			ImGui::Text("%s", realRot);
 #else
 			ImGui::DragFloat("Rot (Rad/S)", &rb->m_angularVelocity, 0.1f);
 #endif
@@ -424,7 +427,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 #if USE_FIXEDPOINT
 			char realAccel[50];
 			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (double)rb->m_acceleration.x, (double)rb->m_acceleration.y);
-			ImGui::Text(realAccel);
+			ImGui::Text("%s", realAccel);
 #else
 
 			ImGui::DragFloat("AccelX", &rb->m_acceleration.x, 1.0f);
@@ -437,7 +440,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 #if USE_FIXEDPOINT
 			char angularAccel[50];
 			snprintf(angularAccel, 50, "Angular accel (%f)" , (double)rb->m_angularAccel);
-			ImGui::Text(angularAccel);
+			ImGui::Text("%s", angularAccel);
 #else
 			ImGui::DragFloat("AngAccel", &rb->m_angularAccel, 1.0f);
 #endif

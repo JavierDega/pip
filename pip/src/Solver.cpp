@@ -12,7 +12,7 @@ using namespace std;
 using namespace PipMath;
 
 Solver::Solver()
-	: m_continuousCollision(false), m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_staticResolution(true), m_logCollisionInfo(false),
+	: m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_staticResolution(true), m_logCollisionInfo(false),
 		m_frictionModel(true), m_allocator(50 * sizeof(OrientedBox)), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f),
 		m_airViscosity(0.133f)
 {
@@ -29,7 +29,7 @@ void Solver::Update(decimal dt)
 	//Fixed timestep with accumulator (50fps)
 	if (m_stepMode) {
 		if (m_stepOnce) {
-			(m_continuousCollision) ? ContinuousStep(m_timestep) : Step(m_timestep);
+			Step(m_timestep);
 			m_stepOnce = false;
 		}
 	}
@@ -37,7 +37,7 @@ void Solver::Update(decimal dt)
 		m_accumulator += dt;
 		if (m_accumulator > 0.2f) m_accumulator = 0.2f;
 		while (m_accumulator > m_timestep) {
-			(m_continuousCollision) ? ContinuousStep(m_timestep) : Step(m_timestep);
+			Step(m_timestep);
 			m_accumulator -= m_timestep;
 		}
 	}
