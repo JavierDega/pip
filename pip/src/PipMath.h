@@ -6,7 +6,7 @@
 #include "fp_math.h"
 
 #define FLT_EPSILON_TESTS 0.0001f
-#define USE_FIXEDPOINT 1
+#define USE_FIXEDPOINT 0
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
 #define RAD2DEG 180/(PI)
@@ -272,6 +272,8 @@ namespace PipMath
 		Vector2 ab = b - a;
 		Vector2 ap = p - a;
 		Vector2 bp = p - b;
+		std::cout << ab << std::endl;
+		std::cout << ap << std::endl;
 		//Case 1
 		if (ab.Dot(ap) <= 0) 
 		{
