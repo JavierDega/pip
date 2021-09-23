@@ -17,6 +17,7 @@ TEST_CASE("Base math queries") {
 	Vector2 b = Vector2(1, 0);
 	Vector2 p = Vector2(0, 1);
 	Vector2 closestPt = ClosestPtToSegment(a, b, p);
+	cout << closestPt << endl;
 	CHECK((float)closestPt.x == Approx(0));
 	CHECK((float)closestPt.y == Approx(0));
 	CHECK((float)DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Approx(Sqrt(2)));
