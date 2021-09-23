@@ -4,15 +4,12 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-namespace fp64
-{
+namespace fp64 {
 	extern "C" {
-		namespace fpc
-		{
+		namespace fpc {
 #endif // __cplusplus
 
-			typedef struct Fp64
-			{
+			typedef struct Fp64 {
 				int64_t internal;
 			} Fp64;
 
@@ -22,6 +19,10 @@ namespace fp64
 			extern Fp64 fp64_mul(Fp64 a, Fp64 b);
 			extern Fp64 fp64_div(Fp64 a, Fp64 b);
 			extern Fp64 fp64_mod(Fp64 a, Fp64 b);
+			static Fp64 fp64_neg(Fp64 a)
+			{
+				return Fp64{ -a.internal };
+			}
 
 			// Maths
 			extern Fp64 fp64_pow(Fp64 f, uint32_t exponent);
@@ -66,32 +67,26 @@ namespace fp64
 	 * arithmetic/manipulation, as the scale of the internal integer
 	 * may change in future versions.
 	 */
-
-	class Fp64
-	{
+	class Fp64 {
 	private:
 		fpc::Fp64 m_Internal;
 	public:
 		// 'Constructors':
 		inline Fp64(fpc::Fp64 Internal) : m_Internal(Internal) {};
 
-		inline Fp64()
-		{
+		inline Fp64() {
 			m_Internal = fpc::Fp64{ 0 };
 		}
 
-		inline Fp64(float f)
-		{
+		inline Fp64(float f) {
 			*this = FromFloat(f);
 		}
 
-		inline Fp64(int i)
-		{
+		inline Fp64(int i) {
 			*this = FromInt32(i);
 		}
 
-		inline Fp64(double d)
-		{
+		inline Fp64(double d) {
 			*this = FromDouble(d);
 		}
 
@@ -178,13 +173,19 @@ namespace fp64
 		}
 
 		// Arithmetic operators
-		inline friend Fp64 operator+(Fp64 Lhs, Fp64 Rhs);
+		inline Fp64 operator+(Fp64 Rhs) const
+		{
+			return Fp64(fpc::fp64_add(m_Internal, Rhs.m_Internal));
+		}
 
-		inline friend Fp64 operator-(Fp64 Lhs, Fp64 Rhs);
+		inline Fp64 operator-(Fp64 Rhs) const
+		{
+			return Fp64(fpc::fp64_sub(m_Internal, Rhs.m_Internal));
+		}
 
 		inline Fp64 operator-() const
 		{
-			return Fp64(fpc::Fp64{ -m_Internal.internal });
+			return Fp64(fpc::fp64_neg(m_Internal));
 		}
 
 		inline Fp64 operator*(Fp64 Rhs) const
@@ -192,7 +193,11 @@ namespace fp64
 			return Fp64(fpc::fp64_mul(m_Internal, Rhs.m_Internal));
 		}
 
-		inline friend Fp64 operator/(Fp64 Lhs, Fp64 Rhs);
+		inline Fp64 operator/(Fp64 Rhs) const
+		{
+			return Fp64(fpc::fp64_div(m_Internal, Rhs.m_Internal));
+		}
+
 
 		inline Fp64 operator%(Fp64 Rhs) const
 		{
@@ -240,6 +245,7 @@ namespace fp64
 		{
 			return Abs(*this - Rhs) < epsilon;
 		}
+		
 		inline bool operator!=(const Fp64& Rhs) const
 		{
 			return !(*this == Rhs);
@@ -327,24 +333,8 @@ namespace fp64
 			return &m_Internal.internal;
 		}
 	};
-	//Friend funcs
-	inline Fp64 operator+(Fp64 Lhs, Fp64 Rhs)
-	{
-		return Fp64(fpc::fp64_add(Lhs.m_Internal, Rhs.m_Internal));
-	}
-
-	inline Fp64 operator-(Fp64 Lhs, Fp64 Rhs)
-	{
-		return Fp64(fpc::fp64_sub(Lhs.m_Internal, Rhs.m_Internal));
-	}
-
-	inline Fp64 operator/(Fp64 Lhs, Fp64 Rhs)
-	{
-		return Fp64(fpc::fp64_div(Lhs.m_Internal, Rhs.m_Internal));
-	}
 
 } // namespace fp64
-
 #endif // __cplusplus
 
 #endif // FP_MATH_DY_H

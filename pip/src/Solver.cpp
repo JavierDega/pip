@@ -236,10 +236,10 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Collision normal point to A by convention
 	Vector2 n = manifold.normal;//Expected to come normalized already
 	decimal pen = manifold.penetration;
-	decimal invMassA = rb1->m_isKinematic ? 0 : 1 / rb1->m_mass;
-	decimal invMassB = rb2->m_isKinematic ? 0 : 1 / rb2->m_mass;
-	decimal invIA = rb1->m_isKinematic ? 0 : 1 / rb1->m_inertia;//Inverse Inertia
-	decimal invIB = rb2->m_isKinematic ? 0 : 1 / rb2->m_inertia;
+	decimal invMassA = rb1->m_isKinematic ? 0 : (decimal)1 / rb1->m_mass;
+	decimal invMassB = rb2->m_isKinematic ? 0 : (decimal)1 / rb2->m_mass;
+	decimal invIA = rb1->m_isKinematic ? 0 : (decimal)1 / rb1->m_inertia;//Inverse Inertia
+	decimal invIB = rb2->m_isKinematic ? 0 : (decimal)1 / rb2->m_inertia;
 	//Make multiple contact points work by caching velocities and then summing local impulses
 	Vector2 resultVelA = rb1->m_velocity;
 	Vector2 resultVelB = rb2->m_velocity;
@@ -268,11 +268,11 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		//If we do this, will kinematic objects get displaced by much?
 		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5f;
 		rb1->m_position += pen * n * dispFactor;
-		rb2->m_position -= pen * n * (1 - dispFactor);
+		rb2->m_position -= pen * n * ((decimal)1 - dispFactor);
 	}
 	//assert(vbaDotN < 0 || !m_staticResolution);
 	if (vbaDotN >= 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
-	decimal num = -(1 + e) * vbaDotN;
+	decimal num = -((decimal)1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulseReactionary = num / denom;
 	assert(impulseReactionary > 0);

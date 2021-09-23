@@ -411,7 +411,7 @@ namespace PipMath
 		inline Vector3 RotateAxisAngle(Vector3 axis, decimal rad)
 		{
 			//axis must be unit vector;
-			*this = *this * Cos(rad) + axis.Cross(*this) * Sin(rad) + (1 - Cos(rad)) * axis.Dot(*this) * axis;
+			*this = *this * Cos(rad) + axis.Cross(*this) * Sin(rad) + ((decimal)1 - Cos(rad)) * axis.Dot(*this) * axis;
 			return *this;
 		}
 

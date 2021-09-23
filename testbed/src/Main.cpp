@@ -11,7 +11,6 @@
 
 using namespace PipMath;
 using namespace std;
-
 //Unit Tests
 TEST_CASE("Base math queries") {
 	Vector2 a = Vector2(-1, 0);
@@ -68,7 +67,7 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 	Vector2 topRight = Vector2(5, 5);
 	Vector2 bottomLeft = Vector2(-5, -5);
 	CHECK(mockCircle.IntersectWith(topRight, bottomLeft));
-	mockCircle.m_position = Vector2(5 + Sqrt(0.5f), 5 + Sqrt(0.5f));
+	mockCircle.m_position = Vector2((decimal)5 + Sqrt(0.5f), (decimal)5 + Sqrt(0.5f));
 	mockCircle.m_position -= Vector2(FLT_EPSILON_TESTS, FLT_EPSILON_TESTS);
 	CHECK(mockCircle.IntersectWith(topRight, bottomLeft));
 	
