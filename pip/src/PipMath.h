@@ -180,6 +180,7 @@ namespace PipMath
 		{
 			return (Abs(x - Rhs.x) + Abs(y - Rhs.y)) < epsilon;
 		}
+
 		inline bool operator!=(const Vector2& Rhs) const
 		{
 			return !(*this == Rhs);

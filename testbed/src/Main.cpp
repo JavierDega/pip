@@ -7,7 +7,7 @@
 #include "OrientedBox.h"
 
 //Enable/Disable unit tests
-#define RUN_TESTS 1
+#define RUN_TESTS 0
 
 using namespace PipMath;
 using namespace std;

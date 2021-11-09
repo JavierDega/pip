@@ -19,7 +19,7 @@ namespace fp64 {
 			extern Fp64 fp64_mul(Fp64 a, Fp64 b);
 			extern Fp64 fp64_div(Fp64 a, Fp64 b);
 			extern Fp64 fp64_mod(Fp64 a, Fp64 b);
-			static Fp64 fp64_neg(Fp64 a)
+			inline Fp64 fp64_neg(Fp64 a)
 			{
 				return Fp64{ -a.internal };
 			}
@@ -198,7 +198,6 @@ namespace fp64 {
 			return Fp64(fpc::fp64_div(m_Internal, Rhs.m_Internal));
 		}
 
-
 		inline Fp64 operator%(Fp64 Rhs) const
 		{
 			return Fp64(fpc::fp64_mod(m_Internal, Rhs.m_Internal));
@@ -241,11 +240,6 @@ namespace fp64 {
 			return m_Internal.internal == Rhs.m_Internal.internal;
 		}
 
-		inline bool EqualsEps(const Fp64& Rhs, const Fp64& epsilon) const
-		{
-			return Abs(*this - Rhs) < epsilon;
-		}
-		
 		inline bool operator!=(const Fp64& Rhs) const
 		{
 			return !(*this == Rhs);
@@ -326,11 +320,6 @@ namespace fp64 {
 		inline int64_t InternalRepresentation() const
 		{
 			return m_Internal.internal;
-		}
-
-		inline int64_t* InternalRepresentationP()
-		{
-			return &m_Internal.internal;
 		}
 	};
 
