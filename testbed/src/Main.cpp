@@ -8,6 +8,7 @@
 
 //Enable/Disable unit tests
 #define RUN_TESTS 1
+#define TEST_FP_EPSILON 0.00001f
 
 using namespace PipMath;
 using namespace std;
@@ -18,9 +19,15 @@ TEST_CASE("Base math queries") {
 	Vector2 p = Vector2(0, 1);
 	Vector2 closestPt = ClosestPtToSegment(a, b, p);
 	cout << closestPt << endl;
-	CHECK((float)closestPt.x == Approx(0));
-	CHECK((float)closestPt.y == Approx(0));
-	CHECK((float)DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Approx(Sqrt(2)));
+#if USE_FIXEDPOINT
+	CHECK(closestPt.x.EqualsEps(0, TEST_FP_EPSILON));
+	CHECK(closestPt.y.EqualsEps(0, TEST_FP_EPSILON));
+	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps(Sqrt(2), TEST_FP_EPSILON));
+#else
+	CHECK(closestPt.x == 0);
+	CHECK(closestPt.y == 0);
+	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2));
+#endif
 }
 
 TEST_CASE("Collision response behavior") {
