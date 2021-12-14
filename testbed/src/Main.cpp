@@ -5,7 +5,7 @@
 #include "Circle.h"
 #include "Capsule.h"
 #include "OrientedBox.h"
-
+#include "DefaultAllocator.h"
 //Enable/Disable unit tests
 #define RUN_TESTS 1
 #define TEST_FP_EPSILON 0.00001f
@@ -32,7 +32,7 @@ TEST_CASE("Base math queries") {
 
 TEST_CASE("Collision response behavior") {
 	//Mock objects
-	Solver mockSolver;
+	Solver mockSolver(new DefaultAllocator());
 
 	Circle circle1 = Circle(1, Vector2(-1, 0), 0, Vector2(1, 0));
 	Circle circle2 = Circle(1, Vector2(1, 0), 0, Vector2(-1, 0));

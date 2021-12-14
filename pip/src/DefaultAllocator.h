@@ -30,7 +30,7 @@ struct Pool
     char* end;
 };
 
-class DefaultAllocator : BaseAllocator
+class DefaultAllocator : public BaseAllocator
 {
 public:
 	DefaultAllocator(size_t poolSize = 0);

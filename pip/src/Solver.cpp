@@ -11,9 +11,9 @@
 using namespace std;
 using namespace PipMath;
 
-Solver::Solver()
+Solver::Solver(BaseAllocator* allocator)
 	: m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_staticResolution(true), m_logCollisionInfo(false),
-		m_frictionModel(true), m_allocator(50 * sizeof(OrientedBox)), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f),
+		m_frictionModel(true), m_allocator(allocator), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f),
 		m_airViscosity(0.133f)
 {
 }
@@ -100,7 +100,8 @@ void Solver::Step(decimal dt)
 {
 	//Integration
 	std::vector<Rigidbody*> rigidbodies;
-	for (Rigidbody* rb = m_allocator.GetFirstBody(); rb != nullptr; rb = m_allocator.GetNextBody(rb)) {
+	assert(m_allocator);
+	for (Rigidbody* rb = m_allocator->GetFirstBody(); rb != nullptr; rb = m_allocator->GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
 		rb->m_acceleration += Vector2(0, -m_gravity / rb->m_mass);
 		rb->m_acceleration -= m_airViscosity * rb->m_velocity / rb->m_mass;
@@ -350,14 +351,16 @@ int Solver::CreateCircle(Handle& handle, decimal rad, PipMath::Vector2 pos, deci
 {
 	// Create the collision body, presumably a pool has been created beforehand
 	Handle circleHandle;
-	Circle* circle = new (m_allocator.AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	assert(m_allocator);
+	Circle* circle = new (m_allocator->AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
 	return circle ? 0 : -1;
 }
 
 int Solver::CreateCapsule(Handle& handle, decimal length, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
 {
 	Handle capsuleHandle;
-	Capsule* capsule = new (m_allocator.AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	assert(m_allocator);
+	Capsule* capsule = new (m_allocator->AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
 	return capsule ? 0 : -1;
 }
 
@@ -365,7 +368,8 @@ int Solver::CreateOrientedBox(Handle& handle, PipMath::Vector2 halfExtents, PipM
  decimal mass, decimal e, bool isKinematic)
 {
 	Handle obbHandle;
-	OrientedBox* obb = new (m_allocator.AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
+	assert(m_allocator);
+	OrientedBox* obb = new (m_allocator->AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
 	return obb ? 0 : -1;
 }
 

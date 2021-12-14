@@ -3,6 +3,7 @@
 #include "Circle.h"
 #include "Capsule.h"
 #include "OrientedBox.h"
+#include "DefaultAllocator.h"
 
 using namespace PipMath;
 
@@ -74,7 +75,7 @@ void TestApp::InitImgui()
 void TestApp::LoadScene(unsigned int index)
 {
 	//Deallocate m_allocator pool
-	m_solver.m_allocator.DestroyAllBodies();
+	m_solver.m_allocator->DestroyAllBodies();
 	m_solver.m_currentManifolds.clear();
 	m_bodyHandles.clear();
 	Handle handle;
@@ -156,7 +157,7 @@ void TestApp::UpdateLoop()
 		glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1, 1, 1);
 		//Loop through solver's rigidbody pool
-		for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
+		for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator->GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator->GetNextBody(rb)) {
 			glLoadIdentity();
 			switch (rb->m_bodyType) {
 			case BodyType::Circle: {
@@ -359,7 +360,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	ImGui::Columns(2);
 	ImGui::Separator();
 	int i = 0;
-	for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator.GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator.GetNextBody(rb)) {
+	for (Rigidbody* rb = (Rigidbody*)m_solver.m_allocator->GetFirstBody(); rb != nullptr; rb = m_solver.m_allocator->GetNextBody(rb)) {
 		std::string objShape;
 		char* objDesc = new char[100];
 		switch (rb->m_bodyType) {
@@ -594,7 +595,7 @@ void TestApp::ProcessInput()
 	{
 		//Debug delete first body handle on the list
 		if (!m_bodyHandles.empty()){
-			m_solver.m_allocator.DestroyBody(m_bodyHandles[0]);
+			m_solver.m_allocator->DestroyBody(m_bodyHandles[0]);
 			m_bodyHandles.erase(m_bodyHandles.begin());
 			//#WIP Solution to manifolds being invalid when deleting objs on step mode, as Step() doesn't run to clear them
 			if (m_solver.m_stepMode) m_solver.m_currentManifolds.clear();
