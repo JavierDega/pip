@@ -109,32 +109,6 @@ Rigidbody* DefaultAllocator::GetNextBody(Rigidbody* prev)
 	return (Rigidbody*)charPNext;
 }
 
-size_t DefaultAllocator::GetBodyByteSize(Rigidbody* rb)
-{
-	assert(rb);
-	switch (rb->m_bodyType)
-	{
-	case BodyType::Circle:
-	{
-		return sizeof(Circle);
-		break;
-	}
-	case BodyType::Capsule:
-	{
-		return sizeof(Capsule);
-		break;
-	}
-	case BodyType::Obb:
-	{
-		return sizeof(OrientedBox);
-		break;
-	}
-	default:
-		break;
-	}
-	return size_t();
-}
-
 Rigidbody* DefaultAllocator::GetBody(Handle handle)
 {
 	if (!IsHandleValid(handle)) return nullptr;
@@ -154,7 +128,7 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 		assert(rb);
 		if (rb == nullptr)
 		{
-			cout << "PiP Error: Trying to get body index bigger than poolSize" << endl;
+			cout << "PiP Error - DefaultAllocator::Trying to get body index bigger than poolSize" << endl;
 			return nullptr;
 		}
 		rb = GetNextBody(rb);

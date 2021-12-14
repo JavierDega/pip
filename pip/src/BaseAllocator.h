@@ -1,57 +1,33 @@
 #pragma once
 
-#include <stdlib.h>
-#include "BaseAllocator.h"
+#include "Rigidbody.h"
 
-struct Idx
+struct Handle
 {
-    Idx(bool active, size_t i, uint64_t generation)
+    Handle(size_t i = 0, uint64_t generation = 0)
     {
-        this->active = active;
         this->idx = i;
         this->generation = generation;
     }
-
-    bool active;
     size_t idx;
     uint64_t generation;
 };
 
-struct Pool
-{
-    Pool()
-    {
-        start = nullptr;
-        next = nullptr;
-        end = nullptr;
-    }
-    char* start;
-    char* next;//Where to allocate next
-    char* end;
-};
-
-class DefaultAllocator : BaseAllocator
+class BaseAllocator
 {
 public:
-	DefaultAllocator(size_t poolSize = 0);
-	~DefaultAllocator();
-    //BaseAllocator
-	virtual void* AllocateBody(size_t length, Handle& handle) override;
-	virtual void DestroyAllBodies() override;//Won't call destructors
-    virtual void DestroyBody(Handle handle) override;
-    virtual Rigidbody* GetFirstBody() override;
-	virtual Rigidbody* GetNextBody(Rigidbody* prev);
-    Rigidbody* GetBody(Handle handle) override;
-    Rigidbody* GetBodyAt(size_t i) override;
-    virtual bool IsHandleValid(Handle handle) override;
-private:
-	void CreatePool(size_t size);
-	void DestroyPool();//Profile whether free deallocates whole pool
-	size_t AvailableInPool();
-    Rigidbody* GetLastBodyOfType(BodyType bodyType, int& idx);
-    void DestroyBodyFromPool(Rigidbody* bodyToDestroy);//Realigns pool
+	BaseAllocator();
+	~BaseAllocator();
+    size_t GetBodyByteSize(Rigidbody* rb);
+	virtual void* AllocateBody(size_t length, Handle& handle) = 0;
+	virtual void DestroyAllBodies() = 0;//Won't call destructors
+    virtual void DestroyBody(Handle handle) = 0;
+    virtual Rigidbody* GetFirstBody() = 0;
+	virtual Rigidbody* GetNextBody(Rigidbody* prev) = 0;
+    virtual Rigidbody* GetBody(Handle handle) = 0;
+    virtual Rigidbody* GetBodyAt(size_t i) = 0;
+    virtual bool IsHandleValid(Handle handle) = 0;
 public:
-private:
 	Pool m_pool;
     std::vector<Idx> m_mappings;//Maps reusable object list to linear object pool.
     std::vector<size_t> m_objectToMappingIdx;//Maps object idx in the pool to their mapping idx
