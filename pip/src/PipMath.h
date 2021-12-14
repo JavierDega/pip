@@ -272,8 +272,8 @@ namespace PipMath
 		Vector2 ab = b - a;
 		Vector2 ap = p - a;
 		Vector2 bp = p - b;
-		std::cout << ab << std::endl;
-		std::cout << ap << std::endl;
+		//std::cout << "ClosestPtToSegment: ab " << ab << std::endl;
+		//std::cout << "ClosestPtToSegment: ap " << ap << std::endl;
 		//Case 1
 		if (ab.Dot(ap) <= 0) 
 		{

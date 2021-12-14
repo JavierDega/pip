@@ -18,7 +18,7 @@ TEST_CASE("Base math queries") {
 	Vector2 b = Vector2(1, 0);
 	Vector2 p = Vector2(0, 1);
 	Vector2 closestPt = ClosestPtToSegment(a, b, p);
-	cout << closestPt << endl;
+	//cout << "Test - ClosestPtToSegment: " << closestPt << endl;
 #if USE_FIXEDPOINT
 	CHECK(closestPt.x.EqualsEps(0, TEST_FP_EPSILON));
 	CHECK(closestPt.y.EqualsEps(0, TEST_FP_EPSILON));

@@ -1,5 +1,20 @@
 #include "BaseAllocator.h"
 
+#include <assert.h>
+
+#include "Circle.h"
+#include "Capsule.h"
+#include "OrientedBox.h"
+
+BaseAllocator::BaseAllocator()
+{
+}
+
+
+BaseAllocator::~BaseAllocator()
+{
+}
+
 size_t BaseAllocator::GetBodyByteSize(Rigidbody* rb)
 {
 	assert(rb);

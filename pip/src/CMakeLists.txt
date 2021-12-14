@@ -5,6 +5,7 @@ set(PIP_HEADER_FILES
 	Capsule.h
 	OrientedBox.h
 	Solver.h
+	BaseAllocator.h
 	DefaultAllocator.h
 	QuadNode.h)
 	
@@ -14,6 +15,7 @@ set(PIP_SOURCE_FILES
 	Capsule.cpp
 	OrientedBox.cpp
 	Solver.cpp
+	BaseAllocator.cpp
 	DefaultAllocator.cpp
 	QuadNode.cpp)
 
