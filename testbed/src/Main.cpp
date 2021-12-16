@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 #endif
 	TestApp testApp;
 	if (testApp.Init() == -1) {
-		cout << "TestApp initialize failed" << endl;
+		cout << "Testbed Error - Main::TestApp initialize failed" << endl;
 		return -1;//Init error
 	}
 	/* Loop until the user closes the window */

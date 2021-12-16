@@ -12,7 +12,7 @@ using namespace std;
 using namespace PipMath;
 
 Solver::Solver(BaseAllocator* allocator)
-	: m_stepMode(true), m_stepOnce(false), m_quadTreeSubdivision(true), m_staticResolution(true), m_logCollisionInfo(false),
+	: m_stepMode(false), m_stepOnce(false), m_quadTreeSubdivision(false), m_staticResolution(true), m_logCollisionInfo(false),
 		m_frictionModel(true), m_allocator(allocator), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f),
 		m_airViscosity(0.133f)
 {
@@ -20,6 +20,8 @@ Solver::Solver(BaseAllocator* allocator)
 
 Solver::~Solver()
 {
+	delete m_allocator;
+	m_allocator = nullptr;
 }
 
 void Solver::Update(decimal dt)
