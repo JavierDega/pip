@@ -17,7 +17,7 @@ class BaseAllocator
 {
 public:
 	BaseAllocator();
-	~BaseAllocator();
+	virtual ~BaseAllocator();
     size_t GetBodyByteSize(Rigidbody* rb);
 	virtual void* AllocateBody(size_t length, Handle& handle) = 0;
 	virtual void DestroyAllBodies() = 0;//Won't call destructors

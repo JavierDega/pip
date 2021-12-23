@@ -318,7 +318,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		decimal sFrictionCoefficient = 0.06f;
 		decimal kFrictionCoefficient = 0.03f;
 		Vector2 t = (vba - n * vbaDotN);//Tangential component of relative (linear) velocities
-		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), FLT_EPSILON_TESTS) ? Vector2(0, 0) : t.Normalized();
+		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), PIP_TESTS_EPSILON) ? Vector2(0, 0) : t.Normalized();
 		//Figure out what part of impulseReactionary was applied through t
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
@@ -329,7 +329,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	}
 
 	if (m_logCollisionInfo) {
-		cout << "-----------------------------------Collision Response Info-------------------------------" << endl
+		cout << "-----------------------------------PiP Log - Collision Response Info-------------------------------" << endl
 			<< "Normal: " << n << endl
 			<< "ra (rb1 to contact point): " << ra << endl
 			<< "rb (rb2 to contact point): " << rb << endl

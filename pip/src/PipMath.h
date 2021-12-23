@@ -5,7 +5,7 @@
 
 #include "fp_math.h"
 
-#define FLT_EPSILON_TESTS 0.0001f
+#define PIP_TESTS_EPSILON 0.00001f
 #define USE_FIXEDPOINT 1
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
@@ -273,8 +273,8 @@ namespace PipMath
 		Vector2 ab = b - a;
 		Vector2 ap = p - a;
 		Vector2 bp = p - b;
-		//std::cout << "ClosestPtToSegment: ab " << ab << std::endl;
-		//std::cout << "ClosestPtToSegment: ap " << ap << std::endl;
+		//std::cout << "PiP - Log: ClosestPtToSegment: ab " << ab << std::endl;
+		//std::cout << "PiP - Log: ClosestPtToSegment: ap " << ap << std::endl;
 		//Case 1
 		if (ab.Dot(ap) <= 0) 
 		{
