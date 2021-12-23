@@ -19,7 +19,7 @@ class Rigidbody
 public:
 	Rigidbody(PipMath::Vector2 pos = PipMath::Vector2(), decimal rot = (decimal)0.f,
 	 PipMath::Vector2 vel = PipMath::Vector2(), decimal angVel = (decimal)0.f, decimal mass = 1.f, decimal e = 1.f,
-	 bool isKinematic = false);
+	 bool isKinematic = false, decimal kFriction = 0.03f);
 	~Rigidbody();
 	//Visitor pattern
 	virtual bool IntersectWith(PipMath::Vector2 topRight, PipMath::Vector2 bottomLeft) = 0;
@@ -43,7 +43,8 @@ public:
 	decimal m_angularAccel;
 	decimal m_mass;
 	decimal m_e;//coefficient of restitution
+	decimal m_kFriction;//friction coefficient (kinetic), doubled when object is static
 	decimal m_timeInSleep;
 	bool m_isKinematic, m_isSleeping;
-	decimal m_inertia;//Scalar in 2D aka 2nd moment of mass, tensor or matrix in 3D
+	decimal m_inertia;//scalar in 2D, aka 2nd moment of mass, tensor or matrix in 3D
 };

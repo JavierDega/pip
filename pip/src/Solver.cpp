@@ -12,9 +12,8 @@ using namespace std;
 using namespace PipMath;
 
 Solver::Solver(BaseAllocator* allocator)
-	: m_stepMode(false), m_stepOnce(false), m_quadTreeSubdivision(false), m_staticResolution(true), m_logCollisionInfo(false),
-		m_frictionModel(true), m_allocator(allocator), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f),
-		m_airViscosity(0.133f)
+	: m_stepMode(false), m_stepOnce(false), m_quadTreeSubdivision(false), m_logCollisionInfo(false), m_frictionModel(true), m_allocator(allocator),
+	m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f), m_airViscosity(0.133f)
 {
 }
 
@@ -266,14 +265,12 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vb = rb2->m_velocity + rb2->m_angularVelocity * rbP;
 	Vector2 vba = va - vb;
 	decimal vbaDotN = vba.Dot(n);
-	if (m_staticResolution) {
-		//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
-		//If we do this, will kinematic objects get displaced by much?
-		decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5f;
-		rb1->m_position += pen * n * dispFactor;
-		rb2->m_position -= pen * n * ((decimal)1 - dispFactor);
-	}
-	//assert(vbaDotN < 0 || !m_staticResolution);
+	//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
+	//If we do this, will kinematic objects get displaced by much?
+	decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5f;
+	rb1->m_position += pen * n * dispFactor;
+	rb2->m_position -= pen * n * ((decimal)1 - dispFactor);
+	//assert(vbaDotN < 0)
 	if (vbaDotN >= 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
 	decimal num = -((decimal)1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
@@ -315,8 +312,8 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		//vb = resultVelB + resultAngVelB * rbP;
 		//vba = va - vb;
 		//vbaDotN = vba.Dot(n);
-		decimal sFrictionCoefficient = 0.06f;
-		decimal kFrictionCoefficient = 0.03f;
+		decimal kFrictionCoefficient = Sqrt(rb1->m_kFriction * rb2->m_kFriction);
+		decimal sFrictionCoefficient = kFrictionCoefficient * 2;
 		Vector2 t = (vba - n * vbaDotN);//Tangential component of relative (linear) velocities
 		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), PIP_TESTS_EPSILON) ? Vector2(0, 0) : t.Normalized();
 		//Figure out what part of impulseReactionary was applied through t
@@ -349,29 +346,31 @@ void Solver::ComputeResponse(const Manifold& manifold)
 
 //Go through custom allocator
 int Solver::CreateCircle(Handle& handle, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass,
- decimal e, bool isKinematic)
+	decimal e, bool isKinematic, decimal kFriction)
 {
-	// Create the collision body, presumably a pool has been created beforehand
 	Handle circleHandle;
 	assert(m_allocator);
-	Circle* circle = new (m_allocator->AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	Circle* circle = new (m_allocator->AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic, kFriction);
 	return circle ? 0 : -1;
 }
 
-int Solver::CreateCapsule(Handle& handle, decimal length, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass, decimal e, bool isKinematic)
+int Solver::CreateCapsule(Handle& handle, decimal length, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass,
+	decimal e, bool isKinematic, decimal kFriction)
 {
 	Handle capsuleHandle;
 	assert(m_allocator);
-	Capsule* capsule = new (m_allocator->AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic);
+	Capsule* capsule = new (m_allocator->AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic,
+	kFriction);
 	return capsule ? 0 : -1;
 }
 
 int Solver::CreateOrientedBox(Handle& handle, PipMath::Vector2 halfExtents, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel,
- decimal mass, decimal e, bool isKinematic)
+	decimal mass, decimal e, bool isKinematic, decimal kFriction)
 {
 	Handle obbHandle;
 	assert(m_allocator);
-	OrientedBox* obb = new (m_allocator->AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic);
+	OrientedBox* obb = new (m_allocator->AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic,
+	kFriction);
 	return obb ? 0 : -1;
 }
 

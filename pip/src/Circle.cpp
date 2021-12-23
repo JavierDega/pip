@@ -7,8 +7,8 @@
 
 using namespace PipMath;
 
-Circle::Circle(decimal rad, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,  decimal e, bool isKinematic)
-	: m_radius(rad), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
+Circle::Circle(decimal rad, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,  decimal e, bool isKinematic, decimal kFriction)
+	: m_radius(rad), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic, kFriction)
 {
 	m_bodyType = BodyType::Circle;
 	m_inertia = m_mass * m_radius * m_radius / 2;//mr^2/2

@@ -8,8 +8,8 @@
 using namespace PipMath;
 
 Capsule::Capsule(decimal length, decimal radius, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass, decimal e,
- bool isKinematic)
-	: m_length(length), m_radius(radius), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic)
+ bool isKinematic, decimal kFriction)
+	: m_length(length), m_radius(radius), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic, kFriction)
 {
 	m_bodyType = BodyType::Capsule;
 	//Inertia tensor of two hemispheres (Parallel axis to translate CM) + the one of the rectangle

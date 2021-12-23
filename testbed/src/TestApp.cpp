@@ -339,7 +339,6 @@ void TestApp::DrawImgui()
 		ImGui::Text("Destroy first body (O)");
 		ImGui::Text("Launch bomb (P)");
 		ImGui::Checkbox("Static & Kinetic friction", &m_solver.m_frictionModel);
-		ImGui::Checkbox("Static collision resolution: True", &m_solver.m_staticResolution);
 		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
 		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
 		char airViscosity[50];
