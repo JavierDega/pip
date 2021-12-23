@@ -240,6 +240,11 @@ namespace fp64 {
 			return m_Internal.internal == Rhs.m_Internal.internal;
 		}
 
+		inline bool EqualsEps(const Fp64& Rhs, const Fp64& Epsilon) const
+		{
+			return Abs((*this - Rhs)) <= Epsilon;
+		}
+		
 		inline bool operator!=(const Fp64& Rhs) const
 		{
 			return !(*this == Rhs);

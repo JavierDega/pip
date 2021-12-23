@@ -7,12 +7,8 @@
 #include "OrientedBox.h"
 #include "DefaultAllocator.h"
 //Enable/Disable unit tests
-<<<<<<< HEAD
 #define RUN_TESTS 1
 #define TEST_FP_EPSILON 0.00001f
-=======
-#define RUN_TESTS 0
->>>>>>> 89a887e3de0d1441f4c4fe9bf5c0838f7da2ed60
 
 using namespace PipMath;
 using namespace std;
