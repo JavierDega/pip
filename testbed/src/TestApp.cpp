@@ -8,7 +8,7 @@
 using namespace PipMath;
 
 TestApp::TestApp()
-	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showDemoWindow(false), m_showRigidbodyEditor(true), m_displayManifolds(true), m_drawGrid(true),
+	:m_window(nullptr), m_glslVersion(""), m_sceneName(""), m_prevTime(0), m_showRigidbodyEditor(true), m_displayManifolds(true), m_drawGrid(true),
 	m_renderLeafNodes(true), m_inputDown(0), m_inputPressed(0), m_inputHeld(0), m_inputReleased(0)
 {
 }
@@ -322,29 +322,47 @@ void TestApp::DrawImgui()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (m_showDemoWindow)
-		ImGui::ShowDemoWindow(&m_showDemoWindow);
+	//if (m_showDemoWindow)
+		//ImGui::ShowDemoWindow(&m_showDemoWindow);
 	if (m_showRigidbodyEditor)
 		ImGuiShowRigidbodyEditor();
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
 		ImGui::Begin(m_sceneName.c_str());                          // Create a window and append into it.
 		ImGui::Text("Press F1-F10 to load scenes");
-		ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
+		//ImGui::Checkbox("Demo Window", &m_showDemoWindow);      // Edit bools storing our window open/close state
 		ImGui::Checkbox("Step mode (R)", &m_solver.m_stepMode);
 		ImGui::Checkbox("Step once (T)", &m_solver.m_stepOnce);
-		ImGui::Checkbox("Show Rigidbody Editor (Y)", &m_showRigidbodyEditor); 
+		ImGui::Checkbox("Show rigidbody editor (Y)", &m_showRigidbodyEditor); 
 		ImGui::Checkbox("Display manifolds (U)", &m_displayManifolds);
-		ImGui::Checkbox("Show Grid (I)", &m_drawGrid);
+		ImGui::Checkbox("Show grid (I)", &m_drawGrid);
 		ImGui::Text("Destroy first body (O)");
 		ImGui::Text("Launch bomb (P)");
-		ImGui::Checkbox("Static & Kinetic friction", &m_solver.m_frictionModel);
-		ImGui::Checkbox("Show Leaf Nodes", &m_renderLeafNodes);
-		ImGui::Checkbox("Log Collision Info", &m_solver.m_logCollisionInfo);
-		char airViscosity[50];
-		snprintf(airViscosity, 50, "Air viscosity (%f)", (double)m_solver.m_airViscosity);
-		ImGui::Text("%s", airViscosity);
-		ImGui::Text("Continuous Collision : False");
+		ImGui::Checkbox("Static & kinetic friction", &m_solver.m_frictionModel);
+		ImGui::Checkbox("Render quad leaf nodes", &m_renderLeafNodes);
+		ImGui::Checkbox("Log collision Info", &m_solver.m_logCollisionInfo);
+		#if USE_FIXEDPOINT
+			char airViscosity[50];
+			snprintf(airViscosity, 50, "Air viscosity (%f)", (double)m_solver.m_airViscosity);
+			char gravity[50];
+			snprintf(gravity, 50, "Gravity X(%f) Y(%f)", (double)m_solver.m_gravity.x, (double)m_solver.m_gravity.y);
+			ImGui::Text("%s", airViscosity);
+			ImGui::Text("%s", gravity);
+#else
+			ImGui::Columns(2);
+			ImGui::Text("Air viscosity (0 < value < ~0.5f):");
+			ImGui::NextColumn();
+			ImGui::DragFloat("", &m_solver.m_airViscosity, 0.1f);
+			ImGui::NextColumn();
+			ImGui::Columns(3);
+			ImGui::Text("Gravity:");
+			ImGui::NextColumn();
+			ImGui::DragFloat("X", &m_solver.m_gravity.x, 1.0f);
+			ImGui::NextColumn();
+			ImGui::DragFloat("Y", &m_solver.m_gravity.y, 1.0f);
+			ImGui::NextColumn();
+			ImGui::Columns(1);
+#endif
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
@@ -406,7 +424,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (double)rb->m_velocity.x, (double)rb->m_velocity.y);
 			ImGui::Text("%s", realVel);
 #else
-			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f);//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for inputfloat funcs?
+			ImGui::DragFloat("VelX", &rb->m_velocity.x, 1.0f);//#TODO: Might not be compatible with fixedpoint mode. Create wrapper for input float funcs?
 			ImGui::DragFloat("VelY", &rb->m_velocity.y, 1.0f);
 #endif
 			ImGui::NextColumn();

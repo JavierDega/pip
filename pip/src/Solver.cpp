@@ -12,8 +12,8 @@ using namespace std;
 using namespace PipMath;
 
 Solver::Solver(BaseAllocator* allocator)
-	: m_stepMode(false), m_stepOnce(false), m_quadTreeSubdivision(false), m_logCollisionInfo(false), m_frictionModel(true), m_allocator(allocator),
-	m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(9.8f), m_airViscosity(0.133f)
+	: m_stepMode(false), m_stepOnce(false), m_logCollisionInfo(false), m_frictionModel(true), m_allocator(allocator),
+	m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(Vector2(0.f, -9.8f)), m_airViscosity(0.133f)
 {
 }
 
@@ -62,7 +62,7 @@ void Solver::ContinuousStep(decimal dt)
 	/*for (int i = 0; i < m_rigidbodies.size(); i++) {
 		//Semi euler integration
 		Rigidbody* rb = m_rigidbodies[i];
-		rb->m_acceleration = Vector2(0, -m_gravity / rb->m_mass);
+		rb->m_acceleration = m_gravity / rb->m_mass;
 		if (!rb->m_isKinematic) rb->m_velocity += rb->m_acceleration*dt;
 	}
 	while (dt >  0.f) {
@@ -104,7 +104,7 @@ void Solver::Step(decimal dt)
 	assert(m_allocator);
 	for (Rigidbody* rb = m_allocator->GetFirstBody(); rb != nullptr; rb = m_allocator->GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
-		rb->m_acceleration += Vector2(0, -m_gravity / rb->m_mass);
+		rb->m_acceleration += m_gravity / rb->m_mass;
 		rb->m_acceleration -= m_airViscosity * rb->m_velocity / rb->m_mass;
 		rb->m_angularAccel -= m_airViscosity * rb->m_angularVelocity / rb->m_mass; 
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) {
@@ -200,7 +200,7 @@ void Solver::Step(decimal dt)
 	}
 
 	//Before clearing their ownedBodies we wanna know which qnodes need merging/subdividing
-	if (m_quadTreeSubdivision)
+	//if (m_quadTreeSubdivision)
 	{
 		std::vector<QuadNode*> quadTreeLeafParentNodes;
 		for (int i = 0; i < quadTreeLeafNodes.size(); i++)

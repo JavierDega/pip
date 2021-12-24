@@ -31,8 +31,10 @@ private:
 public:
 	BaseAllocator* m_allocator;
 	QuadNode m_quadTreeRoot;
-	bool m_stepMode, m_stepOnce, m_quadTreeSubdivision, m_logCollisionInfo, 
-	m_frictionModel;//#Bit field?
-	decimal m_accumulator, m_timestep, m_gravity, m_airViscosity;
+	bool m_stepMode, m_stepOnce, m_logCollisionInfo, m_frictionModel;//#Bit field?
+	decimal m_timestep, m_airViscosity;
+	PipMath::Vector2 m_gravity;
 	std::vector<PipMath::Manifold> m_currentManifolds;
+private:
+	decimal m_accumulator;
 };

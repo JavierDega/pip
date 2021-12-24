@@ -32,14 +32,16 @@ class TestApp
 public:
 	TestApp();
 	int Init();
+	void UpdateLoop();
+private:
 	void InitImgui();
 	void LoadScene(unsigned int index);
-	void UpdateLoop();
 	void DrawImgui();
 	void ImGuiShowRigidbodyEditor();
 	void ProcessInput();
 	void LaunchBomb();
 public:
+private:
 	//Graphics/Window
 	GLFWwindow* m_window;
 	const char* m_glslVersion;
@@ -50,7 +52,8 @@ public:
 	//Timestep
 	decimal m_prevTime;
 	//Imgui
-	bool m_showDemoWindow, m_showRigidbodyEditor, m_displayManifolds, m_drawGrid, m_renderLeafNodes;//#Bit field?
+	bool m_showRigidbodyEditor, m_displayManifolds, m_drawGrid, m_renderLeafNodes;//#Bit field? need to know if imgui allows as it asks for a bool pointer for checkboxes
+	private:
 	//Input: Short =16 bits. 0-5 load scenes.. see Keys::
 	short m_inputDown, m_inputPressed, m_inputHeld, m_inputReleased;
 };
