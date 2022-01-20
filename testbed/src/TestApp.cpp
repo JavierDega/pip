@@ -110,9 +110,9 @@ void TestApp::LoadScene(unsigned int index)
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
-		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 2.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 3.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
 		break;
 	}
