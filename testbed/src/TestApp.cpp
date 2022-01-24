@@ -82,19 +82,21 @@ void TestApp::LoadScene(unsigned int index)
 	switch (index) {
 	case 0:
 	{
-		m_sceneName = "Scene 0: Circles v Capsule";
+		m_sceneName = "Circles v Capsule";
+		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 6), 0, Vector2(5, 0)) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateCapsule(handle, 2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true) != -1) 
-		m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(5, 5), 0, Vector2(-5, 0)) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f) != -1)
-		m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 3.f, 0.7f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(7.5f, 0.5f), Vector2(0, -9), 0 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f, 1.5f, true) != -1) m_bodyHandles.push_back(handle);
+
 		break;
 	}
 	case 2:
@@ -612,11 +614,11 @@ void TestApp::ProcessInput()
 	{
 		//Debug delete first body handle on the list
 		if (!m_bodyHandles.empty()){
-			Rigidbody* bodyToDelete = m_solver.m_allocator->GetBody(m_bodyHandles[0]);
 			//#WIP Solution to manifolds being invalid when deleting objs on step mode, as we attempt to draw
 			//them befofe Step() runs to again to clear them
 			m_solver.m_currentManifolds.clear();
 			/* The better solution
+			Rigidbody* bodyToDelete = m_solver.m_allocator->GetBody(m_bodyHandles[0]);
 			auto it = begin(m_solver.m_currentManifolds);
 			while (it != end(m_solver.m_currentManifolds))
 			{
