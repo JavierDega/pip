@@ -5,8 +5,8 @@
 
 #include "fp_math.h"
 
-#define PIP_TESTS_EPSILON 0.00001f
-#define USE_FIXEDPOINT 1
+#define PIP_TEST_EPSILON 0.00001f
+#define USE_FIXEDPOINT 0
 #define PI 3.14159265f
 #define DEG2RAD (PI)/180
 #define RAD2DEG 180/(PI)

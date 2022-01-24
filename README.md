@@ -10,5 +10,5 @@ libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang
 
 
 Dev Notes:
--Handle generation created 0 idx and generation handles? destroy body function thus only works once
+-Generating too many bodies (Probably past multibody pool size) results in eventual crash on object creation
 -OrientedBoxes have collision issues when bigger in size

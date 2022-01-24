@@ -19,9 +19,9 @@ TEST_CASE("Base math queries") {
 	Vector2 closestPt = ClosestPtToSegment(a, b, p);
 	//cout << "Test - ClosestPtToSegment: " << closestPt << endl;
 #if USE_FIXEDPOINT
-	CHECK(closestPt.x.EqualsEps(0, PIP_TESTS_EPSILON));
-	CHECK(closestPt.y.EqualsEps(0, PIP_TESTS_EPSILON));
-	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps(Sqrt(2), PIP_TESTS_EPSILON));
+	CHECK(closestPt.x.EqualsEps(0, PIP_TEST_EPSILON));
+	CHECK(closestPt.y.EqualsEps(0, PIP_TEST_EPSILON));
+	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps(Sqrt(2), PIP_TEST_EPSILON));
 #else
 	CHECK(closestPt.x == 0);
 	CHECK(closestPt.y == 0);
@@ -75,7 +75,7 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 	Vector2 bottomLeft = Vector2(-5, -5);
 	CHECK(mockCircle.IntersectWith(topRight, bottomLeft));
 	mockCircle.m_position = Vector2((decimal)5 + Sqrt(0.5f), (decimal)5 + Sqrt(0.5f));
-	mockCircle.m_position -= Vector2(PIP_TESTS_EPSILON, PIP_TESTS_EPSILON);
+	mockCircle.m_position -= Vector2(PIP_TEST_EPSILON, PIP_TEST_EPSILON);
 	CHECK(mockCircle.IntersectWith(topRight, bottomLeft));
 	
 	//All positions for capsule vs QuadNode

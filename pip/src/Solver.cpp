@@ -320,7 +320,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 		decimal kFrictionCoefficient = Sqrt(rb1->m_kFriction * rb2->m_kFriction);
 		decimal sFrictionCoefficient = kFrictionCoefficient * 2;
 		Vector2 t = (vba - n * vbaDotN);//Tangential component of relative (linear) velocities
-		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), PIP_TESTS_EPSILON) ? Vector2(0, 0) : t.Normalized();
+		Vector2 tangentDir = t.EqualsEps(Vector2(0, 0), PIP_TEST_EPSILON) ? Vector2(0, 0) : t.Normalized();
 		//Figure out what part of impulseReactionary was applied through t
 		decimal impulseFrictional1 = impulseReactionary * (rb1->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
 		decimal impulseFrictional2 = impulseReactionary * (rb2->m_isSleeping ? sFrictionCoefficient : kFrictionCoefficient);
