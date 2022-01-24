@@ -165,7 +165,12 @@ void Solver::Step(decimal dt)
 	}
 
 	//Collision response, may displace objects directly for static collision resolution
-	for (const Manifold& manifold : m_currentManifolds) ComputeResponse(manifold);
+	for (const Manifold& manifold : m_currentManifolds)
+	{
+		assert(manifold.rb1);
+		assert(manifold.rb2);
+		ComputeResponse(manifold);
+	}
 	//Sleep check
 	for (int i = 0; i < rigidbodies.size(); i++)
 	{
@@ -348,18 +353,16 @@ void Solver::ComputeResponse(const Manifold& manifold)
 int Solver::CreateCircle(Handle& handle, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic, decimal kFriction)
 {
-	Handle circleHandle;
 	assert(m_allocator);
-	Circle* circle = new (m_allocator->AllocateBody(sizeof(Circle), circleHandle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic, kFriction);
+	Circle* circle = new (m_allocator->AllocateBody(sizeof(Circle), handle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic, kFriction);
 	return circle ? 0 : -1;
 }
 
 int Solver::CreateCapsule(Handle& handle, decimal length, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic, decimal kFriction)
 {
-	Handle capsuleHandle;
 	assert(m_allocator);
-	Capsule* capsule = new (m_allocator->AllocateBody(sizeof(Capsule), capsuleHandle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic,
+	Capsule* capsule = new (m_allocator->AllocateBody(sizeof(Capsule), handle)) Capsule(length, rad, pos, rot, vel, angVel, mass, e, isKinematic,
 	kFriction);
 	return capsule ? 0 : -1;
 }
@@ -367,9 +370,8 @@ int Solver::CreateCapsule(Handle& handle, decimal length, decimal rad, PipMath::
 int Solver::CreateOrientedBox(Handle& handle, PipMath::Vector2 halfExtents, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel,
 	decimal mass, decimal e, bool isKinematic, decimal kFriction)
 {
-	Handle obbHandle;
 	assert(m_allocator);
-	OrientedBox* obb = new (m_allocator->AllocateBody(sizeof(OrientedBox), obbHandle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic,
+	OrientedBox* obb = new (m_allocator->AllocateBody(sizeof(OrientedBox), handle)) OrientedBox(halfExtents, pos, rot, vel, angVel, mass, e, isKinematic,
 	kFriction);
 	return obb ? 0 : -1;
 }

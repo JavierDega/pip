@@ -9,5 +9,5 @@ libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang
 
 
 Dev Notes:
--Destroy first body function doesnt destroy the first body and logs ClosestPtToSegment cout
+-Handle generation created 0 idx and generation handles? destroy body function thus only works once
 -OrientedBoxes have collision issues when bigger in size

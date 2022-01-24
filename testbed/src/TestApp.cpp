@@ -612,10 +612,23 @@ void TestApp::ProcessInput()
 	{
 		//Debug delete first body handle on the list
 		if (!m_bodyHandles.empty()){
+			Rigidbody* bodyToDelete = m_solver.m_allocator->GetBody(m_bodyHandles[0]);
+			//#WIP Solution to manifolds being invalid when deleting objs on step mode, as we attempt to draw
+			//them befofe Step() runs to again to clear them
+			m_solver.m_currentManifolds.clear();
+			/* The better solution
+			auto it = begin(m_solver.m_currentManifolds);
+			while (it != end(m_solver.m_currentManifolds))
+			{
+				Manifold& curManifold = *it;
+				if (curManifold.rb1 == bodyToDelete || curManifold.rb2 == bodyToDelete)
+				{
+					it = m_solver.m_currentManifolds.erase(it);
+				}
+				++it;
+			}*/
 			m_solver.m_allocator->DestroyBody(m_bodyHandles[0]);
 			m_bodyHandles.erase(m_bodyHandles.begin());
-			//#WIP Solution to manifolds being invalid when deleting objs on step mode, as Step() doesn't run to clear them
-			if (m_solver.m_stepMode) m_solver.m_currentManifolds.clear();
 		}
 	}
 	if (m_inputPressed & (short)Keys::P) LaunchBomb();
