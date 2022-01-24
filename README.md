@@ -1,7 +1,8 @@
 # PiP
 Open Source 2D Physics Lib
 
-
+Get started:
+Linux:
 Linux (Ubuntu):
 install dependencies:
 sudo apt-get install:
