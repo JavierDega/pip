@@ -6,13 +6,14 @@
 #include "fp_math.h"
 
 #define PIP_TEST_EPSILON 0.00001f
-#define USE_FIXEDPOINT 0
-#define PI 3.14159265f
-#define DEG2RAD (PI)/180
-#define RAD2DEG 180/(PI)
+#define PIP_SLEEP_DELTA 0.0001f*0.0001f
+#define PIP_USE_FIXEDPOINT 0
+#define PIP_PI 3.14159265f
+#define PIP_DEG2RAD (PIP_PI)/180
+#define PIP_RAD2DEG 180/(PIP_PI)
  
 //Inline Base Math, Vector, Matrix, Quaternion library
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 typedef fp64::Fp64 decimal;
 #else
 typedef float decimal;
@@ -25,7 +26,7 @@ namespace PipMath
 
 	inline decimal Abs(decimal x) 
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return fp64::Fp64::Abs(x);
 #else 
 		return std::abs(x);
@@ -44,7 +45,7 @@ namespace PipMath
 
 	inline decimal Clamp(decimal x, decimal min, decimal max) 
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return Max(min, Min(x, max));
 #else
 		return fmaxf(min, fminf(x, max));
@@ -53,7 +54,7 @@ namespace PipMath
 
 	inline decimal Sqrt(decimal x) 
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return fp64::Fp64::EasySqrt(x);
 #else
 		return sqrt(x);
@@ -62,7 +63,7 @@ namespace PipMath
 
 	inline decimal Pow(decimal x, unsigned short exponent) 
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return fp64::Fp64::Pow(x, exponent);
 #else
 		return powf(x, exponent);
@@ -71,7 +72,7 @@ namespace PipMath
 
 	inline decimal Cos(decimal rad) 
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return fp64::Fp64::Cos(rad);
 #else
 		return cos(rad);
@@ -80,7 +81,7 @@ namespace PipMath
 
 	inline decimal Sin(decimal rad) 
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return fp64::Fp64::Sin(rad);
 #else 
 		return sin(rad);
@@ -89,7 +90,7 @@ namespace PipMath
 
 	inline decimal Tan(decimal rad)
 	{
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 		return fp64::Fp64::Sin(rad) / fp64::Fp64::Cos(rad);
 #else
 		return tan(rad);
@@ -258,7 +259,7 @@ namespace PipMath
 		return out;
 	}
 	
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 	inline std::ostream& operator << (std::ostream& out, const decimal& v)
 	{
 		out << (double)v;
@@ -470,10 +471,10 @@ namespace PipMath
 
 		MatrixStr() 
 			: m{ 
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0},
+		{0, 0, 0, 0}
 		}
 		{}
 

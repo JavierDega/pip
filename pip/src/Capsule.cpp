@@ -9,12 +9,12 @@ using namespace PipMath;
 
 Capsule::Capsule(decimal length, decimal radius, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass, decimal e,
  bool isKinematic, decimal kFriction)
-	: m_length(length), m_radius(radius), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic, kFriction)
+	: Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic, kFriction), m_length(length), m_radius(radius)
 {
 	m_bodyType = BodyType::Capsule;
 	//Inertia tensor of two hemispheres (Parallel axis to translate CM) + the one of the rectangle
 	//Calculate mass of individual parts (assuming uniform density)
-	decimal areaHemicircles = m_radius * m_radius * PI;
+	decimal areaHemicircles = m_radius * m_radius * PIP_PI;
 	decimal areaRectangle = m_length * m_radius * 2;
 	decimal area = areaHemicircles + areaRectangle;
 	decimal massHemicircles = m_mass * areaHemicircles / area;

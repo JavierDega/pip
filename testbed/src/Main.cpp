@@ -18,7 +18,7 @@ TEST_CASE("Base math queries") {
 	Vector2 p = Vector2(0, 1);
 	Vector2 closestPt = ClosestPtToSegment(a, b, p);
 	//cout << "Test - ClosestPtToSegment: " << closestPt << endl;
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 	CHECK(closestPt.x.EqualsEps(0, PIP_TEST_EPSILON));
 	CHECK(closestPt.y.EqualsEps(0, PIP_TEST_EPSILON));
 	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps(Sqrt(2), PIP_TEST_EPSILON));
@@ -86,11 +86,11 @@ TEST_CASE("Colliders vs QuadNode intersect tests")
 	mockCapsule.m_position = Vector2();
 	mockCapsule.m_length = 12.1f;
 	CHECK(mockCapsule.IntersectWith(topRight, bottomLeft));
-	mockCapsule.m_rotation = 90 * DEG2RAD;
+	mockCapsule.m_rotation = 90 * PIP_DEG2RAD;
 	CHECK(mockCapsule.IntersectWith(topRight, bottomLeft));
 
 	mockCapsule.m_length = 15;
-	mockCapsule.m_rotation = 45 * DEG2RAD;
+	mockCapsule.m_rotation = 45 * PIP_DEG2RAD;
 	CHECK(mockCapsule.IntersectWith(topRight, bottomLeft));
 
 	//Obb test (SAT)

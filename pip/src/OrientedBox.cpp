@@ -213,12 +213,12 @@ bool OrientedBox::TestAxis(Vector2 axis, Vector2 pos1, Vector2 pos2, Vector2 rot
 {
 	decimal pos1Axis = pos1.Dot(axis);
 	decimal pos2Axis = pos2.Dot(axis);
-	Vector2 p[2]{ rotExtents, -rotExtents};//, rotExtents.Perp(), -rotExtents.Perp() };
-	Vector2 p2[2]{ rotExtents2, -rotExtents2};//, rotExtents2.Perp(), -rotExtents2.Perp() };
+	Vector2 p[4]{ rotExtents, -rotExtents, Vector2(rotExtents.x, -rotExtents.y), Vector2(-rotExtents.x, rotExtents.y) };
+	Vector2 p2[4]{ rotExtents2, -rotExtents2, Vector2(rotExtents2.x, -rotExtents2.y), Vector2(-rotExtents2.y, rotExtents2.y) };
 	decimal min = 0, max = 0;
 	decimal min2 = 0, max2 = 0;
 
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 4; i++) {
 		decimal projection = p[i].Dot(axis);
 		decimal projection2 = p2[i].Dot(axis);
 		if (projection < min) min = projection;

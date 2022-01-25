@@ -12,8 +12,8 @@ using namespace std;
 using namespace PipMath;
 
 Solver::Solver(BaseAllocator* allocator)
-	: m_stepMode(false), m_stepOnce(false), m_logCollisionInfo(false), m_frictionModel(true), m_allocator(allocator),
-	m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_accumulator(0.f), m_timestep(0.02f), m_gravity(Vector2(0.f, -9.8f)), m_airViscosity(0.133f)
+	: m_allocator(allocator), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_stepMode(false), m_stepOnce(false), m_logCollisionInfo(false), m_frictionModel(true),
+	m_timestep(0.02f), m_airViscosity(0.133f), m_gravity(Vector2(0.f, -9.8f)), m_accumulator(0.f)
 {
 }
 
@@ -177,8 +177,8 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= 0.001 * 0.001 &&
-			(rb->m_rotation - rb->m_prevRot) <= 0.001)
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA &&
+			(rb->m_rotation - rb->m_prevRot) <= PIP_SLEEP_DELTA)
 			{
 				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 				rb->m_timeInSleep += dt;
@@ -276,7 +276,11 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	rb1->m_position += pen * n * dispFactor;
 	rb2->m_position -= pen * n * ((decimal)1 - dispFactor);
 	//assert(vbaDotN < 0)
-	if (vbaDotN >= 0) return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
+	if (vbaDotN >= 0) 
+	{
+		cout << "PiP Warning - Solver::ComputeResponse: Colliding bodies have separating velocities" << endl;
+		return;//Possibly log this, helps solve interpenetration after response, by ignoring separating bodies
+	}
 	decimal num = -((decimal)1 + e) * vbaDotN;
 	decimal denom = invMassA + invMassB + Pow(raP.Dot(n), 2) * invIA + Pow(rbP.Dot(n), 2) * invIB;
 	decimal impulseReactionary = num / denom;

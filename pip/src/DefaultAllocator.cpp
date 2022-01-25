@@ -43,7 +43,7 @@ void* DefaultAllocator::AllocateBody( size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
 	if (length > AvailableInPool()) {
-		std::cout << "Error! Trying to allocate past pool size" << std::endl;
+		cout << "PiP Error - DefaultAllocator:: Trying to allocate past pool size" << endl;
 		return nullptr;
 	}
 	size_t objIdx = m_objectToMappingIdx.size();
@@ -156,7 +156,7 @@ void DefaultAllocator::DestroyBody(Handle handle)
 {
 	if (!IsHandleValid(handle))
 	{
-		cout << "PiP Warning: DestroyBody::Handle invalid" << endl;
+		cout << "PiP Warning - DefaultAllocator::DestroyBody::Handle invalid" << endl;
 		return;
 	}
 

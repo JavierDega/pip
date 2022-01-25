@@ -83,19 +83,19 @@ void TestApp::LoadScene(unsigned int index)
 	case 0:
 	{
 		m_sceneName = "Circles v Capsule";
-		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 6), 0, Vector2(5, 0)) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateCapsule(handle, 2.f, 1.0f, Vector2(), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 2.f, 1.0f, Vector2(), 0 * PIP_DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(5, 5), 0, Vector2(-5, 0)) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 3.f, 0.7f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 45 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(7.5f, 0.5f), Vector2(0, -9), 0 * DEG2RAD, Vector2(0, 0), 0.0f, 100.f, 1.5f, true) != -1) m_bodyHandles.push_back(handle);
+		//if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 45 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 3.f, 0.7f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 44 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 10.f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(7.5f, 0.5f), Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 100.f, 1.5f, true) != -1) m_bodyHandles.push_back(handle);
 
 		break;
 	}
@@ -103,32 +103,32 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(0.1f, 5)) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(3, 0), 0 * DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(3, 0), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 3:
 	{
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
-		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 2.f), Vector2(-5, 5), 0 * DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 2.f), Vector2(-5, 5), 0 * PIP_DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 3.f), Vector2(5, 5), 0 * DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 3.f), Vector2(5, 5), 0 * PIP_DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 4:
 	{
 		m_sceneName = "Scene 4: Capsule to capsule";
-		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(0, 4), 0 * DEG2RAD, Vector2(), 0.f, 1.f, 0.9f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateCapsule(handle, 4.f, 1.f, Vector2(0, -2), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(0, 4), 0 * PIP_DEG2RAD, Vector2(), 0.f, 1.f, 0.9f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 4.f, 1.f, Vector2(0, -2), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	case 5:
 	{
 		m_sceneName = "Scene 5: Testing friction";
-		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		//Circles
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		break;
@@ -165,15 +165,15 @@ void TestApp::UpdateLoop()
 			case BodyType::Circle: {
 				Circle* circle = (Circle*)rb;
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * PIP_RAD2DEG, 0, 0, 1);
 				glScalef((float)circle->m_radius, (float)circle->m_radius, (float)circle->m_radius);
 				glBegin(GL_TRIANGLES);
 				//Circle vertices from trig
 				for (int i = 0; i < 350; i += 10) {
 					//Counter clockwise
 					glVertex3f(0, 0, 0);
-					glVertex3f(cos(i * DEG2RAD), sin(i * DEG2RAD), 0);
-					glVertex3f(cos((i + 10.f) * DEG2RAD), sin((i + 10.f) * DEG2RAD), 0);
+					glVertex3f(cos(i * PIP_DEG2RAD), sin(i * PIP_DEG2RAD), 0);
+					glVertex3f(cos((i + 10.f) * PIP_DEG2RAD), sin((i + 10.f) * PIP_DEG2RAD), 0);
 				}
 				break;
 			}
@@ -181,20 +181,20 @@ void TestApp::UpdateLoop()
 				Capsule* capsule = (Capsule*)rb;
 				//Capsule matrix stuff
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * PIP_RAD2DEG, 0, 0, 1);
 				glBegin(GL_TRIANGLES);
 				//Capsule vertices (Two circles and rectangle?)
 				float offSet = (float)capsule->m_length / 2;
 				float rad = (float)capsule->m_radius;
 				for (int i = 0; i < 350; i += 10) {
 					glVertex3f(-offSet, 0, 0);
-					glVertex3f(-offSet + rad * cos(i * DEG2RAD), rad * sin(i * DEG2RAD), 0);
-					glVertex3f(-offSet + rad * cos((i + 10.f) * DEG2RAD), rad * sin((i + 10.f) * DEG2RAD), 0);
+					glVertex3f(-offSet + rad * cos(i * PIP_DEG2RAD), rad * sin(i * PIP_DEG2RAD), 0);
+					glVertex3f(-offSet + rad * cos((i + 10.f) * PIP_DEG2RAD), rad * sin((i + 10.f) * PIP_DEG2RAD), 0);
 				}
 				for (int i = 0; i < 350; i += 10) {
 					glVertex3f(offSet, 0, 0);
-					glVertex3f(offSet + rad * cos(i * DEG2RAD), rad * sin(i * DEG2RAD), 0);
-					glVertex3f(offSet + rad * cos((i + 10.f) * DEG2RAD), rad * sin((i + 10.f) * DEG2RAD), 0);
+					glVertex3f(offSet + rad * cos(i * PIP_DEG2RAD), rad * sin(i * PIP_DEG2RAD), 0);
+					glVertex3f(offSet + rad * cos((i + 10.f) * PIP_DEG2RAD), rad * sin((i + 10.f) * PIP_DEG2RAD), 0);
 				}
 				//Draw rectangle in gltriangles
 				glVertex3f(-offSet, -rad, 0);
@@ -209,7 +209,7 @@ void TestApp::UpdateLoop()
 			case BodyType::Obb: {
 				OrientedBox* obb = (OrientedBox*)rb;
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
-				glRotatef((float)rb->m_rotation * RAD2DEG, 0, 0, 1);
+				glRotatef((float)rb->m_rotation * PIP_RAD2DEG, 0, 0, 1);
 				glBegin(GL_TRIANGLES);
 				//Rectangle made up of two triangles
 				Vector2 halfExtents = obb->m_halfExtents;
@@ -233,8 +233,8 @@ void TestApp::UpdateLoop()
 			for ( Manifold& manifold : m_solver.m_currentManifolds) {
 				for (int i = 0; i < manifold.numContactPoints; i++) {
 					Vector2 currentPoint = manifold.contactPoints[i];
-					Vector2 normalRotLeft = manifold.normal.Rotated(15 * DEG2RAD)*0.9f;
-					Vector2 normalRotRight = manifold.normal.Rotated(-15 * DEG2RAD)*0.9f;
+					Vector2 normalRotLeft = manifold.normal.Rotated(15 * PIP_DEG2RAD)*0.9f;
+					Vector2 normalRotRight = manifold.normal.Rotated(-15 * PIP_DEG2RAD)*0.9f;
 					glLoadIdentity();
 					//Draw arrow of normal
 					glTranslatef((float)currentPoint.x, (float)currentPoint.y, -1);
@@ -343,7 +343,7 @@ void TestApp::DrawImgui()
 		ImGui::Checkbox("Static & kinetic friction", &m_solver.m_frictionModel);
 		ImGui::Checkbox("Render quad leaf nodes", &m_renderLeafNodes);
 		ImGui::Checkbox("Log collision Info", &m_solver.m_logCollisionInfo);
-		#if USE_FIXEDPOINT
+		#if PIP_USE_FIXEDPOINT
 			char airViscosity[50];
 			snprintf(airViscosity, 50, "Air viscosity (%f)", (double)m_solver.m_airViscosity);
 			char gravity[50];
@@ -415,13 +415,13 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Rotation");
 			ImGui::NextColumn();
 			char rotation[50];
-			snprintf(rotation, 50, "Rad(%f), Deg(%f)", (double)rb->m_rotation, (double)rb->m_rotation * RAD2DEG);
+			snprintf(rotation, 50, "Rad(%f), Deg(%f)", (double)rb->m_rotation, (double)rb->m_rotation * PIP_RAD2DEG);
 			ImGui::Text("%s", rotation);
 			ImGui::NextColumn();
 
 			ImGui::Text("Velocity");
 			ImGui::NextColumn();
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 			char realVel[50];
 			snprintf(realVel, 50, "Vel (Real) X(%f), Y(%f)", (double)rb->m_velocity.x, (double)rb->m_velocity.y);
 			ImGui::Text("%s", realVel);
@@ -433,7 +433,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 
 			ImGui::Text("AngVel");
 			ImGui::NextColumn();
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 			char realRot[50];
 			snprintf(realRot, 50, "Rot (Real) (%f)", (double)rb->m_angularVelocity);
 			ImGui::Text("%s", realRot);
@@ -444,7 +444,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 
 			ImGui::Text("Acceleration");
 			ImGui::NextColumn();
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 			char realAccel[50];
 			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (double)rb->m_acceleration.x, (double)rb->m_acceleration.y);
 			ImGui::Text("%s", realAccel);
@@ -457,7 +457,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 
 			ImGui::Text("Angular Acceleration");
 			ImGui::NextColumn();
-#if USE_FIXEDPOINT
+#if PIP_USE_FIXEDPOINT
 			char angularAccel[50];
 			snprintf(angularAccel, 50, "Angular accel (%f)" , (double)rb->m_angularAccel);
 			ImGui::Text("%s", angularAccel);
