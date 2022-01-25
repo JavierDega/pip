@@ -26,7 +26,7 @@ Capsule::Capsule(decimal length, decimal radius, Vector2 pos, decimal rot, Vecto
 	decimal inertiaCircle2 = inertiaCircle1 - massHemicircles * m_length / 2;
 	m_inertia = inertiaRectangle + inertiaCircle2;
 }
-
+//
 Capsule::~Capsule()
 {
 }
@@ -57,7 +57,7 @@ bool Capsule::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 		Vector2(bottomLeft.x, topRight.y) //topLeft
 	};*/
 
-	//First, clamp both points in caps to aabb and check if theyre close enough
+	//First, clamp both points in capsule to aabb and check if theyre close enough
 	Vector2 aClamped = Vector2(Clamp(a.x, bottomLeft.x, topRight.x), Clamp(a.y, bottomLeft.y, topRight.y));
 	Vector2 bClamped = Vector2(Clamp(b.x, bottomLeft.x, topRight.x), Clamp(b.y, bottomLeft.y, topRight.y));
 	if ((aClamped - a).LengthSqr() <= m_radius * m_radius) return true;
@@ -264,6 +264,18 @@ bool Capsule::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	Vector2 a = m_position + Vector2( -halfLength, 0 ).Rotate(m_rotation);
 	Vector2 b = m_position + Vector2( halfLength, 0 ).Rotate(m_rotation);
 
+	//Points in clockwise order
+	Vector2 boxPoints[4]{ rb2->m_halfExtents, Vector2(rb2->m_halfExtents.x, -rb2->m_halfExtents.y),
+	 -rb2->m_halfExtents, Vector2(-rb2->m_halfExtents.x, rb2->m_halfExtents.y) };
+	
+	//Rotate points to get real positions according to OBB's rotations
+	for (int i = 0; i < 4; i++)
+	{
+		boxPoints[i].Rotate(rb2->m_rotation);
+		boxPoints[i] += rb2->m_position;
+	}
+
+	/* #THIS DOES NOT WORK FOR RECTANGULAR ORIENTED BOXES
 	Vector2 rotExtents = rb2->m_halfExtents.Rotated(rb2->m_rotation);
 	//Caps points are now in box's local space
 	Vector2 boxPoints[4] = {
@@ -271,7 +283,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 		rb2->m_position + rotExtents.Perp(),
 		rb2->m_position - rotExtents,
 		rb2->m_position - rotExtents.Perp()
-	};
+	};*/
 	
 	decimal biggestPen = 0;
 	for (int i = 0; i < 3; i++) {

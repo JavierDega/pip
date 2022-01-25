@@ -27,8 +27,8 @@ public:
 	virtual decimal SweepWith(OrientedBox* rb2, decimal dt, PipMath::Manifold& manifold) override;
 private:
 	//#possibly apply Strategy design pattern?
-	bool TestAxis(PipMath::Vector2 axis, PipMath::Vector2 pos1, PipMath::Vector2 pos2, PipMath::Vector2 rotExtents,
-	 PipMath::Vector2 rotExtents2, decimal& penetration);
+	bool TestAxis(PipMath::Vector2 axis, PipMath::Vector2 pos1, PipMath::Vector2 pos2, PipMath::Vector2 points[],
+	 PipMath::Vector2 points2[], decimal& penetration);
 public:
 	PipMath::Vector2 m_halfExtents;
 };

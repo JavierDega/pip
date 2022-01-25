@@ -20,17 +20,29 @@ OrientedBox::~OrientedBox()
 //Intersect AABB for Quad Nodes (Simplified SAT?)
 bool OrientedBox::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 {
-	Vector2 rotExtents = m_halfExtents.Rotated(m_rotation);
+	Vector2 points[4]{ m_halfExtents, -m_halfExtents,
+	Vector2(m_halfExtents.x, -m_halfExtents.y), Vector2(-m_halfExtents.x, m_halfExtents.y) };
+
+	Vector2 points2[4]{ topRight, bottomLeft,
+	Vector2(topRight.x, bottomLeft.y), Vector2(bottomLeft.x, topRight.y) };
+
+	//Rotate points to get real positions according to OBB rotation
+	for (int i = 0; i < 4; i++)
+	{
+		points[i].Rotate(m_rotation);
+		//points2[i].Rotate(rb2->m_rotation);
+	}
+
 	Vector2 quadCenter = topRight + (bottomLeft - topRight) / 2;
 	decimal dummyPenetration;
 	Vector2 axis = Vector2(1, 0);
-	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	if (!TestAxis(axis, m_position, quadCenter, points, points2, dummyPenetration)) return false;
 	axis = Vector2(0, 1);
-	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	if (!TestAxis(axis, m_position, quadCenter, points, points2, dummyPenetration)) return false;
 	axis = Vector2(1, 0).Rotate(m_rotation);
-	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	if (!TestAxis(axis, m_position, quadCenter, points, points2, dummyPenetration)) return false;
 	axis = Vector2(0, 1).Rotate(m_rotation);
-	if (!TestAxis(axis, m_position, quadCenter, rotExtents, topRight, dummyPenetration)) return false;
+	if (!TestAxis(axis, m_position, quadCenter, points, points2, dummyPenetration)) return false;
 	return true;
 }
 
@@ -55,8 +67,22 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	//SAT
 	//We only have 4 axis to project to, but we can simplify it by bringing things to one Obb's reference frame
 	Vector2 aToB = rb2->m_position - m_position;
-	Vector2 rotExtents = m_halfExtents.Rotated(m_rotation);
-	Vector2 rotExtents2 = rb2->m_halfExtents.Rotated(rb2->m_rotation);
+	//Vector2 rotExtents = m_halfExtents.Rotated(m_rotation);
+	//Vector2 rotExtents2 = rb2->m_halfExtents.Rotated(rb2->m_rotation);
+	
+	//Points in clockwise order
+	Vector2 points[4]{ m_halfExtents, Vector2(m_halfExtents.x, -m_halfExtents.y),
+	 -m_halfExtents, Vector2(-m_halfExtents.x, m_halfExtents.y) };
+
+	Vector2 points2[4]{ rb2->m_halfExtents, Vector2(rb2->m_halfExtents.x, -rb2->m_halfExtents.y),
+	 -rb2->m_halfExtents, Vector2(-rb2->m_halfExtents.x, rb2->m_halfExtents.y) };
+	
+	//Rotate points to get real positions according to OBB's rotations
+	for (int i = 0; i < 4; i++)
+	{
+		points[i].Rotate(m_rotation);
+		points2[i].Rotate(rb2->m_rotation);
+	}
 	//Possibly add ref arguments to retrieve contact data (amount of penetration,..)
 	decimal minPen;
 	Vector2 minAxis;
@@ -65,7 +91,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	SatCollision collisionType;
 	//rb1's axii
 	axis = Vector2(1, 0).Rotate(m_rotation);
-	if (TestAxis(axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
+	if (TestAxis(axis, m_position, rb2->m_position, points, points2, penetration)) {
 		//Store penetration and axis
 		minPen = penetration;
 		minAxis = axis;
@@ -73,7 +99,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	}
 	else return false;
 	axis = Vector2(0, 1).Rotate(m_rotation);
-	if (TestAxis( axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
+	if (TestAxis( axis, m_position, rb2->m_position, points, points2, penetration)) {
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
@@ -83,7 +109,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	else return false;
 	//rb2's axii
 	axis = Vector2(1, 0).Rotate(rb2->m_rotation);
-	if (TestAxis( axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
+	if (TestAxis( axis, m_position, rb2->m_position, points, points2, penetration)) {
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
@@ -92,7 +118,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	} 
 	else return false;
 	axis = Vector2(0, 1).Rotate(rb2->m_rotation);
-	if (TestAxis( axis, m_position, rb2->m_position, rotExtents, rotExtents2, penetration)) {
+	if (TestAxis( axis, m_position, rb2->m_position, points, points2, penetration)) {
 		if (penetration < minPen) {
 			minPen = penetration;
 			minAxis = axis;
@@ -120,10 +146,10 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 		planeDists[2] = (m_position + m_halfExtents.y * planeNormals[2]).Dot(planeNormals[2]);
 		planeDists[3] = (m_position + m_halfExtents.y * planeNormals[3]).Dot(planeNormals[3]);
 		//Points to clip (Need to be in order for clipping to work!)
-		boxPoints[0] = rb2->m_position + rotExtents2;
-		boxPoints[1] = rb2->m_position + rotExtents2.Perp();
-		boxPoints[2] = rb2->m_position - rotExtents2;
-		boxPoints[3] = rb2->m_position - rotExtents2.Perp();
+		boxPoints[0] = rb2->m_position + points2[0];
+		boxPoints[1] = rb2->m_position + points2[1];
+		boxPoints[2] = rb2->m_position + points2[2];
+		boxPoints[3] = rb2->m_position + points2[3];
 	}
 	break;
 	case SatCollision::OBJ2:
@@ -138,10 +164,10 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 		planeDists[2] = (rb2->m_position + rb2->m_halfExtents.y * planeNormals[2]).Dot(planeNormals[2]);
 		planeDists[3] = (rb2->m_position + rb2->m_halfExtents.y * planeNormals[3]).Dot(planeNormals[3]);
 
-		boxPoints[0] = m_position + rotExtents;
-		boxPoints[1] = m_position + rotExtents.Perp();
-		boxPoints[2] = m_position - rotExtents;
-		boxPoints[3] = m_position - rotExtents.Perp();
+		boxPoints[0] = m_position + points[0];
+		boxPoints[1] = m_position + points[1];
+		boxPoints[2] = m_position + points[2];
+		boxPoints[3] = m_position + points[3];
 	}
 	break;
 	}
@@ -209,18 +235,16 @@ decimal OrientedBox::SweepWith(OrientedBox* rb2, decimal dt, Manifold& manifold)
 	return decimal();
 }
 
-bool OrientedBox::TestAxis(Vector2 axis, Vector2 pos1, Vector2 pos2, Vector2 rotExtents, Vector2 rotExtents2, decimal& penetration)
+bool OrientedBox::TestAxis(Vector2 axis, Vector2 pos1, Vector2 pos2, Vector2 points[], Vector2 points2[], decimal& penetration)
 {
 	decimal pos1Axis = pos1.Dot(axis);
 	decimal pos2Axis = pos2.Dot(axis);
-	Vector2 p[4]{ rotExtents, -rotExtents, Vector2(rotExtents.x, -rotExtents.y), Vector2(-rotExtents.x, rotExtents.y) };
-	Vector2 p2[4]{ rotExtents2, -rotExtents2, Vector2(rotExtents2.x, -rotExtents2.y), Vector2(-rotExtents2.y, rotExtents2.y) };
 	decimal min = 0, max = 0;
 	decimal min2 = 0, max2 = 0;
 
 	for (int i = 0; i < 4; i++) {
-		decimal projection = p[i].Dot(axis);
-		decimal projection2 = p2[i].Dot(axis);
+		decimal projection = points[i].Dot(axis);
+		decimal projection2 = points2[i].Dot(axis);
 		if (projection < min) min = projection;
 		if (projection > max) max = projection;
 		if (projection2 < min2) min2 = projection2;
