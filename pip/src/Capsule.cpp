@@ -49,13 +49,13 @@ bool Capsule::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 	b += m_position;
 	decimal c = a.y - m*a.x;
 
-	Vector2 boxPoints[4] =
+	/*Vector2 boxPoints[4] =
 	{
 		topRight,
 		Vector2(topRight.x, bottomLeft.y), //bottomRight
 		bottomLeft,
 		Vector2(bottomLeft.x, topRight.y) //topLeft
-	};
+	};*/
 
 	//First, clamp both points in caps to aabb and check if theyre close enough
 	Vector2 aClamped = Vector2(Clamp(a.x, bottomLeft.x, topRight.x), Clamp(a.y, bottomLeft.y, topRight.y));

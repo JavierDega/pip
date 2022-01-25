@@ -9,7 +9,7 @@ using namespace PipMath;
 
 
 QuadNode::QuadNode(Vector2 topRight, Vector2 bottomLeft, bool isLeaf)
-	: m_topRight(topRight), m_bottomLeft(bottomLeft), m_isLeaf(isLeaf), m_owner(nullptr), m_children (nullptr)
+	: m_topRight(topRight), m_bottomLeft(bottomLeft), m_isLeaf(isLeaf), m_children (nullptr), m_owner(nullptr)
 {
 	//bool debugBreak = false;
 }

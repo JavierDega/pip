@@ -121,7 +121,6 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 	//#Using pool mappings, could rapidly figure out memory offset from pool's m_start
 	//by comparing bodyTypes of all PoolIdx's
 	assert(i < m_objectToMappingIdx.size());
-	size_t curIdx = 0;
 	Rigidbody* rb = (Rigidbody*)m_pool.start;
 	for (size_t curIdx = 0; curIdx < i; curIdx++)
 	{

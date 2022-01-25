@@ -106,6 +106,10 @@ int main(int argc, char* argv[])
 	//Do tests here (asserts)
 #if RUN_TESTS
 	int testResult = Catch::Session().run(argc, argv);
+	if (testResult != 0) 
+	{
+		cout << "Testbed Error - Main::Catch session run failed" << endl;
+	}
 #endif
 	TestApp testApp;
 	if (testApp.Init() == -1) {

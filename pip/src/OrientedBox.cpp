@@ -7,7 +7,7 @@ using namespace PipMath;
 
 OrientedBox::OrientedBox(Vector2 halfExtents, Vector2 pos, decimal rot, Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic, decimal kFriction)
-	: m_halfExtents(halfExtents), Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic, kFriction)
+	: Rigidbody(pos, rot, vel, angVel, mass, e, isKinematic, kFriction), m_halfExtents(halfExtents)
 {
 	m_bodyType = BodyType::Obb;
 	//Find inertia tensor formula for an oriented box (Derived from capsule's)
