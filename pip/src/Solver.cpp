@@ -177,13 +177,13 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA &&
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= (decimal)PIP_SLEEP_DELTA/rb->m_mass &&
 			(rb->m_rotation - rb->m_prevRot) <= PIP_SLEEP_DELTA)
 			{
 				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 				rb->m_timeInSleep += dt;
 				//If its static for two timesteps or more, put to sleep
-				if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 2)
+				if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 4)
 				{
 					rb->m_isSleeping = true;
 					rb->m_velocity = Vector2();
@@ -205,33 +205,30 @@ void Solver::Step(decimal dt)
 	}
 
 	//Before clearing their ownedBodies we wanna know which qnodes need merging/subdividing
-	//if (m_quadTreeSubdivision)
+	std::vector<QuadNode*> quadTreeLeafParentNodes;
+	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
-		std::vector<QuadNode*> quadTreeLeafParentNodes;
-		for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+		QuadNode* leafNode = quadTreeLeafNodes[i];
+		QuadNode* leafNodeParent = leafNode->m_owner;
+		if (leafNodeParent)//If its the root node it will have no parent
 		{
-			QuadNode* leafNode = quadTreeLeafNodes[i];
-			QuadNode* leafNodeParent = leafNode->m_owner;
-			if (leafNodeParent)//If its the root node it will have no parent
+			if (std::find(quadTreeLeafParentNodes.begin(), quadTreeLeafParentNodes.end(), leafNodeParent) == quadTreeLeafParentNodes.end())
 			{
-				if (std::find(quadTreeLeafParentNodes.begin(), quadTreeLeafParentNodes.end(), leafNodeParent) == quadTreeLeafParentNodes.end())
-				{
-					//Its not contained already in the vector, add it
-					quadTreeLeafParentNodes.push_back(leafNodeParent);
-				}
+				//Its not contained already in the vector, add it
+				quadTreeLeafParentNodes.push_back(leafNodeParent);
 			}
 		}
-		for (int i = 0; i < quadTreeLeafNodes.size(); i++)
-		{
-			QuadNode* leafNode = quadTreeLeafNodes[i];
-			leafNode->TrySubdivide();
-		}
+	}
+	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
+	{
+		QuadNode* leafNode = quadTreeLeafNodes[i];
+		leafNode->TrySubdivide();
+	}
 
-		for (int i = 0; i < quadTreeLeafParentNodes.size(); i++)
-		{
-			QuadNode* leafParent = quadTreeLeafParentNodes[i];
-			leafParent->TryMerge();
-		}
+	for (int i = 0; i < quadTreeLeafParentNodes.size(); i++)
+	{
+		QuadNode* leafParent = quadTreeLeafParentNodes[i];
+		leafParent->TryMerge();
 	}
 }
 
