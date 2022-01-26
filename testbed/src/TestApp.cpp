@@ -103,9 +103,9 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Scene 2: Sphere against Obb";
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(0.1f, 5)) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(3, 0), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 5.f), Vector2(3, 0), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(0.5f, 0.5f), Vector2(0, 0), 45 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(0.5f, 1.5f), Vector2(-0.5f, 0), 45 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
 		break;
 	}
@@ -114,7 +114,7 @@ void TestApp::LoadScene(unsigned int index)
 		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
 		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 2.f), Vector2(-5, 5), 0 * PIP_DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 3.f), Vector2(5, 5), 0 * PIP_DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
+		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 3.f), Vector2(5, 5), 10 * PIP_DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
 		break;
 	}
