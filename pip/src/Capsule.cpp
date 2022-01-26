@@ -286,7 +286,7 @@ bool Capsule::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	};*/
 	
 	decimal biggestPen = 0;
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i <= 3; i++) {
 		//Generate box segment and do like Caps-Caps query
 		Vector2 c = boxPoints[i];
 		Vector2 d = boxPoints[(i < 3) ? i + 1 : 0];
