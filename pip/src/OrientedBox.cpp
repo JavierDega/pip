@@ -217,14 +217,14 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 				manifold.contactPoints[manifold.numContactPoints] = nextPt;
 				manifold.numContactPoints++;
 				std::cout << "manifold contact point: " << nextPt << std::endl;
-				cout << "ptIn and nextPtIn - clip = nextPt" << endl;
-
+				cout << "ptIn and nextPtIn - clip = nextPtç" << endl;
 			}
 		}
 	}
 	//#Points need to be moved to reference plane of reference box?
-	
-	assert(manifold.numContactPoints);
+
+	//assert(manifold.numContactPoints);
+	if (!manifold.numContactPoints) return false;
 	manifold.rb1 = this;
 	manifold.rb2 = rb2;
 	manifold.normal = minAxis.Dot(aToB) > 0 ? -minAxis : minAxis;

@@ -177,13 +177,13 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= (decimal)PIP_SLEEP_DELTA/rb->m_mass &&
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA &&
 			(rb->m_rotation - rb->m_prevRot) <= PIP_SLEEP_DELTA)
 			{
 				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 				rb->m_timeInSleep += dt;
 				//If its static for two timesteps or more, put to sleep
-				if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 4)
+				if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 16)
 				{
 					rb->m_isSleeping = true;
 					rb->m_velocity = Vector2();

@@ -93,7 +93,7 @@ void TestApp::LoadScene(unsigned int index)
 	case 1:
 	{
 		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 3.f, 0.5f) != -1) m_bodyHandles.push_back(handle);
+		//if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 5), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 3.f, 0.5f) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 44.7f * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 10.f, 0.5f) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateOrientedBox(handle, Vector2(7.5f, 0.5f), Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 1.f, 0.5f, true) != -1) m_bodyHandles.push_back(handle);
 
