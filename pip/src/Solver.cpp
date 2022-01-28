@@ -177,21 +177,36 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA &&
-			(rb->m_rotation - rb->m_prevRot) <= PIP_SLEEP_DELTA)
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA/rb->m_mass)
 			{
-				//#Issues with bodies going to sleep when they shouldnt on fixed point mode
-				rb->m_timeInSleep += dt;
-				//If its static for two timesteps or more, put to sleep
-				if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 16)
+				cout << "Body position delta is below sleep delta" << endl;
+				if ((rb->m_rotation - rb->m_prevRot) <= PIP_SLEEP_DELTA/rb->m_inertia)
 				{
-					rb->m_isSleeping = true;
-					rb->m_velocity = Vector2();
-					rb->m_angularVelocity = 0;
+					//#Issues with bodies going to sleep when they shouldnt on fixed point mode
+					rb->m_timeInSleep += dt;
+					cout << "Body rotation is also below sleep delta, adding timeInSleep to =" <<  rb->m_timeInSleep << endl;
+					//If its static for two timesteps or more, put to sleep
+					if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 64)
+					{
+						rb->m_isSleeping = true;
+						rb->m_velocity = Vector2();
+						rb->m_angularVelocity = 0;
+					}
 				}
-			}
+				else
+				{
+					cout << "Body rotation is not below sleep delta, resetting timeInSleep" << endl;
+					cout << "Body rotation minus prevRot: " << (rb->m_rotation - rb->m_prevRot) << "  Sleep max delta: " 
+					<< PIP_SLEEP_DELTA << "  inertia: " << rb->m_inertia << " divided by inertia: " << PIP_SLEEP_DELTA/rb->m_inertia << endl;
+ 					goto resetSleep;
+				}
+			} 
 			else
 			{
+				cout << "Body position is not below sleep delta, resetting timeInSleep" << endl;
+				cout << "Body position minus prevPo: " << (rb->m_position - rb->m_prevPos) << "  Sleep max delta: " 
+					<< PIP_SLEEP_DELTA << "  mass: " << rb->m_mass << " divided by mass: " << PIP_SLEEP_DELTA/rb->m_mass << endl;
+				resetSleep:
 				if (rb->m_isSleeping)
 				{
 					rb->m_isSleeping = false;
@@ -199,6 +214,7 @@ void Solver::Step(decimal dt)
 				if (rb->m_timeInSleep > 0)
 				{
 					rb->m_timeInSleep = 0;
+					cout << "Body above sleep delta, resetting time in sleep" << endl;
 				}
 			}
 		}

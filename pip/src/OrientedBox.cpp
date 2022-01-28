@@ -98,7 +98,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 		minPen = penetration;
 		minAxis = axis;
 		collisionType = SatCollision::OBJ1;
-		std::cout << "Objects collide on x axis of box 1" << std::endl;
+		//std::cout << "Objects collide on x axis of box 1" << std::endl;
 	}
 	else return false;
 	axis = Vector2(0, 1).Rotate(m_rotation);
@@ -107,7 +107,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 			minPen = penetration;
 			minAxis = axis;
 			collisionType = SatCollision::OBJ1;
-			std::cout << "Objects collide on y axis of box 1" << std::endl;
+			//std::cout << "Objects collide on y axis of box 1" << std::endl;
 
 		}
 	} 
@@ -119,7 +119,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 			minPen = penetration;
 			minAxis = axis;
 			collisionType = SatCollision::OBJ2;
-			std::cout << "Objects collide on x axis of box 2" << std::endl;
+			//std::cout << "Objects collide on x axis of box 2" << std::endl;
 
 		}
 	} 
@@ -130,8 +130,7 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 			minPen = penetration;
 			minAxis = axis;
 			collisionType = SatCollision::OBJ2;
-			std::cout << "Objects collide on y axis of box 2" << std::endl;
-			
+			//std::cout << "Objects collide on y axis of box 2" << std::endl;
 		}
 	}
 	else return false;
@@ -207,8 +206,8 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 			if (nextPtIn) {
 				manifold.contactPoints[manifold.numContactPoints] = nextPt;
 				manifold.numContactPoints++;
-				std::cout << "manifold contact point: " << nextPt << std::endl;
-				std::cout << "!ptin and nextPtIn - clip = nextPt" << endl;
+				//std::cout << "manifold contact point: " << nextPt << std::endl;
+				//std::cout << "!ptin and nextPtIn - clip = nextPt" << endl;
 			}
 		}
 		else
@@ -216,8 +215,8 @@ bool OrientedBox::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 			if (nextPtIn) {
 				manifold.contactPoints[manifold.numContactPoints] = nextPt;
 				manifold.numContactPoints++;
-				std::cout << "manifold contact point: " << nextPt << std::endl;
-				cout << "ptIn and nextPtIn - clip = nextPtç" << endl;
+				//std::cout << "manifold contact point: " << nextPt << std::endl;
+				//cout << "ptIn and nextPtIn - clip = nextPt" << endl;
 			}
 		}
 	}

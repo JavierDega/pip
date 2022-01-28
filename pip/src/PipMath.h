@@ -6,7 +6,7 @@
 #include "fp_math.h"
 
 #define PIP_TEST_EPSILON 0.00001f
-#define PIP_SLEEP_DELTA 0.002f*0.002f
+#define PIP_SLEEP_DELTA 0.008f*0.008f
 #define PIP_USE_FIXEDPOINT 0
 #define PIP_PI 3.14159265f
 #define PIP_DEG2RAD (PIP_PI)/180
@@ -668,4 +668,3 @@ namespace PipMath
 		}
 	};
 }
-
