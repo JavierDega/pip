@@ -15,7 +15,7 @@ OrientedBox::OrientedBox(Vector2 halfExtents, Vector2 pos, decimal rot, Vector2 
 	//Find inertia tensor formula for an oriented box (Derived from capsule's)
 	m_inertia = m_mass * (Pow(m_halfExtents.x * 2, 2) + Pow(m_halfExtents.y * 2, 2)) / 12;
 }
-
+//
 OrientedBox::~OrientedBox()
 {
 }

@@ -177,14 +177,14 @@ void Solver::Step(decimal dt)
 		Rigidbody* rb = rigidbodies[i];
 		if (!rb->m_isKinematic)
 		{
-			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA/rb->m_mass)
+			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA * PIP_SLEEP_DELTA)
 			{
 				cout << "Body position delta is below sleep delta" << endl;
-				if ((rb->m_rotation - rb->m_prevRot) <= PIP_SLEEP_DELTA/rb->m_inertia)
+				if (rb->m_rotation - rb->m_prevRot <= PIP_SLEEP_DELTA/rb->m_inertia)
 				{
 					//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 					rb->m_timeInSleep += dt;
-					cout << "Body rotation is also below sleep delta, adding timeInSleep to =" <<  rb->m_timeInSleep << endl;
+					cout << "Body rotation is also below sleep delta, adding timeInSleep to total =" <<  rb->m_timeInSleep << endl;
 					//If its static for two timesteps or more, put to sleep
 					if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 64)
 					{
@@ -196,16 +196,12 @@ void Solver::Step(decimal dt)
 				else
 				{
 					cout << "Body rotation is not below sleep delta, resetting timeInSleep" << endl;
-					cout << "Body rotation minus prevRot: " << (rb->m_rotation - rb->m_prevRot) << "  Sleep max delta: " 
-					<< PIP_SLEEP_DELTA << "  inertia: " << rb->m_inertia << " divided by inertia: " << PIP_SLEEP_DELTA/rb->m_inertia << endl;
  					goto resetSleep;
 				}
 			} 
 			else
 			{
 				cout << "Body position is not below sleep delta, resetting timeInSleep" << endl;
-				cout << "Body position minus prevPo: " << (rb->m_position - rb->m_prevPos) << "  Sleep max delta: " 
-					<< PIP_SLEEP_DELTA << "  mass: " << rb->m_mass << " divided by mass: " << PIP_SLEEP_DELTA/rb->m_mass << endl;
 				resetSleep:
 				if (rb->m_isSleeping)
 				{
@@ -217,6 +213,10 @@ void Solver::Step(decimal dt)
 					cout << "Body above sleep delta, resetting time in sleep" << endl;
 				}
 			}
+			cout << "Body position minus prevPos Sqr: " << (rb->m_position - rb->m_prevPos).LengthSqr() << "  Sleep max delta: " 
+					<< PIP_SLEEP_DELTA * PIP_SLEEP_DELTA << "  mass: " << rb->m_mass << " delta divided by mass: " << PIP_SLEEP_DELTA*PIP_SLEEP_DELTA/rb->m_mass << endl;
+			cout << "Body rotation minus prevRot: " << (rb->m_rotation - rb->m_prevRot) << "  Sleep max delta: " 
+					<< PIP_SLEEP_DELTA << "  inertia: " << rb->m_inertia << " delta divided by inertia: " << PIP_SLEEP_DELTA/rb->m_inertia << endl;
 		}
 	}
 
