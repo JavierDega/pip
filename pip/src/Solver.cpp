@@ -106,7 +106,7 @@ void Solver::Step(decimal dt)
 		rigidbodies.push_back(rb);
 		rb->m_acceleration += m_gravity / rb->m_mass;
 		rb->m_acceleration -= m_airViscosity * rb->m_velocity / rb->m_mass;
-		//rb->m_angularAccel -= m_airViscosity * rb->m_angularVelocity / rb->m_mass; 
+		rb->m_angularAccel -= m_airViscosity * rb->m_angularVelocity / rb->m_mass; 
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) {
 			rb->m_velocity += rb->m_acceleration * dt;
 			rb->m_angularVelocity += rb->m_angularAccel * dt;	

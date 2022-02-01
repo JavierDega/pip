@@ -84,7 +84,7 @@ void TestApp::LoadScene(unsigned int index)
 	{
 		m_sceneName = "Circle v Capsule";
 		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0), 0.f, 1.f, .8f, false, 0.1f) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 6), 0, Vector2(5, 0)) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCapsule(handle, 2.f, 1.0f, Vector2(), 0 * PIP_DEG2RAD, Vector2(), 0.f, 1.f, 0.9f, true) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(5, 5), 0, Vector2(-5, 0)) != -1) m_bodyHandles.push_back(handle);
@@ -123,14 +123,17 @@ void TestApp::LoadScene(unsigned int index)
 		m_sceneName = "Capsule to capsule";
 		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(0, 4), 0 * PIP_DEG2RAD, Vector2(-0.1f, 0), 0.f, 1.f, 0.9f) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCapsule(handle, 10.f, 1.f, Vector2(0, -2), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
-		//if (m_solver.CreateCapsule(handle, ))
 		break;
 	}
 	case 5:
 	{
 		m_sceneName = "Friction and sleeping objects";
 		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
-		//Circles
+		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(6.f, 0.f), 0.f, Vector2(),
+		0.f, 1.f, 0.7f, true, 0.1f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(-4.f, 2.f), -0.1f, Vector2(),
+		0.f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
@@ -480,6 +483,20 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			char inertia[50];
 			snprintf(inertia, 50, "%f", (float)rb->m_inertia);
 			ImGui::Text("%s", inertia);
+			ImGui::NextColumn();
+
+			ImGui::Text("e (Coefficient of restitution)");
+			ImGui::NextColumn();
+			char e[50];
+			snprintf(e, 50, "%f", rb->m_e);
+			ImGui::Text("%s", e);
+			ImGui::NextColumn();
+
+			ImGui::Text("kFriction (Kinetic friction coefficient)");
+			ImGui::NextColumn();
+			char kFriction[50];
+			snprintf(kFriction, 50, "%f", rb->m_kFriction);
+			ImGui::Text("%s", kFriction);
 			ImGui::NextColumn();
 
 			ImGui::Text("Kinematic");
