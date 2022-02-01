@@ -128,13 +128,15 @@ void TestApp::LoadScene(unsigned int index)
 	case 5:
 	{
 		m_sceneName = "Friction and sleeping objects";
+		//Platforms
 		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(6.f, 0.f), 0.f, Vector2(),
 		0.f, 1.f, 0.7f, true, 0.1f) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(-4.f, 2.f), -0.1f, Vector2(),
 		0.f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
-
+		//Sliding objects
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
+		
 		break;
 	}
 	default:
