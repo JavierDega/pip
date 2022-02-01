@@ -180,13 +180,13 @@ void Solver::Step(decimal dt)
 			if ((rb->m_position - rb->m_prevPos).LengthSqr() <= PIP_SLEEP_DELTA * PIP_SLEEP_DELTA)
 			{
 				cout << "Body position delta is below sleep delta" << endl;
-				if (rb->m_rotation - rb->m_prevRot <= PIP_SLEEP_DELTA/rb->m_inertia)
+				if (rb->m_rotation - rb->m_prevRot <= PIP_SLEEP_DELTA)
 				{
 					//#Issues with bodies going to sleep when they shouldnt on fixed point mode
 					rb->m_timeInSleep += dt;
 					cout << "Body rotation is also below sleep delta, adding timeInSleep to total =" <<  rb->m_timeInSleep << endl;
 					//If its static for two timesteps or more, put to sleep
-					if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 64)
+					if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 16)
 					{
 						rb->m_isSleeping = true;
 						rb->m_velocity = Vector2();
