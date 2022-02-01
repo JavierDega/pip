@@ -8,7 +8,7 @@ class Circle :
 {
 public:
 	Circle(decimal rad = 1.0f, PipMath::Vector2 pos = PipMath::Vector2(), decimal rot = 0.0f, PipMath::Vector2 vel = PipMath::Vector2(),
-	 decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = 1.f, bool isKinematic = false, decimal kFriction = 0.03f);
+	 decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = .8f, bool isKinematic = false, decimal kFriction = 0.03f);
 	~Circle();
 	virtual bool IntersectWith(PipMath::Vector2 topRight, PipMath::Vector2 bottomLeft) override;
 	virtual bool IntersectWith(Rigidbody* rb2, PipMath::Manifold& manifold) override;

@@ -41,9 +41,9 @@ public:
 	decimal m_angularVelocity;
 	PipMath::Vector2 m_acceleration;
 	decimal m_angularAccel;
-	decimal m_mass;
-	decimal m_e;//coefficient of restitution
-	decimal m_kFriction;//friction coefficient (kinetic), doubled when object is static. Recommended range: 0.1f<=x<-0.5f 
+	decimal m_mass;//Range of >0.
+	decimal m_e;//coefficient of restitution. Recommended range: 0.6f<=x<=0.999..f
+	decimal m_kFriction;//friction coefficient (kinetic), doubled when object is static. Recommended range: 0.00..1f<=x<0.5f
 	decimal m_timeInSleep;
 	bool m_isKinematic, m_isSleeping;
 	decimal m_inertia;//scalar in 2D, aka 2nd moment of mass, tensor or matrix in 3D

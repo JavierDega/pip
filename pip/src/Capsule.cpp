@@ -23,7 +23,7 @@ Capsule::Capsule(decimal length, decimal radius, Vector2 pos, decimal rot, Vecto
 	//Use parallel axis to add hemispheres inertia according to capsule CM
 	//I = Icm + md^2
 	decimal inertiaCircle1 = massHemicircles * m_radius * m_radius / 2;
-	decimal inertiaCircle2 = inertiaCircle1 - massHemicircles * m_length / 2;
+	decimal inertiaCircle2 = inertiaCircle1 + massHemicircles * m_length / 2;
 	m_inertia = inertiaRectangle + inertiaCircle2;
 }
 //

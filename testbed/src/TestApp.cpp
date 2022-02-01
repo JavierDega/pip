@@ -82,7 +82,7 @@ void TestApp::LoadScene(unsigned int index)
 	switch (index) {
 	case 0:
 	{
-		m_sceneName = "Circles v Capsule";
+		m_sceneName = "Circle v Capsule";
 		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 6), 0, Vector2(5, 0)) != -1) m_bodyHandles.push_back(handle);
@@ -92,16 +92,16 @@ void TestApp::LoadScene(unsigned int index)
 	}
 	case 1:
 	{
-		m_sceneName = "Scene 1: Capsule v OrientedBox";
-		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(-1, 4), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 1.f, 0.7f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(2, 2), Vector2(0, -2), 44.7f * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 10.f, 0.7f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(7.5f, 0.5f), Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		m_sceneName = "Capsule v OrientedBox";
+		if (m_solver.CreateCapsule(handle, 2.f, 1.f, Vector2(0, 4), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, .5f, 0.7f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(1, 2), Vector2(0.f, -2), 44.7f * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 10.f, 0.7f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(9.5f, 0.5f), Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 
 		break;
 	}
 	case 2:
 	{
-		m_sceneName = "Scene 2: Sphere against Obb";
+		m_sceneName = "Circle v Obb";
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(0.1f, 5)) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 5.f), Vector2(3, 0), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
@@ -111,7 +111,7 @@ void TestApp::LoadScene(unsigned int index)
 	}
 	case 3:
 	{
-		m_sceneName = "Scene 3: OBB collision with SAT, uses discontiguous std::vector";
+		m_sceneName = "OBB collision with SAT, clipping with Sutherland-Hodgmann for contact points";
 		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 2.f), Vector2(-5, 5), 0 * PIP_DEG2RAD, Vector2(5, 0), 0.0f, 100.f) != -1)
 		m_bodyHandles.push_back(handle);
 		if (m_solver.CreateOrientedBox(handle, Vector2(2.f, 3.f), Vector2(5, 5), 10 * PIP_DEG2RAD, Vector2(-5, 0), 0.0f, 100.f) != -1)
@@ -120,14 +120,15 @@ void TestApp::LoadScene(unsigned int index)
 	}
 	case 4:
 	{
-		m_sceneName = "Scene 4: Capsule to capsule";
-		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(0, 4), 0 * PIP_DEG2RAD, Vector2(), 0.f, 1.f, 0.9f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateCapsule(handle, 4.f, 1.f, Vector2(0, -2), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		m_sceneName = "Capsule to capsule";
+		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(0, 4), 0 * PIP_DEG2RAD, Vector2(-0.1f, 0), 0.f, 1.f, 0.9f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 10.f, 1.f, Vector2(0, -2), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
+		//if (m_solver.CreateCapsule(handle, ))
 		break;
 	}
 	case 5:
 	{
-		m_sceneName = "Scene 5: Testing friction";
+		m_sceneName = "Friction and sleeping objects";
 		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		//Circles
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
