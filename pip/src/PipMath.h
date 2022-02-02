@@ -23,7 +23,7 @@ class Rigidbody;//Manifold needs fwdecl
 
 namespace PipMath 
 {
-
+	//
 	inline decimal Abs(decimal x) 
 	{
 #if PIP_USE_FIXEDPOINT
@@ -31,6 +31,11 @@ namespace PipMath
 #else 
 		return std::abs(x);
 #endif
+	}
+	//
+	inline bool EqualsEps(decimal lhs, decimal rhs, decimal epsilon)
+	{
+		return Abs(lhs - rhs) <= epsilon;
 	}
 
 	inline decimal Min(decimal x, decimal max) 

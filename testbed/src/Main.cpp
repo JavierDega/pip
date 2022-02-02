@@ -18,15 +18,9 @@ TEST_CASE("Base math queries") {
 	Vector2 p = Vector2(0, 1);
 	Vector2 closestPt = ClosestPtToSegment(a, b, p);
 	//cout << "Test - ClosestPtToSegment: " << closestPt << endl;
-#if PIP_USE_FIXEDPOINT
-	CHECK(closestPt.x.EqualsEps(0, PIP_TEST_EPSILON));
-	CHECK(closestPt.y.EqualsEps(0, PIP_TEST_EPSILON));
-	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0).EqualsEps(Sqrt(2), PIP_TEST_EPSILON));
-#else
-	CHECK(closestPt.x == 0);
-	CHECK(closestPt.y == 0);
-	CHECK(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0) == Sqrt(2));
-#endif
+	CHECK(EqualsEps(closestPt.x, 0, PIP_TEST_EPSILON));
+	CHECK(EqualsEps(closestPt.y, 0, PIP_TEST_EPSILON));
+	CHECK(EqualsEps(DistPtToPlane(Vector2(1, 1), Vector2(1, 1), 0), Sqrt(2), PIP_TEST_EPSILON));
 }
 
 TEST_CASE("Collision response behavior") {
@@ -45,9 +39,8 @@ TEST_CASE("Collision response behavior") {
 	testManifold.rb2 = &circle2;
 
 	mockSolver.ComputeResponse(testManifold);
-	CHECK((circle1.m_velocity.x == Approx(-1) && circle1.m_velocity.y == Approx(0)));
-	CHECK((circle2.m_velocity.x == Approx(1) && circle2.m_velocity.y == Approx(0)));
-	
+	CHECK((EqualsEps(circle1.m_velocity.x, -1, PIP_TEST_EPSILON) && EqualsEps(circle1.m_velocity.y, 0, PIP_TEST_EPSILON)));
+	CHECK((EqualsEps(circle2.m_velocity.x, 1, PIP_TEST_EPSILON) && EqualsEps(circle2.m_velocity.y, 0, PIP_TEST_EPSILON)));
 	OrientedBox obb1 = OrientedBox(Vector2(1, 1), Vector2(-1, 0), 0, Vector2(5, 1));
 	OrientedBox obb2 = OrientedBox(Vector2(1, 1), Vector2(1, 0), 0, Vector2(-5, 1));
 
@@ -60,8 +53,8 @@ TEST_CASE("Collision response behavior") {
 
 	mockSolver.ComputeResponse(testManifold);
 
-	CHECK((obb1.m_velocity.x == Approx(-5) && obb1.m_velocity.y == Approx(1)));
-	CHECK((obb2.m_velocity.x == Approx(5) && obb2.m_velocity.y == Approx(1)));
+	CHECK((EqualsEps(obb1.m_velocity.x, -5, PIP_TEST_EPSILON) && EqualsEps(obb1.m_velocity.y, 1, PIP_TEST_EPSILON)));
+	CHECK((EqualsEps(obb2.m_velocity.x, 5, PIP_TEST_EPSILON) && EqualsEps(obb2.m_velocity.y, 1, PIP_TEST_EPSILON)));
 	//#Possibly test collision detection logging aswell?
 }
 
