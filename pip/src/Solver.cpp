@@ -186,7 +186,7 @@ void Solver::Step(decimal dt)
 					rb->m_timeInSleep += dt;
 					cout << "Body rotation is also below sleep delta, adding timeInSleep to total =" <<  rb->m_timeInSleep << endl;
 					//If its static for two timesteps or more, put to sleep
-					if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 16)
+					if (!rb->m_isSleeping && rb->m_timeInSleep >= m_timestep * 32)
 					{
 						rb->m_isSleeping = true;
 						rb->m_velocity = Vector2();

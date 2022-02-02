@@ -130,13 +130,15 @@ void TestApp::LoadScene(unsigned int index)
 		m_sceneName = "Friction and sleeping objects";
 		//Platforms
 		if (m_solver.CreateCapsule(handle, 16.f, 1.f, Vector2(0, -9), 0 * PIP_DEG2RAD, Vector2(), 0.0f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(6.f, 0.f), 0.f, Vector2(),
+		if (m_solver.CreateOrientedBox(handle, Vector2(4.5f, 0.5f), Vector2(5.5f, 0.f), 0.f, Vector2(),
 		0.f, 1.f, 0.7f, true, 0.1f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(-4.f, 2.f), -0.1f, Vector2(),
+		if (m_solver.CreateOrientedBox(handle, Vector2(4.f, 0.5f), Vector2(-4.f, 2.f), -0.02f, Vector2(),
 		0.f, 1.f, 0.7f, true) != -1) m_bodyHandles.push_back(handle);
 		//Sliding objects
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
-		
+		if (m_solver.CreateCircle(handle, .8f, Vector2(-6, 4.f), 0.f, Vector2(), 0, 1.f, 0.6f, false, 0.05f) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(-6, 6.f)) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(.5f, .5f), Vector2(-1, 12.f)) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	default:
