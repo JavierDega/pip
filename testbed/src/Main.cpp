@@ -27,8 +27,8 @@ TEST_CASE("Collision response behavior") {
 	//Mock objects
 	Solver mockSolver(new DefaultAllocator());
 
-	Circle circle1 = Circle(1, Vector2(-1, 0), 0, Vector2(1, 0));
-	Circle circle2 = Circle(1, Vector2(1, 0), 0, Vector2(-1, 0));
+	Circle circle1 = Circle(1, Vector2(-1, 0), 0, Vector2(1, 0), 0.f, 1.f, 1.f);
+	Circle circle2 = Circle(1, Vector2(1, 0), 0, Vector2(-1, 0), 0.f, 1.f, 1.f);
 
 	//Could run intersect test and check manifold data aswell rather than inputting manually
 	Manifold testManifold;
@@ -39,10 +39,14 @@ TEST_CASE("Collision response behavior") {
 	testManifold.rb2 = &circle2;
 
 	mockSolver.ComputeResponse(testManifold);
+	CHECK(circle1.m_velocity.EqualsEps(Vector2(-1, 0), PIP_TEST_EPSILON));
+	CHECK(circle2.m_velocity.EqualsEps(Vector2(1, 0), PIP_TEST_EPSILON));
 	CHECK((EqualsEps(circle1.m_velocity.x, -1, PIP_TEST_EPSILON) && EqualsEps(circle1.m_velocity.y, 0, PIP_TEST_EPSILON)));
 	CHECK((EqualsEps(circle2.m_velocity.x, 1, PIP_TEST_EPSILON) && EqualsEps(circle2.m_velocity.y, 0, PIP_TEST_EPSILON)));
-	OrientedBox obb1 = OrientedBox(Vector2(1, 1), Vector2(-1, 0), 0, Vector2(5, 1));
-	OrientedBox obb2 = OrientedBox(Vector2(1, 1), Vector2(1, 0), 0, Vector2(-5, 1));
+
+
+	OrientedBox obb1 = OrientedBox(Vector2(1, 1), Vector2(-1, 0), 0, Vector2(5, 1), 0.f, 1.f, 1.f);
+	OrientedBox obb2 = OrientedBox(Vector2(1, 1), Vector2(1, 0), 0, Vector2(-5, 1), 0.f, 1.f, 1.f);
 
 	testManifold.contactPoints[0] = Vector2(0, 1);
 	testManifold.contactPoints[1] = Vector2(0, -1);
