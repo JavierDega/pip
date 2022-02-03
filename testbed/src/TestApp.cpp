@@ -492,14 +492,14 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("e (Coefficient of restitution)");
 			ImGui::NextColumn();
 			char e[50];
-			snprintf(e, 50, "%f", rb->m_e);
+			snprintf(e, 50, "%f", (float)rb->m_e);
 			ImGui::Text("%s", e);
 			ImGui::NextColumn();
 
 			ImGui::Text("kFriction (Kinetic friction coefficient)");
 			ImGui::NextColumn();
 			char kFriction[50];
-			snprintf(kFriction, 50, "%f", rb->m_kFriction);
+			snprintf(kFriction, 50, "%f", (float)rb->m_kFriction);
 			ImGui::Text("%s", kFriction);
 			ImGui::NextColumn();
 
