@@ -137,8 +137,8 @@ void TestApp::LoadScene(unsigned int index)
 		//Sliding objects
 		if (m_solver.CreateCircle(handle, 1.0f, Vector2(-2.f, -6), 0.0f, Vector2(1.5f, 0)) != -1) m_bodyHandles.push_back(handle);
 		if (m_solver.CreateCircle(handle, .8f, Vector2(-6, 4.f), 0.f, Vector2(), 0, 1.f, 0.6f, false, 0.05f) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(-6, 6.f)) != -1) m_bodyHandles.push_back(handle);
-		if (m_solver.CreateOrientedBox(handle, Vector2(.5f, .5f), Vector2(-1, 12.f)) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateCapsule(handle, 1.f, 1.f, Vector2(-4, 6.f)) != -1) m_bodyHandles.push_back(handle);
+		if (m_solver.CreateOrientedBox(handle, Vector2(1.f, 1.f), Vector2(-1.f, 12.f), 44.7f * PIP_DEG2RAD, Vector2(0, 0), 0.0f, 5.f, 0.6, false, 0.02f) != -1) m_bodyHandles.push_back(handle);
 		break;
 	}
 	default:
