@@ -15,6 +15,7 @@ public:
 	virtual bool IntersectWith(Circle* rb2, PipMath::Manifold& manifold) override;
 	virtual bool IntersectWith(Capsule* rb2, PipMath::Manifold& manifold) override;
 	virtual bool IntersectWith(OrientedBox* rb2, PipMath::Manifold& manifold) override;
+	//Continuous collision (Not implemented)
 	virtual decimal SweepWith(Rigidbody* rb2, decimal dt, PipMath::Manifold& manifold) override;
 	virtual decimal SweepWith(Circle* rb2, decimal dt, PipMath::Manifold& manifold) override;
 	virtual decimal SweepWith(Capsule* rb2, decimal dt, PipMath::Manifold& manifold) override;

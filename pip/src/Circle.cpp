@@ -13,7 +13,7 @@ Circle::Circle(decimal rad, Vector2 pos, decimal rot, Vector2 vel, decimal angVe
 	m_bodyType = BodyType::Circle;
 	m_inertia = m_mass * m_radius * m_radius / 2;//mr^2/2
 }
-
+//
 Circle::~Circle()
 {
 }
@@ -24,12 +24,12 @@ bool Circle::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 	Vector2 clampedPos = Vector2(Clamp(m_position.x, bottomLeft.x, topRight.x), Clamp(m_position.y, bottomLeft.y, topRight.y));
 	return (m_radius*m_radius >= (m_position - clampedPos).LengthSqr());
 }
-
+//
 bool Circle::IntersectWith(Rigidbody* rb2, Manifold& manifold)
 {
 	return rb2->IntersectWith(this, manifold);
 }
-
+//
 bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 {
 	Vector2 ab = rb2->m_position - m_position;
@@ -47,7 +47,7 @@ bool Circle::IntersectWith(Circle* rb2, Manifold& manifold)
 	}
 	return false;
 }
-
+//
 bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 {
 	//Get Capsule's AB
@@ -78,7 +78,7 @@ bool Circle::IntersectWith(Capsule* rb2, Manifold& manifold)
 	}
 	return false;
 }
-
+//
 bool Circle::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 {
 	//ClosestPtToObb query
@@ -93,7 +93,6 @@ bool Circle::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	p += rb2->m_position;
 	//p is closest point from sphere to Obb
 	//Get manifold info
-
 	Vector2 circleToClosestPt = p - m_position;
 	if (circleToClosestPt.LengthSqr() <= m_radius * m_radius) {
 		//Assume circle is outside
@@ -107,12 +106,12 @@ bool Circle::IntersectWith(OrientedBox* rb2, Manifold& manifold)
 	}
 	return false;
 }
-
+//Decimal return represents timestamp of collision in the current step, possibly normalized in range 0-1
 decimal Circle::SweepWith(Rigidbody* rb2, decimal dt, Manifold& manifold)
 {
 	return rb2->SweepWith(this, dt, manifold);
 }
-
+//
 decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 {
 	//https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=2
@@ -158,12 +157,12 @@ decimal Circle::SweepWith(Circle* rb2, decimal dt, Manifold& manifold)
 		return realRoot;
 	}
 }
-
+//
 decimal Circle::SweepWith(Capsule* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();
 }
-
+//
 decimal Circle::SweepWith(OrientedBox* rb2, decimal dt, Manifold& manifold)
 {
 	return decimal();

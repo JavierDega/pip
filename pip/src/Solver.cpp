@@ -104,9 +104,10 @@ void Solver::Step(decimal dt)
 	assert(m_allocator);
 	for (Rigidbody* rb = m_allocator->GetFirstBody(); rb != nullptr; rb = m_allocator->GetNextBody(rb)) {
 		rigidbodies.push_back(rb);
-		rb->m_acceleration += m_gravity / rb->m_mass;
-		rb->m_acceleration -= m_airViscosity * rb->m_velocity / rb->m_mass;
-		rb->m_angularAccel -= m_airViscosity * rb->m_angularVelocity / rb->m_mass; 
+		decimal mass = rb->GetMass();
+		rb->m_acceleration += m_gravity / mass;
+		rb->m_acceleration -= m_airViscosity * rb->m_velocity / mass;
+		rb->m_angularAccel -= m_airViscosity * rb->m_angularVelocity / mass; 
 		if (!(rb->m_isKinematic || rb->m_isSleeping)) {
 			rb->m_velocity += rb->m_acceleration * dt;
 			rb->m_angularVelocity += rb->m_angularAccel * dt;	
@@ -142,7 +143,7 @@ void Solver::Step(decimal dt)
 	}
 	
 	m_currentManifolds.clear();
-	//You might test twice for bodies that are both part of two QuadNodes at the same time, which is why m_ignoreSeparatingBodies should be true
+	//You might test twice for bodies that are both part of two QuadNodes at the same time, which is why we should always ignore separating bodies
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
 		QuadNode* leafNode = quadTreeLeafNodes[i];
@@ -256,10 +257,10 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	//Collision normal point to A by convention
 	Vector2 n = manifold.normal;//Expected to come normalized already
 	decimal pen = manifold.penetration;
-	decimal invMassA = rb1->m_isKinematic ? 0 : (decimal)1 / rb1->m_mass;
-	decimal invMassB = rb2->m_isKinematic ? 0 : (decimal)1 / rb2->m_mass;
-	decimal invIA = rb1->m_isKinematic ? 0 : (decimal)1 / rb1->m_inertia;//Inverse Inertia
-	decimal invIB = rb2->m_isKinematic ? 0 : (decimal)1 / rb2->m_inertia;
+	decimal invMassA = rb1->m_isKinematic ? 0 : (decimal)1 / rb1->GetMass();
+	decimal invMassB = rb2->m_isKinematic ? 0 : (decimal)1 / rb2->GetMass();
+	decimal invIA = rb1->m_isKinematic ? 0 : (decimal)1 / rb1->GetInertia();//Inverse Inertia
+	decimal invIB = rb2->m_isKinematic ? 0 : (decimal)1 / rb2->GetInertia();
 	//Make multiple contact points work by caching velocities and then summing local impulses
 	Vector2 resultVelA = rb1->m_velocity;
 	Vector2 resultVelB = rb2->m_velocity;
@@ -284,7 +285,7 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	Vector2 vba = va - vb;
 	decimal vbaDotN = vba.Dot(n);
 	//Generic solution that uses manifold's penetration to displace rigidbodies along the normal
-	//If we do this, will kinematic objects get displaced by much?
+	//#Leverage whether this displaces kinematic bodies by too much 
 	decimal dispFactor = (rb1->m_isKinematic) ? 0 : (rb2->m_isKinematic) ? 1 : 0.5f;
 	rb1->m_position += pen * n * dispFactor;
 	rb2->m_position -= pen * n * ((decimal)1 - dispFactor);
@@ -365,17 +366,17 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	rb2->m_velocity = resultVelB;
 	rb2->m_angularVelocity = resultAngVelB;
 }
-//
+//Allocator
 void Solver::DestroyAllBodies()
 {
 	m_allocator->DestroyAllBodies();
 }
-//
+//Allocator
 void Solver::DestroyBody(Handle bodyHandle)
 {
 	m_allocator->DestroyBody(bodyHandle);
 }
-//
+//Allocator
 BaseAllocator* Solver::GetAllocator()
 {
 	assert(m_allocator);
@@ -389,7 +390,7 @@ int Solver::CreateCircle(Handle& handle, decimal rad, PipMath::Vector2 pos, deci
 	Circle* circle = new (m_allocator->AllocateBody(sizeof(Circle), handle)) Circle(rad, pos, rot, vel, angVel, mass, e, isKinematic, kFriction);
 	return circle ? 0 : -1;
 }
-
+//
 int Solver::CreateCapsule(Handle& handle, decimal length, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic, decimal kFriction)
 {

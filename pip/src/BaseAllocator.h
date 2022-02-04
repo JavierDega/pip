@@ -18,15 +18,16 @@ class BaseAllocator
 public:
 	BaseAllocator();
 	virtual ~BaseAllocator();
-    size_t GetBodyByteSize(Rigidbody* rb);
 	virtual void* AllocateBody(size_t length, Handle& handle) = 0;
 	virtual void DestroyAllBodies() = 0;//Won't call destructors
     virtual void DestroyBody(Handle handle) = 0;
     virtual Rigidbody* GetFirstBody() = 0;
 	virtual Rigidbody* GetNextBody(Rigidbody* prev) = 0;
     virtual Rigidbody* GetBody(Handle handle) = 0;
-    virtual Rigidbody* GetBodyAt(size_t i) = 0;
+    virtual Rigidbody* GetBodyAt(size_t i) = 0;//Returns by index in the mem pool. This might not be useful to be public as we use handles
+protected:
     virtual bool IsHandleValid(Handle handle) = 0;
+    size_t GetBodyByteSize(Rigidbody* rb);
 public:
 private:
 };

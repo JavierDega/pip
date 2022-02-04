@@ -18,7 +18,7 @@ BaseAllocator::~BaseAllocator()
 size_t BaseAllocator::GetBodyByteSize(Rigidbody* rb)
 {
 	assert(rb);
-	switch (rb->m_bodyType)
+	switch (rb->GetBodyType())
 	{
 	case BodyType::Circle:
 	{

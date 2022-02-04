@@ -38,7 +38,7 @@ void DefaultAllocator::DestroyPool()
 	m_pool.next = nullptr;
 	m_pool.end = nullptr;
 }
-
+//
 void* DefaultAllocator::AllocateBody( size_t length, Handle& handle)
 {
 	//Asks for a linear slot of that size from the pool and return void *
@@ -95,7 +95,7 @@ size_t DefaultAllocator::AvailableInPool()
 
 Rigidbody* DefaultAllocator::GetFirstBody()
 {
-	//Returns null if pool uninitted, dynamic cast
+	//Returns null if pool uninitted
 	if (m_pool.start == m_pool.next)return nullptr;
 	return (Rigidbody*)m_pool.start;
 }
@@ -134,14 +134,14 @@ Rigidbody* DefaultAllocator::GetBodyAt(size_t i)
 	}
 	return rb;
 }
-
+//Helper func for displacing bodies, etc
 Rigidbody* DefaultAllocator::GetLastBodyOfType(BodyType bodyType, int& idx )
 {
 	Rigidbody* lastBodyOfType = nullptr;
 	unsigned int curIdx = 0;
 	for (Rigidbody* rb = GetFirstBody(); rb != nullptr; rb = GetNextBody(rb))
 	{
-		if (rb->m_bodyType == bodyType)
+		if (rb->GetBodyType() == bodyType)
 		{
 			lastBodyOfType = rb;
 			idx = curIdx;
@@ -163,7 +163,7 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	// check whether its the same object.
 	size_t objIdx = m_mappings[handle.idx].idx;
 	Rigidbody* bodyToDestroy = GetBodyAt(objIdx);
-	BodyType bodyType = bodyToDestroy->m_bodyType;
+	BodyType bodyType = bodyToDestroy->GetBodyType();
 	int lastBodyOfTypeIdx = -1;
 	Rigidbody* lastMatchingBody = GetLastBodyOfType(bodyType, lastBodyOfTypeIdx);
 	if (bodyToDestroy != lastMatchingBody) {
@@ -204,16 +204,16 @@ void DefaultAllocator::DestroyBody(Handle handle)
 	// Set the mapping to be inactive for the object that was destroyed
 	m_mappings[handle.idx].active = false;
 }
-
+//Check we have that many handle indices on our mappings, check handle idx is active and it has the same generational index.
 bool DefaultAllocator::IsHandleValid(Handle handle)
 {
 	return handle.idx < m_mappings.size() && m_mappings[handle.idx].active && handle.generation == m_mappings[handle.idx].generation;
 }
-
+//
 void DefaultAllocator::DestroyBodyFromPool(Rigidbody* bodyToDestroy)
 {
 	assert(bodyToDestroy);
-	BodyType bodyType = bodyToDestroy->m_bodyType;
+	BodyType bodyType = bodyToDestroy->GetBodyType();
 	size_t displacementSize = 0;
 	switch (bodyType) 
 	{

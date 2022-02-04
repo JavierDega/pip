@@ -23,6 +23,6 @@ private:
 	PipMath::Vector2 m_bottomLeft;	
 	QuadNode* m_owner;
 	bool m_isLeaf;
-	QuadNode* m_children;
+	QuadNode* m_children;//Array of children, assumed to be of size 4
 };
 

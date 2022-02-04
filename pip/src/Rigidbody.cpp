@@ -11,4 +11,18 @@ Rigidbody::Rigidbody(Vector2 pos, decimal rot, Vector2 vel, decimal angVel, deci
 Rigidbody::~Rigidbody()
 {
 }
-
+//
+BodyType Rigidbody::GetBodyType()
+{
+	return m_bodyType;
+}
+//
+decimal Rigidbody::GetMass()
+{
+	return m_mass;
+}
+//
+decimal Rigidbody::GetInertia()
+{
+	return m_inertia;
+}

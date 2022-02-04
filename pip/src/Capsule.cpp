@@ -156,7 +156,6 @@ bool Capsule::IntersectWith(Vector2 topRight, Vector2 bottomLeft)
 		Vector2 segmentClamp4 = Vector2(Clamp(lineY2.x, segmentXMin, segmentXMax), Clamp(lineY2.y, segmentYMin, segmentYMax));
 		if ((boxClamp4 - segmentClamp4).LengthSqr() <= m_radius * m_radius) return true;
 	}
-	//#UNIT TEST THIS STUFF
 	return false;
 }
 
@@ -214,7 +213,7 @@ bool Capsule::IntersectWith(Capsule* rb2, Manifold& manifold)
 	}
 	closestPt = ClosestPtToSegment(c, d, a);//Segment in caps2, to point in caps1
 	closestVec = closestPt - a;
-	if (closestVec.LengthSqr() <= rab*rab) {
+	if (closestVec.LengthSqr() <= rab * rab) {
 		//Fill manifold
 		manifold.penetration = rab - closestVec.Length();
 		Vector2 capsuleEdge = closestPt - closestVec.Normalize() * rb2->m_radius;

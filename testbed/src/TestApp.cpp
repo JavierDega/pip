@@ -170,7 +170,7 @@ void TestApp::UpdateLoop()
 		BaseAllocator* allocator = m_solver.GetAllocator();
 		for (Rigidbody* rb = (Rigidbody*)allocator->GetFirstBody(); rb != nullptr; rb = allocator->GetNextBody(rb)) {
 			glLoadIdentity();
-			switch (rb->m_bodyType) {
+			switch (rb->GetBodyType()) {
 			case BodyType::Circle: {
 				Circle* circle = (Circle*)rb;
 				glTranslatef((float)rb->m_position.x, (float)rb->m_position.y, -1);
@@ -392,7 +392,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 	for (Rigidbody* rb = (Rigidbody*)allocator->GetFirstBody(); rb != nullptr; rb = allocator->GetNextBody(rb)) {
 		std::string objShape;
 		char* objDesc = new char[100];
-		switch (rb->m_bodyType) {
+		switch (rb->GetBodyType()) {
 		case BodyType::Circle: {
 			Circle* circle = (Circle*)rb;
 			objShape = "Circle";
@@ -454,32 +454,25 @@ void TestApp::ImGuiShowRigidbodyEditor()
 
 			ImGui::Text("Acceleration");
 			ImGui::NextColumn();
-#if PIP_USE_FIXEDPOINT
+
 			char realAccel[50];
 			snprintf(realAccel, 50, "Accel (Real) X(%f) Y(%f)", (double)rb->m_acceleration.x, (double)rb->m_acceleration.y);
 			ImGui::Text("%s", realAccel);
-#else
-
-			ImGui::DragFloat("AccelX", &rb->m_acceleration.x, 1.0f);
-			ImGui::DragFloat("AccelY", &rb->m_acceleration.y, 1.0f);
-#endif
 			ImGui::NextColumn();
 
 			ImGui::Text("Angular Acceleration");
 			ImGui::NextColumn();
-#if PIP_USE_FIXEDPOINT
+
 			char angularAccel[50];
 			snprintf(angularAccel, 50, "Angular accel (%f)" , (double)rb->m_angularAccel);
 			ImGui::Text("%s", angularAccel);
-#else
 			ImGui::DragFloat("AngAccel", &rb->m_angularAccel, 1.0f);
-#endif
 
 			ImGui::NextColumn();
 			ImGui::Text("Mass");
 			ImGui::NextColumn();
 			char mass[50];
-			snprintf(mass, 50, "%f", (float)rb->m_mass);
+			snprintf(mass, 50, "%f", (float)rb->GetMass());
 			ImGui::Text("%s", mass);
 			ImGui::NextColumn();
 
@@ -487,7 +480,7 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Inertia");
 			ImGui::NextColumn();
 			char inertia[50];
-			snprintf(inertia, 50, "%f", (float)rb->m_inertia);
+			snprintf(inertia, 50, "%f", (float)rb->GetInertia());
 			ImGui::Text("%s", inertia);
 			ImGui::NextColumn();
 
