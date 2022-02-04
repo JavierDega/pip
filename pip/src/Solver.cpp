@@ -140,7 +140,7 @@ void Solver::Step(decimal dt)
 			}
 		}
 	}
-
+	
 	m_currentManifolds.clear();
 	//You might test twice for bodies that are both part of two QuadNodes at the same time, which is why m_ignoreSeparatingBodies should be true
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
@@ -408,3 +408,7 @@ int Solver::CreateOrientedBox(Handle& handle, PipMath::Vector2 halfExtents, PipM
 	return obb ? 0 : -1;
 }
 
+QuadNode Solver::GetQuadTreeRoot()
+{
+	return m_quadTreeRoot;
+}

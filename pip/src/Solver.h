@@ -30,16 +30,18 @@ public:
 	void DestroyAllBodies();
 	void DestroyBody(Handle bodyHandle);
 	BaseAllocator* GetAllocator();
+	//QTree
+	QuadNode GetQuadTreeRoot();
 private:
 	void ContinuousStep(decimal dt);//#Not supported: Continuous collision physics step
 	void Step(decimal dt);// Discrete step
 public:
-	QuadNode m_quadTreeRoot;
 	bool m_stepMode, m_stepOnce, m_logCollisionInfo, m_frictionModel;//#Bit field?
 	decimal m_timestep, m_airViscosity;
 	PipMath::Vector2 m_gravity;
-	std::vector<PipMath::Manifold> m_currentManifolds;
+	std::vector<PipMath::Manifold> m_currentManifolds;//Information about collisions in current frame
 private:
+	QuadNode m_quadTreeRoot;
 	BaseAllocator* m_allocator;
 	decimal m_accumulator;
 };

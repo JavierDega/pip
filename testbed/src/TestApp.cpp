@@ -291,7 +291,7 @@ void TestApp::UpdateLoop()
 		{
 			//Similar to drawing grid
 			std::vector<QuadNode*> leafNodes;
-			m_solver.m_quadTreeRoot.GetLeafNodes(leafNodes);
+			m_solver.GetQuadTreeRoot().GetLeafNodes(leafNodes);
 			glColor3f(1, 0, 0);
 			glLoadIdentity();
 			glTranslatef(0, 0, -1);//Slightly in front of geometry

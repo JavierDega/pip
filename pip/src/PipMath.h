@@ -663,7 +663,7 @@ namespace PipMath
 		Rigidbody* rb1;
 		Rigidbody* rb2;
 
-		Manifold() 
+		Manifold()
 		{
 			numContactPoints = 0;
 			penetration = 0.0f;
