@@ -25,16 +25,20 @@ public:
 	 decimal rot = 0.0f, PipMath::Vector2 vel = PipMath::Vector2(), decimal angVel = 0.0f, decimal mass = 1.0f, decimal e = .7f, bool isKinematic = false,
 	 decimal kFriction = 0.03f);
 	void ComputeResponse(const PipMath::Manifold& manifold);
+	//Allocator
+	void DestroyAllBodies();
+	void DestroyBody(Handle bodyHandle);
+	BaseAllocator* GetAllocator();
 private:
 	void ContinuousStep(decimal dt);//#Not supported: Continuous collision physics step
 	void Step(decimal dt);// Discrete step
 public:
-	BaseAllocator* m_allocator;
 	QuadNode m_quadTreeRoot;
 	bool m_stepMode, m_stepOnce, m_logCollisionInfo, m_frictionModel;//#Bit field?
 	decimal m_timestep, m_airViscosity;
 	PipMath::Vector2 m_gravity;
 	std::vector<PipMath::Manifold> m_currentManifolds;
 private:
+	BaseAllocator* m_allocator;
 	decimal m_accumulator;
 };

@@ -365,7 +365,22 @@ void Solver::ComputeResponse(const Manifold& manifold)
 	rb2->m_velocity = resultVelB;
 	rb2->m_angularVelocity = resultAngVelB;
 }
-
+//
+void Solver::DestroyAllBodies()
+{
+	m_allocator->DestroyAllBodies();
+}
+//
+void Solver::DestroyBody(Handle bodyHandle)
+{
+	m_allocator->DestroyBody(bodyHandle);
+}
+//
+BaseAllocator* Solver::GetAllocator()
+{
+	assert(m_allocator);
+	return m_allocator;
+}
 //Go through custom allocator
 int Solver::CreateCircle(Handle& handle, decimal rad, PipMath::Vector2 pos, decimal rot, PipMath::Vector2 vel, decimal angVel, decimal mass,
 	decimal e, bool isKinematic, decimal kFriction)
