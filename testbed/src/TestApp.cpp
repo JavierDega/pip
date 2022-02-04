@@ -659,7 +659,7 @@ void TestApp::ProcessInput()
 	}
 	if (m_inputPressed & (short)Keys::P) LaunchBomb();
 }
-
+//
 void TestApp::LaunchBomb(){
 	Handle handle;
 	int r = m_solver.CreateCircle(handle, 1.0f, Vector2(-5, 2), 0.f, Vector2(5, 0));

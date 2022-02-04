@@ -11,9 +11,9 @@
 using namespace std;
 using namespace PipMath;
 
-Solver::Solver(BaseAllocator* allocator, Vector2 topRight, Vector2 bottomLeft)
+Solver::Solver(BaseAllocator* allocator, Vector2 topRight, Vector2 bottomLeft, decimal timestep)
 	: m_allocator(allocator), m_quadTreeRoot(topRight, bottomLeft), m_stepMode(false), m_stepOnce(false), m_logCollisionInfo(false), m_frictionModel(true),
-	m_timestep(0.02f), m_airViscosity(0.133f), m_gravity(Vector2(0.f, -9.8f)), m_accumulator(0.f)
+	m_timestep(timestep), m_airViscosity(0.133f), m_gravity(Vector2(0.f, -9.8f)), m_accumulator(0.f)
 {
 }
 

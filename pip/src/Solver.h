@@ -13,7 +13,8 @@ class Solver
 {
 public:
 	Solver(BaseAllocator* allocator = new DefaultAllocator(50*sizeof(OrientedBox)),
-	 PipMath::Vector2 topRight = PipMath::Vector2(10, 10), PipMath::Vector2 bottomLeft = PipMath::Vector2(-10, -10));//Topright, bottomleft of playspace
+	 PipMath::Vector2 topRight = PipMath::Vector2(10, 10), PipMath::Vector2 bottomLeft = PipMath::Vector2(-10, -10),//Topright, bottomleft of playspace
+	 decimal timestep = 0.02f);
 	~Solver();
 	void Update(decimal dt);//Updates the time and executes physics step
 	int CreateCircle(Handle& handle, decimal rad = 1.0f, PipMath::Vector2 pos = PipMath::Vector2(), decimal rot = 0.0f,
@@ -37,10 +38,11 @@ private:
 	void Step(decimal dt);// Discrete step
 public:
 	bool m_stepMode, m_stepOnce, m_logCollisionInfo, m_frictionModel;//#Bit field?
-	decimal m_timestep, m_airViscosity;
+	decimal m_airViscosity;
 	PipMath::Vector2 m_gravity;
 	std::vector<PipMath::Manifold> m_currentManifolds;//Information about collisions in current frame
 private:
+	decimal m_timestep;
 	QuadNode m_quadTreeRoot;
 	BaseAllocator* m_allocator;
 	decimal m_accumulator;
