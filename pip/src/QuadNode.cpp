@@ -88,5 +88,18 @@ void QuadNode::TryMerge()
 		m_isLeaf = true;
 	}
 }
-
-
+//
+QuadNode* QuadNode::GetOwner()
+{
+	return m_owner;
+}
+//
+Vector2 QuadNode::GetTopRight()
+{
+	return m_topRight;
+}
+//
+Vector2 QuadNode::GetBottomLeft()
+{
+	return m_bottomLeft;
+}

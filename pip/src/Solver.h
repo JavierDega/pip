@@ -12,7 +12,8 @@
 class Solver
 {
 public:
-	Solver(BaseAllocator* allocator = new DefaultAllocator(50*sizeof(OrientedBox)));
+	Solver(BaseAllocator* allocator = new DefaultAllocator(50*sizeof(OrientedBox)),
+	 PipMath::Vector2 topRight = PipMath::Vector2(10, 10), PipMath::Vector2 bottomLeft = PipMath::Vector2(-10, -10));//Topright, bottomleft of playspace
 	~Solver();
 	void Update(decimal dt);//Updates the time and executes physics step
 	int CreateCircle(Handle& handle, decimal rad = 1.0f, PipMath::Vector2 pos = PipMath::Vector2(), decimal rot = 0.0f,

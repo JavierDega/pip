@@ -11,8 +11,8 @@
 using namespace std;
 using namespace PipMath;
 
-Solver::Solver(BaseAllocator* allocator)
-	: m_allocator(allocator), m_quadTreeRoot(Vector2(10, 10), Vector2(-10, -10)), m_stepMode(false), m_stepOnce(false), m_logCollisionInfo(false), m_frictionModel(true),
+Solver::Solver(BaseAllocator* allocator, Vector2 topRight, Vector2 bottomLeft)
+	: m_allocator(allocator), m_quadTreeRoot(topRight, bottomLeft), m_stepMode(false), m_stepOnce(false), m_logCollisionInfo(false), m_frictionModel(true),
 	m_timestep(0.02f), m_airViscosity(0.133f), m_gravity(Vector2(0.f, -9.8f)), m_accumulator(0.f)
 {
 }
@@ -134,7 +134,7 @@ void Solver::Step(decimal dt)
 		{
 			//Figure which bin rigidbody is on
 			Rigidbody* rb = rigidbodies[j];
-			if (rb->IntersectWith(leafNode->m_topRight, leafNode->m_bottomLeft))
+			if (rb->IntersectWith(leafNode->GetTopRight(), leafNode->GetBottomLeft()))
 			{
 				leafNode->m_ownedBodies.push_back(rb);
 			}
@@ -225,7 +225,7 @@ void Solver::Step(decimal dt)
 	for (int i = 0; i < quadTreeLeafNodes.size(); i++)
 	{
 		QuadNode* leafNode = quadTreeLeafNodes[i];
-		QuadNode* leafNodeParent = leafNode->m_owner;
+		QuadNode* leafNodeParent = leafNode->GetOwner();
 		if (leafNodeParent)//If its the root node it will have no parent
 		{
 			if (std::find(quadTreeLeafParentNodes.begin(), quadTreeLeafParentNodes.end(), leafNodeParent) == quadTreeLeafParentNodes.end())

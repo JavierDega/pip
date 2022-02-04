@@ -299,8 +299,8 @@ void TestApp::UpdateLoop()
 			for (int i = 0; i < leafNodes.size(); i++)
 			{
 				QuadNode* currentLeaf = leafNodes[i];
-				Vector2 topRight = currentLeaf->m_topRight;
-				Vector2 bottomLeft = currentLeaf->m_bottomLeft;
+				Vector2 topRight = currentLeaf->GetTopRight();
+				Vector2 bottomLeft = currentLeaf->GetBottomLeft();
 				glVertex3f((float)topRight.x, (float)topRight.y, 0);
 				glVertex3f((float)bottomLeft.x, (float)topRight.y, 0);
 
@@ -350,7 +350,7 @@ void TestApp::DrawImgui()
 		ImGui::Text("Destroy first body (O)");
 		ImGui::Text("Launch bomb (P)");
 		ImGui::Checkbox("Static & kinetic friction", &m_solver.m_frictionModel);
-		ImGui::Checkbox("Render quad leaf nodes", &m_renderLeafNodes);
+		ImGui::Checkbox("Render quadtree leaf nodes", &m_renderLeafNodes);
 		ImGui::Checkbox("Log collision Info", &m_solver.m_logCollisionInfo);
 		#if PIP_USE_FIXEDPOINT
 			char airViscosity[50];
