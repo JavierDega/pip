@@ -25,8 +25,8 @@ public:
 	virtual Rigidbody* GetNextBody(Rigidbody* prev) = 0;
     virtual Rigidbody* GetBody(Handle handle) = 0;
     virtual Rigidbody* GetBodyAt(size_t i) = 0;//Returns by index in the mem pool. This might not be useful to be public as we use handles
-protected:
     virtual bool IsHandleValid(Handle handle) = 0;
+protected:
     size_t GetBodyByteSize(Rigidbody* rb);
 public:
 private:
