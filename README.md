@@ -16,10 +16,10 @@ The library is distributed as a static .lib
 - A memory allocator interface is provided including a DefaultAllocator implementation that uses a multibody dense linear pool.
 
 ## Get started (win/linux):
--Download a release, 
--include headers in 'include' folder
--link against 'pip.lib'
--Done
+-Download a release  
+-include headers in 'include' folder  
+-link against 'pip.lib'  
+-Done  
 
 The 'Testbed' binary is there so you can quickly check the engine demos. The executable will generate 'imgui.ini' when running to store GUI window settings. 
 
