@@ -23,36 +23,34 @@ The library is distributed as a static .lib
 
 The 'Testbed' binary is there so you can quickly check the engine demos. The executable will generate 'imgui.ini' when running to store GUI window settings.  
 
-### Compiling: 
-#### Linux (Ubuntu):
+## Compiling / Building from source:  
+You will need to build from source in order to change PIP_USE_FIXEDPOINT  
+
+### Linux (Ubuntu):  
 Install dependencies using 'sudo apt-get install', 'snap install' or your package manager of choice:  
 libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang, cmake  
 
 Visual Studio Code (Recommended, tested):  
+-Download source  
 -Install 'CMake Tools' extension  
 -Scan for kits should show you the clang installation from llvm (something like Clang_platform_pc-linux-gnu)  
 -Compile and run  
 
-#### Windows:
+### Windows:
 This has been tested and developed using Visual Studio's Clang installation. You can add this from Visual Studio Installer:  
--Install Visual Studio 2022. In the installer, make sure to install 'Desktop development with C++', and within it, install 'Clang in C++ Tools for Windows'  
- Visual Studio Code (Recommented)  
--Install visual studio (Tested on vs2019/2022)  
--Visual Studio Installer: Desktop development for C++ - Make sure to install clang tools for visual studio  
--Install CMake extension  
--Install CMake  
--Scan for kits should show you the Visual Studio installation of clang, choose it  
--Compile  
+-Download source  
+-Install Visual Studio (tested on vs2019, 2022). In the installer, make sure to install 'Desktop development with C++', and within it, install 'Clang in C++ Tools for Windows'  
+-Install CMake and add to PATH  
 
- Visual Studio:
--Install visual studio (Tested on vs2019/2022)
--Visual Studio Installer: Desktop development for C++ - Make sure to install clang tools for visual studio
--Install CMake, configure and generate the project for visual studio.
--On the project properties, go to general, platform toolset, and choose clang
+#### Visual Studio Code (Recommented, tested)  
+-Install 'CMake Tools' extension  
+-'CMake: Scan for kits' on the vscode command palette should show you the Visual Studio installation of clang (something like Clang X.X.X for MSVC X.X.X (Visual Studio Release)  
+-Build testbed  
 
-### Developing:
-### Linux
-### Windows
+#### Visual Studio  
+-Generate the binaries for your Visual studio version (Only tested on 2019, 2022) using CMake (in something like pip/build)  
+-Open with visual studio, in order to run on clang, you need to go to Project properties (for Testbed, pip and imgui), General, platform toolset = LLVM(clang-cl)  
+-Build testbed  
 
 ## Summary - Dev Guide:
 -Generational indices
