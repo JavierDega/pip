@@ -21,17 +21,17 @@ The library is distributed as a static .lib
 -link against 'pip.lib'  
 -Done  
 
-The 'Testbed' binary is there so you can quickly check the engine demos. The executable will generate 'imgui.ini' when running to store GUI window settings. 
+The 'Testbed' binary is there so you can quickly check the engine demos. The executable will generate 'imgui.ini' when running to store GUI window settings.  
 
 ### Compiling: 
 #### Linux (Ubuntu):
-install dependencies using 'sudo apt-get install', 'snap install' or your package manager of choice:
-libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang, cmake
+Install dependencies using 'sudo apt-get install', 'snap install' or your package manager of choice:  
+libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang, cmake  
 
-Visual Studio Code (Recommended, tested):
--Install 'CMake Tools'extension
--Scan for kits should show you the clang installation from llvm (something like Clang_platform_pc-linux-gnu)
--Compile and run 
+Visual Studio Code (Recommended, tested):  
+-Install 'CMake Tools'extension  
+-Scan for kits should show you the clang installation from llvm (something like Clang_platform_pc-linux-gnu)  
+-Compile and run  
 
 #### Windows:
 
