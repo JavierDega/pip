@@ -1,5 +1,5 @@
 # PiP
-## Intro / Preamble
+## Intro / Summary
 Hello! PiP is an open source 2d physics library written in C++ in my spare time. It is licensed under MIT meaning its basically free for use as long as its credited.
 I built this during my first years of working as a game developer to continue my research into game physics (This was a subject I was quite interested in during university but when working in industry I never really worked on game physics directly, or specifically). During the process I met a friend who sparked some conversations about floating point determinism and networking physics, and so we had the idea of making this engine work on an alternate decimal mode, using fixed point decimal representations (This is basically upping the scale of your numbers by N to represent decimals with bigger integers).
 This project almost got stale for a while, specially given I had to spend a lot of time dealing with compilation and dev issues to keep the library working for Linux and Windows (The fixed point library it uses is written in Rust with C bindings, and theres other dependencies); Regardless, after over 2 years of development, it works and runs as intended. Its compiled with clang on all operating systems and IDEs, to keep the workflow easier.
@@ -29,19 +29,20 @@ Install dependencies using 'sudo apt-get install', 'snap install' or your packag
 libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang, cmake  
 
 Visual Studio Code (Recommended, tested):  
--Install 'CMake Tools'extension  
+-Install 'CMake Tools' extension  
 -Scan for kits should show you the clang installation from llvm (something like Clang_platform_pc-linux-gnu)  
 -Compile and run  
 
 #### Windows:
-
- Visual Studio Code (Recommented)
--Install visual studio (Tested on vs2019/2022)
--Visual Studio Installer: Desktop development for C++ - Make sure to install clang tools for visual studio
--Install CMake extension
--Install CMake
--Scan for kits should show you the Visual Studio installation of clang, choose it
--Compile
+This has been tested and developed using Visual Studio's Clang installation. You can add this from Visual Studio Installer:  
+-Install Visual Studio 2022. In the installer, make sure to install 'Desktop development with C++', and within it, install 'Clang in C++ Tools for Windows'  
+ Visual Studio Code (Recommented)  
+-Install visual studio (Tested on vs2019/2022)  
+-Visual Studio Installer: Desktop development for C++ - Make sure to install clang tools for visual studio  
+-Install CMake extension  
+-Install CMake  
+-Scan for kits should show you the Visual Studio installation of clang, choose it  
+-Compile  
 
  Visual Studio:
 -Install visual studio (Tested on vs2019/2022)
