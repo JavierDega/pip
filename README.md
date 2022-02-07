@@ -15,13 +15,14 @@ The library is distributed as a static .lib
 - Handles are used to keep track of your rigidbodies and edit their data or destroy them when needed.
 - A memory allocator interface is provided including a DefaultAllocator implementation that uses a multibody dense linear pool.
 
-## Get started:
+## Get started (win/linux):
 -Download a release, 
 -include headers in 'include' folder
 -link against 'pip.lib'
 -Done
 
-'imgui.lib' is there in case you want the opengl, glfw3 implementation used in the testbed. 'Testbed.exe' is there so you can quickly see the engine demos.
+The 'Testbed' binary is there so you can quickly check the engine demos. The executable will generate 'imgui.ini' when running to store GUI window settings. 
+
 ### Compiling: 
 #### Linux (Ubuntu):
 install dependencies using 'sudo apt-get install', 'snap install' or your package manager of choice:
