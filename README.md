@@ -5,6 +5,8 @@ I built this during my first years of working as a game developer to continue my
 This project almost got stale for a while, specially given I had to spend a lot of time dealing with compilation and dev issues to keep the library working for Linux and Windows (The fixed point library it uses is written in Rust with C bindings, and theres other dependencies); Regardless, after over 2 years of development, it works and runs as intended. Its compiled with clang on all operating systems and IDEs, to keep the workflow easier.
 It is quite simple and should provide a good introduction point for newbies wanting to learn about game physics or those that want to implement third party code to deal with simple collisions into their game.
 
+The library is distributed as a static .lib
+
 - It simulates Circle, Capsule, and OrientedBox collisions, using newtonian physics and impulse based collision response.
 - It uses a static / kinetic friction model to bring objects to sleep
 - It uses dynamic quad trees as a space subdivision scheme to avoid (o)N^2 complexity scaling (Things getting exponentially slower with more rigidbodies)
@@ -14,17 +16,21 @@ It is quite simple and should provide a good introduction point for newbies want
 - A memory allocator interface is provided including a DefaultAllocator implementation that uses a multibody dense linear pool.
 
 ## Get started:
+-Download a release, 
+-include headers in 'include' folder
+-link against 'pip.lib'
+-Done
 
+'imgui.lib' is there in case you want the opengl, glfw3 implementation used in the testbed. 'Testbed.exe' is there so you can quickly see the engine demos.
 ### Compiling: 
 #### Linux (Ubuntu):
-install dependencies:
-sudo apt-get install:
-libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang
+install dependencies using 'sudo apt-get install', 'snap install' or your package manager of choice:
+libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang, cmake
 
-Visual Studio Code:
--Install CMake extention and CMake
--Scan for kits should show you the clang installation from llvm
--Compile
+Visual Studio Code (Recommended, tested):
+-Install 'CMake Tools'extension
+-Scan for kits should show you the clang installation from llvm (something like Clang_platform_pc-linux-gnu)
+-Compile and run 
 
 #### Windows:
 
