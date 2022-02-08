@@ -5,6 +5,9 @@
 
 #include "fp_math.h"
 
+//QTREE
+#define PIP_QNODE_MERGE_THRESHOLD 8 // 8 objects in 1 node = 28 tests. 8 objects in 4 nodes = 32 + 1*4 = 36 tests if fully balanced
+#define PIP_QNODE_SUBDIVIDE_THRESHOLD 12 //12 objects in 1 node = 66 tests. 12 objects in 4 nodes = 48 + 3*4 = 60 tests if fully balanced
 #define PIP_TEST_EPSILON 0.0001f
 #define PIP_SLEEP_DELTA 0.002f
 #define PIP_USE_FIXEDPOINT 0

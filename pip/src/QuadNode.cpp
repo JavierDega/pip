@@ -2,8 +2,6 @@
 
 #include <assert.h>
 
-#define QNODE_MERGE_THRESHOLD 8 // 8 objects in 1 node = 28 tests. 8 objects in 4 nodes = 32 + 1*4 = 36 tests if fully balanced
-#define QNODE_SUBDIVIDE_THRESHOLD 12 //12 objects in 1 node = 66 tests. 12 objects in 4 nodes = 48 + 3*4 = 60 tests if fully balanced
 
 using namespace PipMath;
 
@@ -39,7 +37,7 @@ void QuadNode::TrySubdivide()
 {
 	assert(m_isLeaf && !m_children);//Assert were leaf node and thus have no children
 	//Measure owned bodies
-	if (m_ownedBodies.size() >= QNODE_SUBDIVIDE_THRESHOLD) 
+	if (m_ownedBodies.size() >= PIP_QNODE_SUBDIVIDE_THRESHOLD) 
 	{
 		if (!m_ownedBodies.empty()) m_ownedBodies.clear();
 		m_isLeaf = false;
@@ -81,7 +79,7 @@ void QuadNode::TryMerge()
 		QuadNode* childLeaf = leafNodes[i];
 		childrenBodyTotal += (unsigned int)childLeaf->m_ownedBodies.size();
 	}
-	if (childrenBodyTotal <= QNODE_MERGE_THRESHOLD)
+	if (childrenBodyTotal <= PIP_QNODE_MERGE_THRESHOLD)
 	{
 		delete[] m_children;//Should delete recursively
 		m_children = nullptr;
