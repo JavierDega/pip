@@ -2,6 +2,7 @@
 ## Intro / Summary
 PiP is a C++ open source 2d physics lib.
 I built this during my first couple of years working as a game developer to continue studying into game physics, which I liked quite a bit in uni. I met a friend who sparked some conversations about floating point determinism and networking physics, so we had the idea of making this engine work on an alternate decimal mode, using fixed point decimal representations (Upping the scale of your numbers by N to represent decimals with bigger integers), for which he provided [this fixedpoint library](https://gitlab.com/DixieDev/fixed-point-lib). This is done by changing PIP_USE_FIXEDPOINT in 'PipMath.h' and rebuilding.  
+
 This project almost got stale for a while, specially given I had to spend a lot of time dealing with compilation and dev issues to keep the library working for Linux and Windows (The fixed point library it uses is written in Rust with C bindings, and theres other dependencies). Regardless, after over 2 years of development, it works and runs as intended. Its compiled with clang on both operating systems and IDEs, to keep the workflow easier.  
 
 It is quite simple and should provide a good introduction point for newbies wanting to learn about game physics or those that want to implement third party code to deal with simple collisions into their game.  
