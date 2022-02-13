@@ -27,7 +27,7 @@ The library is distributed as a static .lib
 
 First, you need to instance a Solver, passing the timestep frequency (Smaller numbers will result in physics engine using more resources, physics looking more 'Continuous' or smoother), an allocator (a DefaultAllocator if none is provided), and defining the playspace of the engine as an AABB; Objects outside this space won't process collision, but they won't be deleted by the engine, they will remain in memory unless deleted.  
 
-All client communication can be done through the Solver, to make things.  
+All client communication can be done through the Solver, to make things simple.  
 You can instance bodies through the Solver's interface for every shape, providing a handle reference and the body's properties. You will also receive an int for error code checking. This handle pattern is there to replace using pointers that may go invalid. It is an index into a list and its generational index to check the object on that list is the same as the one you had. For the properties, its worth checking in Rigidbody.h for safe ranges on things like m_e (coefficient of restitution), kinetic friction, etc.  
 
 From there on, just call Solver::Step() on your update loop passing delta time as an argument. The solver will step as many times as its timestep indicates, and store leftover delta time in its accumulator to keep things balanced. If delta time between frames grows too much (Say the physics takes too long or else), the Solver will process up to 0.2f seconds in each Step() call, to avoid a spiral of death. You will notice that the physics processing will appear to run in slow motion, and look choppy (As multiple physics frames are stepped through before rendering).  
@@ -37,21 +37,20 @@ Its worth noting that a lot of rigidbody properties are not designed to be edite
 
 When the game logic needs to delete a rigidbody, it's done through handles using Solver::DestroyBody(). You can use Solver::DestroyAllBodies() to empty the scene from rigidbodies.  
 
-You wouldn't normally be doing this, but if you delete an object at runtime, the manifold list is going to hold invalid references until the next Solver::Step() when they're
-cleared, this is worth knowing in case you're deleting and then rendering manifold data or something in between Step() calls.  
+You wouldn't normally be doing this, but if you delete an object at runtime, the manifold list is going to hold invalid references until the next Solver::Step() when they're cleared, this is worth knowing in case you're deleting and then rendering manifold data or something in between Step() calls.  
 
 ## Get started (win/linux):
 - Download a release  
 - Include headers in 'include' folder  
-- Link against 'pip.lib'  (windows) or 'libpip.a' (linux)
-- Done  
+- Link against 'pip.lib' (windows) or 'libpip.a' (linux)
+- Done
 
 The 'Testbed' binary is there so you can quickly check the engine demos. The executable will generate 'imgui.ini' when running to store GUI window settings.  
 
 ## Compiling / Building from source:  
 You will need to build from source in order to change PIP_USE_FIXEDPOINT  
 
-### Linux (Ubuntu):  
+### Linux (Ubuntu): 
 Install dependencies using 'sudo apt-get install', 'snap install' or your package manager of choice:  
 libglfw3, libglfw3-dev, libmesa-dev, libglu1-dev, libglew-dev, clang, cmake  
 
