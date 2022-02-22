@@ -39,7 +39,7 @@ private:
 public:
 	bool m_stepMode, m_stepOnce, m_logCollisionInfo, m_frictionModel;//#Bit field?
 	decimal m_airViscosity;
-	PipMath::Vector2 m_gravity;
+	PipMath::Vector2 m_gravity;//Recommended absolute range: 0.0f<=x<=30.f
 	std::vector<PipMath::Manifold> m_currentManifolds;//Information about collisions in current frame
 private:
 	decimal m_timestep;

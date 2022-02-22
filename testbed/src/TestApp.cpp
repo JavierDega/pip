@@ -463,11 +463,13 @@ void TestApp::ImGuiShowRigidbodyEditor()
 			ImGui::Text("Angular Acceleration");
 			ImGui::NextColumn();
 
+#if PIP_USE_FIXEDPOINT
 			char angularAccel[50];
 			snprintf(angularAccel, 50, "Angular accel (%f)" , (double)rb->m_angularAccel);
 			ImGui::Text("%s", angularAccel);
+#else
 			ImGui::DragFloat("AngAccel", &rb->m_angularAccel, 1.0f);
-
+#endif
 			ImGui::NextColumn();
 			ImGui::Text("Mass");
 			ImGui::NextColumn();
